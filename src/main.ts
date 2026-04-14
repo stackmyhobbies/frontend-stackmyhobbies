@@ -9,11 +9,13 @@ import { useThemeStore } from './stores/theme'
 
 import './assets/main.css'
 import 'vue-toastification/dist/index.css'
+import { VueQueryPlugin } from '@tanstack/vue-query'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+app.use(VueQueryPlugin)
 
 const options = {
   // You can set your default options here

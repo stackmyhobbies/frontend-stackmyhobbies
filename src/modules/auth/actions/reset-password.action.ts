@@ -15,6 +15,7 @@ export const ResetPasswordAction = async (
       password,
       password_confirmation,
     })
+    console.log({ data }, 'Deberia llegar aqui')
     return data
   } catch (error: unknown) {
     console.log(error)

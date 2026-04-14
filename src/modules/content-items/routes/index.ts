@@ -9,12 +9,17 @@ export const contentItemRoutes: RouteRecordRaw = {
   children: [
     {
       path: 'list',
-      name: 'list',
+      name: 'content-item-list',
       component: () => import('@/modules/content-items/pages/ListPage.vue'),
     },
     {
+      path: 'create',
+      name: 'content-item-create',
+      component: () => import('@/modules/content-items/pages/CreatePage.vue'),
+    },
+    {
       path: '**',
-      redirect: { name: 'list' },
+      redirect: { name: 'content-item-list' },
     },
   ],
 }

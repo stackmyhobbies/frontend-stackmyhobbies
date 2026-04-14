@@ -6,7 +6,10 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@content-queries/*": ["./src/modules/content-items/queries/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@shared-components/*": ["./src/shared/components/*"]
     }
   }
 }

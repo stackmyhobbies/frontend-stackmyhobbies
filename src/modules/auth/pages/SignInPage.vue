@@ -1,6 +1,5 @@
 <template>
   <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-
     <header-form :url="signInImage" alt="icon_forgot_password" text_title="Sign in to your account" />
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -32,7 +31,7 @@
         <div class="mb-4 flex items-center">
           <input class="checkbox checkbox-sm checkbox-neutral" v-model="signInForm.rememberMe" type="checkbox"
             id="remember" name="remember" />
-          <label for="remember" class=" ml-2 block text-sm/6 font-medium text-base-content">Recuerdame</label>
+          <label for="remember" class="ml-2 block text-sm/6 font-medium text-base-content">Recuerdame</label>
         </div>
 
         <div>
@@ -40,9 +39,10 @@
             'flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all',
             isFormValid
               ? 'bg-indigo-500 hover:bg-indigo-400'
-              : 'bg-gray-400 cursor-not-allowed opacity-70'
-          ]">Sign
-            in</button>
+              : 'bg-gray-400 cursor-not-allowed opacity-70',
+          ]">
+            Sign in
+          </button>
         </div>
       </form>
 
@@ -62,63 +62,55 @@
   </div>
 </template>
 
-
 <script lang="ts" setup>
-import { computed, reactive, ref, watchEffect } from 'vue';
-import { useAuthStore } from '../stores/auth.store';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, reactive, ref, watchEffect } from 'vue'
+import { useAuthStore } from '../stores/auth.store'
+import { useRoute, useRouter } from 'vue-router'
 import { POSITION, useToast } from 'vue-toastification'
-import HeaderForm from '../components/HeaderForm.vue';
-import signInImage from '../../../assets/images/sign-in.webp';
-
-
+import HeaderForm from '../components/HeaderForm.vue'
+import signInImage from '../../../assets/images/sign-in.webp'
 
 interface SignInFormInterface {
-  login: string,
-  password: string,
+  login: string
+  password: string
   rememberMe: boolean
 }
 
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
+const toast = useToast()
 
-const toast = useToast();
-
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 const signInForm: SignInFormInterface = reactive({
   login: '',
   password: '',
-  rememberMe: false
+  rememberMe: false,
 })
 
-const loginInputRef = ref<HTMLInputElement | null>(null);
-const passwordInputRef = ref<HTMLInputElement | null>(null);
+const loginInputRef = ref<HTMLInputElement | null>(null)
+const passwordInputRef = ref<HTMLInputElement | null>(null)
 
-
-const isFormValid = computed(() => signInForm.login !== "" && signInForm.password !== "");
-
+const isFormValid = computed(() => signInForm.login !== '' && signInForm.password !== '')
 
 const onSignIn = async () => {
-
   console.log(signInForm.password, 'deberia hacer focus')
 
   if (signInForm.login === '') {
-    loginInputRef.value?.focus();
+    loginInputRef.value?.focus()
   }
 
   if (signInForm.password === '') {
-    passwordInputRef.value?.focus();
+    passwordInputRef.value?.focus()
   }
 
   if (signInForm.rememberMe) {
-    localStorage.setItem('email', signInForm.login);
+    localStorage.setItem('email', signInForm.login)
   } else {
-    localStorage.removeItem('email');
+    localStorage.removeItem('email')
   }
 
-
-  const response = await authStore.signIn(signInForm.login, signInForm.password);
+  const response = await authStore.signIn(signInForm.login, signInForm.password)
 
   console.log(response)
 
@@ -127,25 +119,22 @@ const onSignIn = async () => {
     if ('emailPending' in response && response.emailPending) {
       toast(response.message, {
         position: POSITION.BOTTOM_RIGHT,
-        toastClassName: "custom-error-toast",
-        bodyClassName: ["custom-class-1"]
+        toastClassName: 'custom-error-toast',
+        bodyClassName: ['custom-class-1'],
       })
     } else {
       // Error real de credenciales
       toast(response.message, {
         position: POSITION.BOTTOM_RIGHT,
-        toastClassName: "custom-error-toast",
-        bodyClassName: ["custom-class-1"]
+        toastClassName: 'custom-error-toast',
+        bodyClassName: ['custom-class-1'],
       })
       return
     }
-  };
+  }
 
-  router.push({ name: 'content-items' })
-
-
+  router.push({ name: 'content-item-list' })
 }
-
 
 watchEffect(() => {
   if (route.query.from === 'resend-email') {
@@ -154,18 +143,17 @@ watchEffect(() => {
 })
 
 watchEffect(() => {
-
   const emailParams = route.query?.email
 
   if (emailParams) {
     signInForm.login = emailParams as string
   }
 
-  const email = localStorage.getItem('email');
+  const email = localStorage.getItem('email')
 
   if (email && !emailParams) {
-    signInForm.login = email;
-    signInForm.rememberMe = true;
+    signInForm.login = email
+    signInForm.rememberMe = true
   }
 })
 </script>

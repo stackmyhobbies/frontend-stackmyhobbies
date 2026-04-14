@@ -41,13 +41,13 @@
 
 
 <script lang="ts" setup>
-import { computed, reactive, ref, watch, watchEffect } from 'vue';
+
+import { reactive, ref, watch, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth.store';
 import { useRoute, useRouter } from 'vue-router';
 import { POSITION, useToast } from 'vue-toastification'
 import HeaderForm from '../components/HeaderForm.vue';
 import forgotPasswordImage from "../../../assets/images/forgot_password.webp"
-
 
 
 interface ForgotPasswordFormInterface {
@@ -68,23 +68,20 @@ const forgotPasswordForm: ForgotPasswordFormInterface = reactive({
 const emailInputRef = ref<HTMLInputElement | null>(null);
 const emailError = ref(false);
 
-const isFormValid = computed(() => forgotPasswordForm.email !== "");
+
+onMounted(() => {
+  emailInputRef.value?.focus()
+})
 
 const onForgotPassword = async () => {
 
-  console.log(forgotPasswordForm.email, 'deberia hacer focus')
-
   if (forgotPasswordForm.email === '') {
-    console.log('Aqui')
     emailError.value = true
     emailInputRef.value?.focus();
     return
   }
 
-  console.log(forgotPasswordForm.email)
-
   const forgotPasswordResponse = await authStore.forgotPassword(forgotPasswordForm.email);
-
 
   if (!forgotPasswordResponse?.success) {
     const errorMessage = forgotPasswordResponse.errors?.email?.[0] || forgotPasswordResponse.message || 'Error al enviar email de recuperación'
@@ -95,6 +92,12 @@ const onForgotPassword = async () => {
     })
     return
   };
+
+  toast(forgotPasswordResponse.message, {
+    position: POSITION.BOTTOM_RIGHT,
+    toastClassName: "custom-success-toast",
+    bodyClassName: ["custom-class-1"]
+  })
 
 
 
@@ -121,5 +124,9 @@ watch(() => forgotPasswordForm.email, (newEmail) => {
 
 .Vue-Toastification__toast-body.custom-class-1 {
   font-size: 16px;
+}
+
+.Vue-Toastification__toast--default.custom-success-toast {
+  background-color: rgb(34, 197, 94);
 }
 </style>

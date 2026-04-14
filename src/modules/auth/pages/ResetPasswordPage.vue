@@ -112,7 +112,7 @@ const onResetPassword = async () => {
 
   try {
     const result = await ResetPasswordAction(token.value, email.value, resetForm.password, resetForm.confirmPassword)
-
+    console.log(result, 'Aqui deberia estar llegar')
     if (result.success) {
       toast('Password reset successfully', {
         position: POSITION.BOTTOM_RIGHT,

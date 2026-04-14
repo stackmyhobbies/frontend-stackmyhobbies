@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-interface ErrorResponse {
+export interface ErrorResponse {
   success: false
   message: string
   errors?: Record<string, string[]>
@@ -15,7 +15,7 @@ export function handleApiError(
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as any
 
-    console.log(data, '📋 Observando el error recibido')
+    console.error(data, '📋 error instance of axios')
 
     // Si el backend envía errores de validación
     if (data?.errors) {
@@ -39,7 +39,7 @@ export function handleApiError(
   }
 
   if (error instanceof Error) {
-    console.log(error, 'Aqui')
+    console.error(error, 'error instance of Error')
     return {
       success: false,
       message: error.message || defaultMessage,
