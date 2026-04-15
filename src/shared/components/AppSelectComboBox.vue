@@ -32,6 +32,11 @@ const handleContainerClick = (open) => {
   if (!open && toggleBtnRef.value) {
     toggleBtnRef.value.$el.click()
   }
+
+  if (open && toggleBtnRef.value) {
+    toggleBtnRef.value.$el.click()
+  }
+
 }
 
 const onSelect = () => {
@@ -75,10 +80,10 @@ const removePerson = (person) => {
 
           <ComboboxInput ref="inputRef"
             class="flex-1 border-none min-w-[100px] text-sm text-neutral-200 bg-transparent focus:outline-none placeholder:text-gray-600 w-full"
-            placeholder="Escribe un tag..." @change="query = $event.target.value" :display-value="() => ''" 
+            placeholder="Escribe un tag..." @change="query = $event.target.value" :display-value="() => ''"
             @keydown="handleKeydown" />
 
-          <ComboboxButton ref="toggleBtnRef" class="absolute inset-y-0 right-0 flex items-center pr-2">
+          <ComboboxButton ref="toggleBtnRef" class="absolute inset-y-0 right-0 flex items-center pr-2" @click.stop>
             <svg class="h-5 w-5 text-gray-400 hover:text-cyan-400 transition-colors" viewBox="0 0 20 20"
               fill="currentColor">
               <path fill-rule="evenodd"
