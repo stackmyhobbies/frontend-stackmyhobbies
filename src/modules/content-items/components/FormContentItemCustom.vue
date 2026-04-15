@@ -21,6 +21,8 @@ import { CreateContentItem } from '../schemas/content-item.schema';
 import { useContentTypeCalculations } from '../composable/useContentTypeCalculations';
 import { useTagsManager } from '../composable/useTagsManager';
 import { useImagePreview } from '../composable/useImagePreview';
+import AppSelectComboBox from '@/shared/components/AppSelectComboBox.vue';
+
 
 
 const { data } = useGetContentTypesQuery()
@@ -256,7 +258,7 @@ const onSubmit = handleSubmit((formValues) => {
                   <textarea v-model="notes" v-bind="notesAttrs"
                     class="textarea textarea-bordered w-full bg-base-100 border-gray-700 h-[60px] min-h-0 resize-none"></textarea>
                 </div>
-                <div class="col-span-12">
+                <!-- <div class="col-span-12">
                   <label class="label"><span class="label-text text-gray-400">Tags</span></label>
                   <div class="flex flex-wrap gap-2 mb-2">
                     <span v-for="tag in (tags ?? [])" :key="tag"
@@ -269,6 +271,10 @@ const onSubmit = handleSubmit((formValues) => {
                   <input v-model="tagInput" @keydown="addTag"
                     class="input input-bordered w-full border-gray-700 bg-base-100"
                     placeholder="Escribe un tag y presiona Enter" />
+                </div> -->
+
+                <div class="col-span-12">
+                  <AppSelectComboBox />
                 </div>
               </div>
             </div>
