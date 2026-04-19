@@ -23,13 +23,17 @@ import { useTagsManager } from '../composable/useTagsManager';
 import { useImagePreview } from '../composable/useImagePreview';
 import AppSelectComboBox from '@/shared/components/AppSelectComboBox.vue';
 
+/** Enum */
+import { DayOfWeekValues, DayOfWeek } from "@/modules/content-items/enum/dayOfWeek.enum"
+import type { ProgressStatus } from '../interfaces/contentItemListResponse';
+
 
 
 const { data } = useGetContentTypesQuery()
 const { data: progressStatuses } = useProgressStatusesQuery()
 const { data: data_tags } = useGetTagsQuery();
 
-console.log({ tags: data_tags })
+console.log({ progressStatuses: data_tags })
 
 const formHobby = {
   content_type_id: null,
@@ -44,6 +48,11 @@ const formHobby = {
   segment_subtype: null,
   tags: [],
   total_progress: 0,
+}
+
+const progress_statuses_object = {
+  airing: 'en emisión',
+  finished: 'terminado',
 }
 
 
@@ -72,11 +81,21 @@ const [start_date, start_dateAttrs] = defineField('start_date')
 const [end_date, end_dateAttrs] = defineField('end_date')
 const [rating, ratingAttrs] = defineField('rating')
 const [tags, tagsAttrs] = defineField('tags')
+const [day_of_week, day_of_weekAttrs] = defineField('day_of_week')
 const [image, imageAttrs] = defineField('image')
 
 const { progressPercent, allowedSegmentType, allowedSubsegmentType, allowedUnits } = useContentTypeCalculations(data, values)
 
-const { tagInput, addTag, removeTag } = useTagsManager(tags, setFieldValue as (field: string, value: unknown) => void)
+const selectedProgressStatus = computed<ProgressStatus | null>(() => {
+  if (!progressStatuses.value || !values.progress_status_id) return null
+  return progressStatuses.value.find((t) => t.id === Number(values.progress_status_id)) ?? null
+})
+
+watch(selectedProgressStatus, (newVal) => {
+  console.log('El estado cambió a:', newVal);
+  console.log(selectedProgressStatus.value?.name === progress_statuses_object.airing)
+});
+// const { tagInput, addTag, removeTag } = useTagsManager(tags, setFieldValue as (field: string, value: unknown) => void)
 
 const { previewUrl, handleImageUpload } = useImagePreview(computed(() => values.image), setFieldValue as (field: string, value: unknown) => void)
 
@@ -138,28 +157,34 @@ const onSubmit = handleSubmit((formValues) => {
             <div class="collapse-content">
               <div class="grid grid-cols-12 gap-4 pt-2">
                 <div class="col-span-12 md:col-span-6">
-                  <AppInput input-class="bg-base-100" label="Title" placeholder="Ej: Naruto" labelFor="title"
-                    v-model="title" v-bind="titleAttrs" :error="errors.title" />
+                  <AppInput input-class="bg-base-100 focus:outline-cyan-500" label="Title" placeholder="Ej: Naruto"
+                    labelFor="title" v-model="title" v-bind="titleAttrs" :error="errors.title" />
                 </div>
                 <div class="col-span-12 md:col-span-6">
-                  <AppSelect label="Content Type" labelFor="content_type_id" v-model="content_type_id"
-                    v-bind="content_type_idAttrs" :error="errors.content_type_id">
-                    <option :value="null" disabled selected>Selecciona tipo</option>
-                    <option v-for="type in data" :key="type.id" :value="type.id">{{ type.name }}</option>
+                  <AppSelect select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
+                    select-container-option-class="bg-cyan-500/10 text-cyan-400" selected-text="text-cyan-500"
+                    label="Content Type" display-key="name" :items="data || []" labelFor="content_type_id"
+                    value-key="id" v-model="content_type_id" v-bind="content_type_idAttrs"
+                    :error="errors.content_type_id" placeholder="Selecciona un tipo de hobby">
+
+
                   </AppSelect>
                 </div>
 
                 <template v-if="allowedSegmentType.length">
                   <div class="col-span-12 md:col-span-6">
-                    <AppSelect label="Segment Type" labelFor="segment_type" v-model="segment_type"
+                    <AppSelect select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
+                      select-container-option-class="bg-cyan-500/10 text-cyan-400" selected-text="text-cyan-500"
+                      label="Segment Type" :items="allowedSegmentType" labelFor="segment_type" v-model="segment_type"
                       v-bind="segment_typeAttrs" :error="errors.segment_type">
                       <option :value="null" disabled>Selecciona tipo de segmento</option>
-                      <option v-for="seg in allowedSegmentType" :key="seg" :value="seg">{{ seg }}</option>
+                      <option v-for="seg in allowedSegmentType" :key="seg.id" :value="seg.name">{{ seg.name }}</option>
                     </AppSelect>
                   </div>
                   <div class="col-span-12 md:col-span-6">
-                    <AppInput label="Number" type="number" labelFor="segment_number" v-model="segment_number!"
-                      v-bind="segment_numberAttrs" placeholder="0" :error="errors.segment_number" />
+                    <AppInput input-class="bg-base-100 focus:outline-cyan-500" label="Number" type="number"
+                      labelFor="segment_number" v-model="segment_number!" v-bind="segment_numberAttrs" placeholder="0"
+                      :error="errors.segment_number" />
                   </div>
 
                   <div class="col-span-12 md:col-span-12">
@@ -173,29 +198,33 @@ const onSubmit = handleSubmit((formValues) => {
 
                 </template>
 
-                <template v-if="advancedSegmentSubtypes && allowedSubsegmentType.length">
+                <template v-if="advancedSegmentSubtypes && allowedSubsegmentType?.length">
                   <div class="col-span-12 md:col-span-6">
-                    <AppSelect label="Subtype" labelFor="segment_subtype" v-model="segment_subtype"
-                      v-bind="segment_subtypeAttrs" :error="errors.segment_subtype">
-                      <option v-for="sub in allowedSubsegmentType" :key="sub" :value="sub">{{ sub }}</option>
+                    <AppSelect select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
+                      select-container-option-class="bg-cyan-500/10 text-cyan-400" selected-text="text-cyan-500"
+                      label="Subtype" labelFor="segment_subtype" :items="allowedSubsegmentType"
+                      v-model="segment_subtype" v-bind="segment_subtypeAttrs" :error="errors.segment_subtype">
+                      <!-- <option v-for="sub in allowedSubsegmentType" :key="sub.id" :value="sub.name">{{ sub.name }}
+                      </option> -->
                     </AppSelect>
                   </div>
                   <div class="col-span-12 md:col-span-6">
-                    <AppInput label="Number" type="number" labelFor="segment_subnumber" v-model="segment_subnumber!"
-                      v-bind="segment_subnumberAttrs" placeholder="0" :error="errors.segment_subnumber" />
+                    <AppInput input-class="bg-base-100 focus:outline-cyan-500" label="Number" type="number"
+                      labelFor="segment_subnumber" v-model="segment_subnumber!" v-bind="segment_subnumberAttrs"
+                      placeholder="0" :error="errors.segment_subnumber" />
                   </div>
                 </template>
 
                 <div class="col-span-12">
                   <label class="label"><span class="label-text text-gray-400">Description</span></label>
                   <textarea v-model="description" v-bind="descriptionAttrs"
-                    class="textarea textarea-bordered w-full bg-base-100 border-gray-700 h-[60px] min-h-0 resize-none"></textarea>
+                    class="textarea textarea-bordered w-full bg-base-100 focus-within:border-cyan-500  focus:border-cyan-500 focus:outline-none border-gray-700 h-[60px] min-h-0 resize-none"></textarea>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="collapse collapse-arrow md:collapse-open border border-gray-700 bg-[#1a1c23]/50 rounded-2xl">
+          <div class="collapse collapse-arrow md:collapse-open border border-gray-700 bg-white/2 rounded-2xl">
             <input type="checkbox" checked />
             <div
               class="collapse-title text-cyan-500 font-bold uppercase tracking-widest text-sm md:pointer-events-none">
@@ -204,27 +233,42 @@ const onSubmit = handleSubmit((formValues) => {
             <div class="collapse-content">
               <div class="grid grid-cols-12 gap-4 pt-2">
                 <div class="col-span-12 md:col-span-6">
-                  <AppSelect label="Progress Status" labelFor="progress_status_id" v-model="progress_status_id"
-                    v-bind="progress_status_idAttrs" :error="errors.progress_status_id">
-                    <option :value="null" disabled>Selecciona tipo</option>
-                    <option v-for="progressStatus in progressStatuses" :key="progressStatus.id"
-                      :value="progressStatus.id">{{
-                        progressStatus.name }}</option>
+                  <AppSelect select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
+                    select-container-option-class="bg-cyan-500/10 text-cyan-400" selected-text="text-cyan-500"
+                    label="Progress Status" :items="progressStatuses || []" labelFor="progress_status_id"
+                    v-model="progress_status_id" v-bind="progress_status_idAttrs" :error="errors.progress_status_id">
                   </AppSelect>
                 </div>
+                <!-- Day of the week for emission-->
+                <div v-if="selectedProgressStatus?.name === progress_statuses_object.airing"
+                  class="col-span-12 md:col-span-6">
+                  <AppSelect select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
+                    select-container-option-class="bg-cyan-500/10 text-cyan-400" selected-text="text-cyan-500"
+                    label="dia de emision"
+                    :items="Object.entries(DayOfWeekValues).map(([key, value]) => ({ id: value, name: value }))"
+                    labelFor="day_of_week_id" v-model="day_of_week" v-bind="day_of_weekAttrs"
+                    :error="errors.day_of_week" placeholder="Seleccionar un dia de emision">
+                  </AppSelect>
+                </div>
+
+                <!-- Current progress of the project -->
                 <div class="col-span-12 md:col-span-6">
-                  <AppInput label="Current Progress" type="number" labelFor="current_progress"
-                    v-model="current_progress" v-bind="current_progressAttrs"
+                  <AppInput input-class="bg-base-100 focus:outline-cyan-500" label="Current Progress" type="number"
+                    labelFor="current_progress" v-model="current_progress" v-bind="current_progressAttrs"
                     :error="errors.current_progress || crossFieldError" />
                 </div>
                 <div class="col-span-12 md:col-span-6">
-                  <AppInput label="Total Progress" type="number" labelFor="total_progress" v-model="total_progress"
-                    v-bind="total_progressAttrs" :error="errors.total_progress" />
+                  <AppInput input-class="bg-base-100 focus:outline-cyan-500" label="Total Progress" type="number"
+                    labelFor="total_progress" v-model="total_progress" v-bind="total_progressAttrs"
+                    :error="errors.total_progress" />
                 </div>
                 <div class="col-span-12 md:col-span-6">
-                  <AppSelect label="Progress Unit" labelFor="progress_unit" v-model="progress_unit"
-                    v-bind="progress_unitAttrs" :error="errors.progress_unit">
-                    <option v-for="unit in allowedUnits" :key="unit" :value="unit">{{ unit }}</option>
+                  <AppSelect label="Progress Unit"
+                    select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
+                    select-container-option-class="bg-cyan-500/10 text-cyan-400" selected-text="text-cyan-500"
+                    :items="allowedUnits" labelFor="progress_unit" v-model="progress_unit" v-bind="progress_unitAttrs"
+                    :error="errors.progress_unit">
+                    <option v-for="unit in allowedUnits" :key="unit.id" :value="unit">{{ unit }}</option>
                   </AppSelect>
                 </div>
                 <div class="col-span-12 flex items-center gap-3 mt-2">
@@ -236,7 +280,7 @@ const onSubmit = handleSubmit((formValues) => {
             </div>
           </div>
 
-          <div class="collapse collapse-arrow md:collapse-open border border-gray-700 bg-[#1a1c23]/50 rounded-2xl">
+          <div class="collapse collapse-arrow md:collapse-open border border-gray-700 bg-white/2 rounded-2xl">
             <input type="checkbox" checked />
             <div
               class="collapse-title text-cyan-500 font-bold uppercase tracking-widest text-sm md:pointer-events-none">
@@ -256,7 +300,7 @@ const onSubmit = handleSubmit((formValues) => {
                 <div class="col-span-12">
                   <label class="label"><span class="label-text text-gray-400">Notes</span></label>
                   <textarea v-model="notes" v-bind="notesAttrs"
-                    class="textarea textarea-bordered w-full bg-base-100 border-gray-700 h-[60px] min-h-0 resize-none"></textarea>
+                    class="textarea textarea-bordered w-full bg-base-100 border-gray-700 h-[60px] min-h-0 resize-none focus-within:border-cyan-500  focus:border-cyan-500 focus:outline-none"></textarea>
                 </div>
                 <!-- <div class="col-span-12">
                   <label class="label"><span class="label-text text-gray-400">Tags</span></label>
@@ -274,7 +318,9 @@ const onSubmit = handleSubmit((formValues) => {
                 </div> -->
 
                 <div class="col-span-12">
-                  <AppSelectComboBox />
+                  <AppSelectComboBox badgeVariant="soft" v-bind="tagsAttrs" v-model="tags" :items="data_tags || []"
+                    placeholder="Selecciona tags..."
+                    containerClass="border-zinc-800 bg-base-100 focus-within:border-cyan-500" />
                 </div>
               </div>
             </div>
