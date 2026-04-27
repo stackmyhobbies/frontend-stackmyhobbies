@@ -1,14 +1,14 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
-import { ref, computed } from "vue"
+import { ref, computed } from 'vue'
 import {
   Combobox,
   ComboboxInput,
   ComboboxOptions,
   ComboboxOption,
   ComboboxButton,
-  TransitionRoot
-} from "@headlessui/vue"
-import { useElementBounding } from "@vueuse/core"
+  TransitionRoot,
+} from '@headlessui/vue'
+import { useElementBounding } from '@vueuse/core'
 import { twMerge } from 'tailwind-merge'
 
 /* ------------------------------------------------------------------
@@ -21,8 +21,8 @@ interface Props {
   label?: string
   error?: { message: string } | string
   labelClass?: string | string[]
-  selectClass?: string | string[],
-  selectContainerOptionClass?: string | string[],
+  selectClass?: string | string[]
+  selectContainerOptionClass?: string | string[]
   selectedText?: string | string[]
   labelFor?: string
   placeholder?: string
@@ -30,11 +30,10 @@ interface Props {
   valueKey?: keyof T
 }
 
-
 const props = withDefaults(defineProps<Props>(), {
   displayKey: 'name' as any,
   valueKey: 'id' as any,
-  placeholder: 'Seleccionar...'
+  placeholder: 'Seleccionar...',
 })
 
 console.log(props.items)
@@ -43,115 +42,161 @@ const toggleBtnRef = ref<any>(null)
 /* ------------------------------------------------------------------
    🔵 2. Estado y Posicionamiento
 -------------------------------------------------------------------*/
-const query = ref("")
+const query = ref('')
 
 // Objeto seleccionado internamente (HeadlessUI necesita el objeto completo)
 const selectedItem = computed({
-  get: () => props.items.find(item => item[props.valueKey] === model.value) ?? null,
-  set: (item: T | null) => { model.value = item ? item[props.valueKey] : null }
+  get: () => props.items.find((item) => item[props.valueKey] === model.value) ?? null,
+  set: (item: T | null) => {
+    model.value = item ? item[props.valueKey] : null
+  },
 })
 const containerRef = ref(null)
 const { x, y, width, height } = useElementBounding(containerRef)
 
 const filteredItems = computed(() =>
-  query.value === ""
+  query.value === ''
     ? props.items
     : props.items.filter((item) =>
-      String(item[props.displayKey])
-        .toLowerCase()
-        .includes(query.value.toLowerCase())
-    )
+        String(item[props.displayKey]).toLowerCase().includes(query.value.toLowerCase()),
+      ),
 )
 
 function getErrorMessage(error: Props['error']): string {
-  if (!error) return '';
-  return typeof error === 'string' ? error : error.message;
+  if (!error) return ''
+  return typeof error === 'string' ? error : error.message
 }
-
 
 const handleContainerClick = () => {
   toggleBtnRef.value?.$el.click()
 }
 
-const activeOptionClass = computed(() =>
-  props.selectContainerOptionClass ?? 'bg-indigo-500/10 text-indigo-400'
+const activeOptionClass = computed(
+  () => props.selectContainerOptionClass ?? 'bg-primary/10 text-primary',
 )
 
-const selectedIconClass = computed(() =>
-  props.selectedText ?? 'text-indigo-500'
-)
+const selectedIconClass = computed(() => props.selectedText ?? 'text-primary')
 
 defineOptions({ inheritAttrs: false })
 </script>
 
 <template>
   <div class="form-control w-full">
-    <label v-if="label" :for="labelFor" class="label">
-      <span class="label-text text-base-content/70 font-medium" :class="labelClass">{{ label }}</span>
+    <label
+      v-if="label"
+      :for="labelFor"
+      class="label"
+    >
+      <span
+        class="label-text text-base-content/70 font-medium"
+        :class="labelClass"
+        >{{ label }}</span
+      >
     </label>
 
-    <Combobox v-model="selectedItem" v-slot="{ open }">
-      <div class="relative" ref="containerRef">
-
+    <Combobox
+      v-model="selectedItem"
+      v-slot="{ open }"
+    >
+      <div
+        class="relative"
+        ref="containerRef"
+      >
         <div @click="handleContainerClick">
-          <div :class="twMerge(
-            'relative w-full flex items-center rounded-lg border border-gray-700 bg-[#1a1c23] transition-all',
-            'focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:border-indigo-500',
-            error ? 'border-error' : '',
-            selectClass
-          )">
-
+          <div
+            :class="
+              twMerge(
+                'relative w-full flex items-center rounded-lg border border-base-content/20 bg-base-100 transition-all',
+                'focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:border-indigo-500',
+                error ? 'border-error' : '',
+                selectClass,
+              )
+            "
+          >
             <ComboboxInput
-              class="w-full bg-base-100 py-2.5 pl-4 pr-10 text-sm text-neutral-200 focus:outline-none placeholder:text-gray-500"
-              :display-value="(item: any) => item?.[displayKey] ?? ''" @change="query = $event.target.value"
-              :placeholder="placeholder" />
+              class="w-full bg-base-100 py-2.5 pl-4 pr-10 text-sm text-base-content focus:outline-none placeholder:text-base-content/50"
+              :display-value="(item: any) => item?.[displayKey] ?? ''"
+              @change="query = $event.target.value"
+              :placeholder="placeholder"
+            />
 
-            <ComboboxButton ref="toggleBtnRef" class="absolute inset-y-0 right-0 flex items-center pr-3" @click.stop>
-              <svg class="h-5 w-5 text-gray-500 transition-transform duration-200" :class="{ 'rotate-180': open }"
-                viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                  clip-rule="evenodd" />
-              </svg>
+            <ComboboxButton
+              ref="toggleBtnRef"
+              class="absolute inset-y-0 right-0 flex items-center pr-3"
+              @click.stop
+            >
             </ComboboxButton>
           </div>
         </div>
 
         <Teleport to="body">
-          <TransitionRoot :show="open" leave="transition ease-in duration-100" leaveFrom="opacity-100"
-            leaveTo="opacity-0" @after-leave="query = ''">
-            <ComboboxOptions static :style="{
-              position: 'fixed',
-              top: `${y + height + 4}px`,
-              left: `${x}px`,
-              width: `${width}px`
-            }"
-              class="z-[9999] max-h-60 overflow-auto rounded-xl bg-base-100 border border-gray-700 py-1 shadow-2xl focus:outline-none sm:text-sm">
-              <div v-if="filteredItems.length === 0" class="p-4 text-sm text-gray-500 text-center">
+          <TransitionRoot
+            :show="open"
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            @after-leave="query = ''"
+          >
+            <ComboboxOptions
+              static
+              :style="{
+                position: 'fixed',
+                top: `${y + height + 4}px`,
+                left: `${x}px`,
+                width: `${width}px`,
+              }"
+              class="z-[9999] max-h-60 overflow-auto rounded-xl bg-base-100 border border-base-content/20 py-1 shadow-2xl focus:outline-none sm:text-sm"
+            >
+              <div
+                v-if="filteredItems.length === 0"
+                class="p-4 text-sm text-base-content/50 text-center"
+              >
                 No hay resultados.
               </div>
 
-              <div :class="twMerge(
-                'relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colorstext-gray-300'
-              )">
+              <div
+                :class="
+                  twMerge(
+                    'relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors text-base-content/80',
+                  )
+                "
+              >
                 <slot name="option_prepend" />
               </div>
-              <ComboboxOption v-for="item in filteredItems" :key="item[valueKey]" :value="item"
-                v-slot="{ selected, active }">
-                <li :class="twMerge(
-                  'relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors',
-                  active ? activeOptionClass : 'text-gray-300'
-                )">
+              <ComboboxOption
+                v-for="item in filteredItems"
+                :key="item[valueKey]"
+                :value="item"
+                v-slot="{ selected, active }"
+              >
+                <li
+                  :class="
+                    twMerge(
+                      'relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors',
+                      active ? activeOptionClass : 'text-base-content/80',
+                    )
+                  "
+                >
                   <span :class="selected ? twMerge('font-bold', selectedIconClass) : 'font-normal'">
                     {{ item[displayKey] }}
                   </span>
 
-                  <span v-if="selected"
-                    :class="twMerge('absolute inset-y-0 left-0 flex items-center pl-3', selectedIconClass)">
-                    <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd"
+                  <span
+                    v-if="selected"
+                    :class="
+                      twMerge('absolute inset-y-0 left-0 flex items-center pl-3', selectedIconClass)
+                    "
+                  >
+                    <svg
+                      class="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd" />
+                        clip-rule="evenodd"
+                      />
                     </svg>
                   </span>
                 </li>
@@ -162,7 +207,10 @@ defineOptions({ inheritAttrs: false })
       </div>
     </Combobox>
 
-    <label v-if="error" class="label">
+    <label
+      v-if="error"
+      class="label"
+    >
       <span class="label-text-alt text-error">{{ getErrorMessage(error) }}</span>
     </label>
   </div>
