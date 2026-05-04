@@ -2,19 +2,34 @@ import * as z from 'zod'
 import { SegmentType, SegmentTypeValues } from '../enum/segmentType.enum'
 import { SubSegmentType, SubSegmentTypeValues } from '../enum/subSegmentType.enum'
 import { ProgressUnit, ProgressUnitValues } from '../enum/progressUnit.enum'
+import { DayOfWeek, DayOfWeekValues } from '../enum/dayOfWeek.enum'
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png']
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024 // 2MB
 
-// Validador manual para fechas (Zod 4 eliminó .date() sobre string)
-const dateString = z.string().refine((val) => !val || !isNaN(Date.parse(val)), {
+const validDateString = z.string().refine((val) => !isNaN(Date.parse(val)), {
   message: 'La fecha debe tener un formato válido',
 })
 
-const validatedSegmentType = (val: unknown) => {
+// Definimos la función como genérica <T>
+const validateValueInSet = <T>(val: unknown, fieldValues: T[]): T | null => {
   if (val === null || val === undefined) return null
-  if (typeof val === 'string' && (SegmentTypeValues as string[]).includes(val)) return val
+
+  // Verificamos si el valor está incluido en el array de valores permitidos
+  if (typeof val === 'string' && (fieldValues as unknown as string[]).includes(val)) {
+    return val as unknown as T
+  }
+
   return null
+}
+
+// Ahora tus validadores específicos sí retornan el valor
+const validatedSegmentType = (val: unknown) => {
+  return validateValueInSet(val, SegmentTypeValues)
+}
+
+const validatedDayOfWeek = (val: unknown) => {
+  return validateValueInSet(val, DayOfWeekValues)
 }
 
 const BaseContentItem = z.object({
@@ -67,10 +82,20 @@ const BaseContentItem = z.object({
     invalid_type_error: 'Selecciona un tipo de unidad de progreso',
   }),
 
+  day_of_week: z.preprocess(
+    (val) => validatedDayOfWeek(val),
+    z
+      .enum(DayOfWeekValues, {
+        required_error: 'El día de la semana es obligatorio',
+        invalid_type_error: 'Selecciona un dia de la semana',
+      })
+      .nullable() /**Pendiente validar si es null */,
+  ) as z.ZodType<DayOfWeek | null>,
+
   segment_type: z.preprocess(
     (val) => validatedSegmentType(val),
     z.enum(SegmentTypeValues, { invalid_type_error: 'Selecciona un tipo de segmento' }),
-  ) as z.ZodType<SegmentType | null>,
+  ) as z.ZodType<SegmentType>,
 
   segment_number: z.coerce
     .number({
@@ -80,14 +105,59 @@ const BaseContentItem = z.object({
   segment_subtype: z.enum(SubSegmentTypeValues).nullable().optional(),
   segment_subnumber: z.number().default(0).nullable().optional(),
 
-  start_date: dateString.optional().or(z.literal('')),
-  end_date: dateString.optional().or(z.literal('')),
+  viewing_started_at: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : String(val)),
+    z
+      .string({ required_error: 'La fecha de inicio de visionado es obligatoria' })
+      .min(1, 'La fecha de inicio de visionado es obligatoria')
+      .refine((val) => !isNaN(Date.parse(val)), {
+        message: 'La fecha debe tener un formato válido',
+      }),
+  ) as z.ZodType<string>,
+
+  viewing_finished_at: z.preprocess(
+    (val) => (val === '' || val === null ? null : String(val)),
+    validDateString.nullable().optional(),
+  ),
+  aired_from: z.preprocess(
+    (val) => (val === '' || val === null ? null : String(val)),
+    validDateString.nullable().optional(),
+  ),
+  aired_to: z.preprocess(
+    (val) => (val === '' || val === null ? null : String(val)),
+    validDateString.nullable().optional(),
+  ),
 
   rating: z.number().min(0).max(5),
 
-  tags: z.array(z.string()).default([]),
+  tags: z
+    .array(z.object({ id: z.number(), name: z.string(), slug: z.string(), status: z.boolean() }))
+    .min(1, { message: 'Debe tener al menos un tag' }),
 })
 
-export const CreateContentItem = BaseContentItem
+const withDateRefinements = <T extends z.ZodRawShape>(schema: z.ZodObject<T>) =>
+  schema
+    .refine(
+      (data) => {
+        if (!data.viewing_finished_at) return true
+        if (!data.viewing_started_at) return true
+        return new Date(data.viewing_finished_at) >= new Date(data.viewing_started_at)
+      },
+      {
+        message: 'La fecha de fin no puede ser anterior a la de inicio',
+        path: ['viewing_finished_at'],
+      },
+    )
+    .refine(
+      (data) => {
+        if (!data.aired_from || !data.aired_to) return true
+        return new Date(data.aired_to) >= new Date(data.aired_from)
+      },
+      {
+        message: 'La fecha de fin de emisión no puede ser anterior a la de inicio',
+        path: ['aired_to'],
+      },
+    )
 
-export const UpdateContentItem = BaseContentItem.partial()
+export const CreateContentItem = withDateRefinements(BaseContentItem)
+export const UpdateContentItem = withDateRefinements(BaseContentItem.partial())

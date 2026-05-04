@@ -1,22 +1,90 @@
 @import 'tailwindcss';
+
 @plugin "daisyui" {
   themes:
-    light --default,
-    nord,
-    lemonade,
+    light-purple --default,
+    pastel,
+    cupcake,
     night --prefersdark,
     sunset;
 }
 
-[data-theme='night'] {
-  --bc: 0 0% 95%; /* más blanco (antes era más gris oscuro) */
+@plugin "daisyui/theme" {
+  name: 'light-purple';
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+  --color-base-100: oklch(96% 0.018 272.314);
+  --color-base-200: oklch(93% 0.034 272.788);
+  --color-base-300: oklch(87% 0.065 274.039);
+  --color-base-content: oklch(35% 0.144 278.697);
+  --color-primary: oklch(54% 0.281 293.009);
+  --color-primary-content: oklch(96% 0.016 293.756);
+  --color-secondary: oklch(0% 0 0);
+  --color-secondary-content: oklch(100% 0 0);
+  --color-accent: oklch(57% 0.245 27.325);
+  --color-accent-content: oklch(97% 0.013 17.38);
+  --color-neutral: oklch(35% 0.144 278.697);
+  --color-neutral-content: oklch(96% 0.018 272.314);
+  --color-info: oklch(74% 0.16 232.661);
+  --color-info-content: oklch(29% 0.066 243.157);
+  --color-success: oklch(77% 0.152 181.912);
+  --color-success-content: oklch(27% 0.046 192.524);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(28% 0.066 53.813);
+  --color-error: oklch(71% 0.194 13.428);
+  --color-error-content: oklch(27% 0.105 12.094);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }
 
-[data-theme='light'] {
-  --bc: 0 0% 20%; /* más oscuro para modo claro, mejora contraste */
-}
+@layer base {
+  /* Toastify - tema claro */
+  .Toastify__toast-theme--light {
+    background-color: rgb(238, 239, 239) !important;
+    color: #1a1a2e !important;
+    border: 1px solid rgb(208, 210, 210) !important;
+    border-radius: 12px !important;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.1),
+      0 2px 6px rgba(0, 0, 0, 0.06) !important;
+    padding: 14px 16px !important;
+    font-weight: 500 !important;
+  }
 
-body {
-  margin: 0;
-  padding: 0;
+  /* Toastify - tema oscuro */
+  .Toastify__toast-theme--dark {
+    background-color: #19243d !important;
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.4),
+      0 2px 6px rgba(0, 0, 0, 0.3) !important;
+    padding: 14px 16px !important;
+    font-weight: 500 !important;
+  }
+
+  /* Barras de progreso */
+  .Toastify__progress-bar--success {
+    background: linear-gradient(to right, #4ade80, #22c55e) !important;
+  }
+
+  .Toastify__progress-bar--error {
+    background: linear-gradient(to right, #f87171, #ef4444) !important;
+  }
+
+  .Toastify__progress-bar--info {
+    background: linear-gradient(to right, #60a5fa, #3b82f6) !important;
+  }
+
+  .Toastify__progress-bar--warning {
+    background: linear-gradient(to right, #fbbf24, #f59e0b) !important;
+  }
 }

@@ -12,5 +12,6 @@ export const useGetContentItemsQuery = () => {
 
       return response.data.items
     },
+    staleTime: 1000 * 60,
   })
 }

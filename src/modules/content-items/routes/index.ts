@@ -13,9 +13,14 @@ export const contentItemRoutes: RouteRecordRaw = {
       component: () => import('@/modules/content-items/pages/ListPage.vue'),
     },
     {
-      path: 'create',
+      path: 'new',
       name: 'content-item-create',
       component: () => import('@/modules/content-items/pages/CreatePage.vue'),
+    },
+    {
+      path: 'edit/:slug',
+      name: 'content-item-edit',
+      component: () => import('@/modules/content-items/pages/EditPage.vue'),
     },
     {
       path: '**',

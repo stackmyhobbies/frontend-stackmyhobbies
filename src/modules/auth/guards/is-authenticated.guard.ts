@@ -9,25 +9,19 @@ const isAuthenticatedGuard = async (
 ) => {
   const authStore = useAuthStore()
 
-  // Siempre verificar estado (excepto si venimos de signIn con email no verificado)
-  const isComingFromSignIn =
-    from.name === 'signIn' && authStore.user && !authStore.user.email_verified_at
+  await authStore.checkAuthStatus()
 
-  if (!isComingFromSignIn) {
-    await authStore.checkAuthStatus()
-  }
-  console.log('pero aqui asi')
-  // Si no está autenticado → login
+  // ❌ No autenticado → login
   if (authStore.authStatus === AuthStatus.UNAUTHENTICATED) {
     return next({ name: 'signIn' })
   }
 
-  // Si está autenticado pero email no verificado → resend email
+  // ❌ Autenticado pero NO verificado → resend-email
   if (!authStore.user?.email_verified_at) {
     return next({ name: 'resendEmail' })
   }
-  console.log('no croe que llegeue aqui')
-  // Todo OK → continuar
+
+  // ✔ Todo OK
   return next()
 }
 

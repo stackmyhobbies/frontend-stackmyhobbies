@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import FormContentItemCustom from '@/modules/content-items/components/FormContentItemCustom.vue';
+import FormContentItemCustom from '@/modules/content-items/components/FormContentItemCustom.vue'
 </script>
 
 <template>
-  <form-content-item-custom />
+  <form-content-item-custom action="create" />
 </template>

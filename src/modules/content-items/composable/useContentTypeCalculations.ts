@@ -18,11 +18,15 @@ export function useContentTypeCalculations(
   })
 
   // 2. Mapeo de propiedades del tipo seleccionado
-  const allowedSegmentType = computed(() => selectedTypeData.value?.allowed_segment_types ?? [])
-  const allowedSubsegmentType = computed(
-    () => selectedTypeData.value?.allowed_subsegment_types ?? [],
+  const allowedSegmentType = computed(
+    () => selectedTypeData.value?.allowed_segment_types.map((s) => ({ id: s, name: s })) ?? [],
   )
-  const allowedUnits = computed(() => selectedTypeData.value?.allowed_units ?? [])
+  const allowedSubsegmentType = computed(() =>
+    selectedTypeData.value?.allowed_subsegment_types.map((s) => ({ id: s, name: s })),
+  )
+  const allowedUnits = computed(
+    () => selectedTypeData.value?.allowed_units.map((s) => ({ id: s, name: s })) ?? [],
+  )
 
   // 3. Cálculo de progreso (Lógica de negocio)
   const progressPercent = computed<number>(() => {
