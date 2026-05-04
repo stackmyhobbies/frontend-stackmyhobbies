@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import type { CreateContentItemDto } from '../dto/CreateContentItemDto'
+import type { CreateContentItemDto } from '../dto/createContentItemDto'
 import { postContentItemAction } from '../actions/post-content-item.action'
 import type { Hobby } from '../interfaces/contentItemListResponse'
 

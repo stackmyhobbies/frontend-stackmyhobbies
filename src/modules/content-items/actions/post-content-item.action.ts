@@ -1,6 +1,6 @@
 import { stackMyHobbiesApi } from '@/api/stackMyHobbiesApi'
 import { handleApiError, type ErrorResponse } from '@/utils/handleApiError'
-import type { CreateContentItemDto } from '../dto/CreateContentItemDto'
+import type { CreateContentItemDto } from '../dto/createContentItemDto'
 import type { Hobby } from '../interfaces/contentItemListResponse'
 import { convertJsonToFormData } from '@/utils/convertJsontoFormdata'
 

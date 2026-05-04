@@ -3,7 +3,7 @@ import type { Tag } from '../interfaces/contentItemListResponse'
 import type { Type } from '../interfaces/ContentTypeResponse'
 import type { ProgressStatus } from '../interfaces/progressStatusResponse'
 
-export interface CreateContentItemDto {
+export interface createContentItemDto {
   title: string
   description?: string
   content_type_id: number | null
