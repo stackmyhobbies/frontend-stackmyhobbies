@@ -10,6 +10,7 @@ import type { ProgressStatusResponse } from '../interfaces/progressStatusRespons
 export const progressStatusAction = async (): Promise<ProgressStatusResponse | ErrorResponse> => {
   try {
     const { data } = await stackMyHobbiesApi.get<ProgressStatusResponse>('progress-statuses')
+
     return data
   } catch (error: unknown) {
     return handleApiError(error)

@@ -1,6 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router'
 import isNotAuthenticatedGuard from '../guards/is-not-authenticated.guard'
-import { onBeforeRouteLeave } from 'vue-router'
 
 export const authRoutes: RouteRecordRaw = {
   path: '/auth',
@@ -37,18 +36,7 @@ export const authRoutes: RouteRecordRaw = {
       path: 'resend-email',
       name: 'resendEmail',
       component: () => import('@/modules/auth/pages/ResendEmailVerificationPage.vue'),
-
-      //* TODO Pending
-      // beforeEnter: () => {
-      //   const auth = useAuthStore()
-      //   if (auth.user?.email_verified_at) {
-      //     return { name: 'signIn' }
-      //   }
-      // },
     },
-    {
-      path: '',
-      redirect: { name: 'signIn' },
-    },
+    { path: '', redirect: { name: 'signIn' } },
   ],
 }

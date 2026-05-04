@@ -5,6 +5,7 @@ import { handleApiError } from '@/utils/handleApiError'
 export const checkAuthStatusAction = async (): Promise<AuthResponse> => {
   try {
     const { data } = await stackMyHobbiesApi.get<AuthResponse>('/auth/check-session')
+
     return data
   } catch (error: unknown) {
     return handleApiError(error)

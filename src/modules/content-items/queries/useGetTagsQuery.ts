@@ -12,6 +12,7 @@ export const useGetTagsQuery = () => {
 
       return response.data
     },
+    staleTime: 1000 * 60 * 3,
     // M
   })
 }

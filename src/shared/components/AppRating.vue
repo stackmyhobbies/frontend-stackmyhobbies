@@ -13,9 +13,9 @@ defineProps<Props>();
 
 <template>
   <div class="form-control w-full">
-    <label v-if="label" class="label">
-      <span class="label-text font-medium text-gray-400">{{ label }}</span>
-    </label>
+     <label v-if="label" class="label">
+       <span class="label-text font-medium text-base-content/60">{{ label }}</span>
+     </label>
 
     <div class="flex items-center gap-4">
       <div class="rating rating-lg rating-half">

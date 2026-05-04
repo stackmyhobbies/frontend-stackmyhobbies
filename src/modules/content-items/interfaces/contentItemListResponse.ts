@@ -22,16 +22,20 @@ export interface Hobby {
   segment_label: string
   segment_subtype: string
   segment_subnumber: string
-  image_url: string
-  start_date: Date
-  end_date: Date | null
+  image_path: string
+  thumbnail_url: string
+  detail_url: string
+  viewing_started_at: Date | null
+  viewing_finished_at: Date | null
+  aired_from: string | null
+  aired_to: string | null
   current_progress: number
   total_progress: number
   progress_percent: number
   progress_unit: string
   notes: string
   rating: number
-  status: boolean
+  is_active: boolean
   tags: Tag[]
   type: Type
   progress_status: ProgressStatus
