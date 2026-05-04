@@ -4,4 +4,6 @@ import type { Type } from '../interfaces/ContentTypeResponse'
 import type { ProgressStatus } from '../interfaces/progressStatusResponse'
 import type { createContentItemDto } from './createContentItemDto'
 
-export interface updateContentItemDto extends Partial<createContentItemDto> {}
+export interface updateContentItemDto extends Partial<createContentItemDto> {
+  id?: string | number
+}

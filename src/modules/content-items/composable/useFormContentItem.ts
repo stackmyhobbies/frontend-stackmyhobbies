@@ -2,12 +2,22 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useToast } from '@/shared/composables/useToast'
 import { usePostContentItemMutation } from '../mutations/usePostContentItemMutation'
+import { usePutContentItemMutation } from '../mutations/usePutContentItemMutation'
 import { CreateContentItem } from '../schemas/content-item.schema'
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, computed } from 'vue'
 
 export const useFormContentItem = (initialData?: any) => {
   const toast = useToast()
-  const { mutate } = usePostContentItemMutation()
+  const { mutate: createMutate } = usePostContentItemMutation()
+  const { mutate: updateMutate } = usePutContentItemMutation()
+
+  const contentItemId = computed(() => {
+    const data = initialData?.value
+    if (!data) return null
+    const hobbyData = data.data || data
+    return hobbyData.id ?? null
+  })
+  const isEdit = computed(() => !!contentItemId.value)
 
   const formHobby = {
     content_type_id: null,
@@ -74,11 +84,12 @@ export const useFormContentItem = (initialData?: any) => {
     { immediate: true },
   )
 
-  const formatBackendErrors = (backendErrors: Record<string, string | undefined>) => {
+  const formatBackendErrors = (backendErrors: Record<string, string | string[] | undefined>) => {
     const formatted: Record<string, string> = {}
 
     for (const key in backendErrors) {
-      const message = backendErrors[key]
+      const raw = backendErrors[key]
+      const message = Array.isArray(raw) ? raw[0] : raw
 
       if (message && message.includes('Ya existe un contenido')) {
         formatted[key] = 'Este contenido ya existe'
@@ -95,24 +106,46 @@ export const useFormContentItem = (initialData?: any) => {
     console.log('Deberia enviar un submit')
     const tags = formValues.tags.map((tag) => tag.id)
 
-    mutate(
-      { ...formValues, tags },
-      {
-        onSuccess: (data) => {
-          if (!data.success && data.errors) {
-            const cleanErrors = formatBackendErrors(data.errors)
-            setErrors(cleanErrors)
-            toast.error('Error al crear el hobby')
-            return
-          }
+    const successMessage = isEdit.value ? 'hobby actualizado exitosamente' : 'hobby creado exitosamente'
+    const errorMessage = isEdit.value ? 'Error al actualizar el hobby' : 'Error al crear el hobby'
 
-          toast.success('hobby creado exitosamente')
-        },
-        onError: () => {
-          toast.error('Error al crear el hobby')
-        },
-      },
-    )
+    const mutationFn = isEdit.value
+      ? () => updateMutate({
+          payload: { ...formValues, tags },
+          id: contentItemId.value!,
+        }, {
+          onSuccess: (data) => {
+            if (!data.success && data.errors) {
+              const cleanErrors = formatBackendErrors(data.errors)
+              setErrors(cleanErrors)
+              toast.error(errorMessage)
+              return
+            }
+            toast.success(successMessage)
+          },
+          onError: () => {
+            toast.error(errorMessage)
+          },
+        })
+      : () => createMutate(
+          { ...formValues, tags },
+          {
+            onSuccess: (data) => {
+              if (!data.success && data.errors) {
+                const cleanErrors = formatBackendErrors(data.errors)
+                setErrors(cleanErrors)
+                toast.error(errorMessage)
+                return
+              }
+              toast.success(successMessage)
+            },
+            onError: () => {
+              toast.error(errorMessage)
+            },
+          },
+        )
+
+    mutationFn()
   })
 
   return {
@@ -125,5 +158,6 @@ export const useFormContentItem = (initialData?: any) => {
     setErrors,
     onSubmit,
     isResetting,
+    isEdit,
   }
 }

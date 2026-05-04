@@ -1,37 +1,40 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import type { createContentItemDto } from '../dto/createContentItemDto'
-import { postContentItemAction } from '../actions/post-content-item.action'
+import type { updateContentItemDto } from '../dto/updateContentItemDto'
+import { putContentItemAction } from '../actions/put-content-item.action'
 import type { Hobby } from '../interfaces/contentItemListResponse'
 
-export const usePostContentItemMutation = () => {
+export const usePutContentItemMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (createContentItem: createContentItemDto) =>
-      postContentItemAction(createContentItem),
-    onMutate: async (createContentItem: createContentItemDto) => {
+    mutationFn: ({ payload, id }: { payload: updateContentItemDto; id: string | number }) =>
+      putContentItemAction(payload, id),
+    onMutate: async ({ payload, id }: { payload: updateContentItemDto; id: string | number }) => {
       await queryClient.cancelQueries({ queryKey: ['content-item-list'] })
 
       const previousData = queryClient.getQueryData(['content-item-list'])
 
       const contentItemOptimistic = {
-        id: Math.floor(Math.random() * 1000000),
-        ...createContentItem,
+        id,
+        ...payload,
       }
 
       queryClient.setQueryData(['content-item-list'], (old: Hobby[] = []) => {
-        return old ? [contentItemOptimistic, ...old] : [contentItemOptimistic]
+        return (
+          old?.map((item) => (item.id === id ? { ...item, ...contentItemOptimistic } : item)) ?? old
+        )
       })
       return { previousData, contentItemOptimistic }
     },
     onSuccess: (data, variables, context) => {
       queryClient.setQueryData(['content-item-list'], (old: Hobby[] | undefined) => {
-        if (!old) return [data]
+        const newData = data.data as Hobby
+        if (!old) return [newData]
 
-        return old.map((item) => (item.id === context?.contentItemOptimistic.id ? data : item))
+        return old.map((item) => (item.id === context?.contentItemOptimistic.id ? newData : item))
       })
     },
-    onError: (err, newContentItem, context) => {
+    onError: (err, variables, context) => {
       queryClient.setQueryData(['content-item-list'], context?.previousData)
     },
     onSettled: () => {

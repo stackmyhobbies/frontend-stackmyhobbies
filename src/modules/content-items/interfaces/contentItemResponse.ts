@@ -4,6 +4,7 @@ export interface ContentItemResponse {
   success: boolean
   data: Hobby
   message: string
+  errors?: Record<string, string | undefined>
 }
 
 export interface Hobby {
