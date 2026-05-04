@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useForm } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/zod'
 import { useI18n } from 'vue-i18n'
 
 //** Queries **//
@@ -15,64 +13,65 @@ import AppInput from '@shared-components/AppInput.vue'
 import AppSelect from '@shared-components/AppSelect.vue'
 import AppRating from '@shared-components/AppRating.vue'
 
-/** schema */
-import { CreateContentItem } from '../schemas/content-item.schema'
-
 /** Composables  */
 import { useContentTypeCalculations } from '../composable/useContentTypeCalculations'
 import { useTagsManager } from '../composable/useTagsManager'
 import { useImagePreview } from '../composable/useImagePreview'
+import { useFormContentItem } from '../composable/useFormContentItem'
 import AppSelectComboBox from '@/shared/components/AppSelectComboBox.vue'
 
 /** Enum */
 import { DayOfWeekValues, DayOfWeek } from '@/modules/content-items/enum/dayOfWeek.enum'
-import type { ProgressStatus } from '../interfaces/contentItemListResponse'
+import type { Hobby, ProgressStatus } from '../interfaces/contentItemListResponse'
 import IndentitySection from './SectionsForm/IndentitySection.vue'
-import { usePostContentItemMutation } from '../mutations/usePostContentItemMutation'
+import ProgressMetricsSection from './SectionsForm/ProgressMetricsSection.vue'
+import EvaluationSection from './SectionsForm/EvaluationSection.vue'
 
-import { useToast } from '@/shared/composables/useToast'
 import { useThemeStore } from '@/stores/theme'
+import { useGetContentItemQuery } from '../queries/useGetContentItemQuery'
+
+enum actionform {
+  create = 'create',
+  update = 'edit',
+}
+
+const props = defineProps<{
+  action: actionform | string
+  idOrSlug?: string | number
+  contentItem?: Hobby
+}>()
 
 const { data } = useGetContentTypesQuery()
 const { data: progressStatuses } = useProgressStatusesQuery()
 const { data: data_tags } = useGetTagsQuery()
-const { mutate } = usePostContentItemMutation()
 const { isLightTheme } = useThemeStore()
 const { t } = useI18n({ useScope: 'global' })
 
-console.log({ isLightTheme })
+// 1. Definimos la lógica de activación
+const isUpdating = computed(() => props.action === 'update')
+const hasId = computed(() => !!props.idOrSlug && props.idOrSlug.toString() !== '')
 
-console.log({ progressStatuses: data_tags })
+// 2. Solo habilitamos si es edición Y tiene un ID válido
+const canFetch = computed(() => isUpdating.value && hasId.value)
 
-const formHobby = {
-  content_type_id: null,
-  current_progress: 0,
-  description: '',
-  notes: '',
-  progress_status_id: 1,
-  rating: 1.0,
-  segment_number: 0,
-  segment_subnumber: 0,
-  segment_type: undefined,
-  segment_subtype: null,
-  tags: [],
-  total_progress: 0,
-  viewing_started_at: '',
-  viewing_finished_at: null,
-  aired_from: null,
-  aired_to: null,
-}
+// 3. Pasamos canFetch como opción 'enabled'
+const { data: contentItemData, isPlaceholderData } = useGetContentItemQuery(
+  () => props.idOrSlug?.toString() ?? '',
+  { enabled: canFetch }, // <-- Pasamos el booleano reactivo aquí
+)
+console.log({ contentItemDataShow: contentItemData.value })
 
-const toast = useToast()
-
-const AIRED_STATUSES = ['en emisión', 'finalizado', 'abandonado']
-const CONTENT_TYPE_HOBBY = ['anime', 'serie']
-
-const { handleSubmit, errors, values, defineField, setFieldValue, resetForm, setErrors } = useForm({
-  validationSchema: toTypedSchema(CreateContentItem),
-  validateOnMount: false,
-  initialValues: formHobby,
-})
+const {
+  handleSubmit,
+  errors,
+  values,
+  defineField,
+  setFieldValue,
+  resetForm,
+  setErrors,
+  onSubmit,
+  isResetting,
+} = useFormContentItem(computed(() => contentItemData.value))
 
 const [title, titleAttrs] = defineField('title', { validateOnModelUpdate: true })
 const [description, descriptionAttrs] = defineField('description')
@@ -108,12 +107,14 @@ const selectedProgressStatus = computed<ProgressStatus | null>(() => {
   return progressStatuses.value.find((t) => t.id === Number(values.progress_status_id)) ?? null
 })
 
+const AIRED_STATUSES = ['en emisión', 'finalizado', 'abandonado']
+const CONTENT_TYPE_HOBBY = ['anime', 'serie']
+
 const showAiredFields = computed(
   () =>
     AIRED_STATUSES.includes(selectedProgressStatus.value?.name ?? '') &&
     CONTENT_TYPE_HOBBY.includes(selectedTypeData.value?.name ?? ''),
 )
-// const { tagInput, addTag, removeTag } = useTagsManager(tags, setFieldValue as (field: string, value: unknown) => void)
 
 const { previewUrl, handleImageUpload } = useImagePreview(
   computed(() => values.image),
@@ -121,8 +122,9 @@ const { previewUrl, handleImageUpload } = useImagePreview(
 )
 
 const advancedSegmentSubtypes = ref<boolean>(false)
-console.log({ advancedSegmentSubtypes })
+
 watch(content_type_id, () => {
+  if (isResetting.value) return
   setFieldValue('segment_type', undefined)
   setFieldValue('segment_subtype', null)
 })
@@ -134,56 +136,33 @@ const crossFieldError = computed(() => {
     ? 'El progreso actual no puede ser mayor al total'
     : undefined
 })
-
-const formatBackendErrors = (backendErrors: Record<string, string>) => {
-  const formatted: Record<string, string> = {}
-
-  for (const key in backendErrors) {
-    const message = backendErrors[key]
-
-    // Si el mensaje es el específico de duplicado, usamos nuestra traducción
-    if (message.includes('Ya existe un contenido')) {
-      formatted[key] = 'Este contenido ya existe'
-    } else {
-      formatted[key] = message // Dejamos el error original para otros casos
-    }
-  }
-
-  return formatted
-}
-
-const onSubmit = handleSubmit((formValues) => {
-  console.log('Formulario válido:', formValues)
-  console.log('Deberia enviar un submit')
-  const tags = formValues.tags.map((tag) => tag.id)
-
-  mutate(
-    { ...formValues, tags },
-    {
-      onSuccess: (data) => {
-        if (!data.success && data.errors) {
-          const cleanErrors = formatBackendErrors(data.errors)
-          setErrors(cleanErrors) // Vee-Validate ahora recibe tu versión corta/traducida
-          toast.error('Error al crear el hobby')
-          return
-        }
-
-        // Si todo salió bien
-        toast.success('hobby creado exitosamente')
-        // resetForm()
-      },
-      onError: () => {
-        toast.error('Error al crear el hobby')
-      },
-    },
-  )
-})
 </script>
 
 <template>
   <div class="min-h-screen p-4 md:p-6 flex justify-center items-start text-gray-300">
     <div class="w-full rounded-3xl p-1">
+      <div v-if="isPlaceholderData || (!contentItemData && isUpdating)" class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 md:p-10">
+        <div class="lg:col-span-5 flex flex-col gap-4">
+          <div class="skeleton aspect-[3/4] rounded-2xl"></div>
+        </div>
+        <div class="lg:col-span-7 flex flex-col gap-y-6">
+          <div class="space-y-4">
+            <div class="skeleton h-10 rounded-xl"></div>
+            <div class="skeleton h-10 rounded-xl"></div>
+            <div class="skeleton h-24 rounded-xl"></div>
+          </div>
+          <div class="space-y-4">
+            <div class="skeleton h-10 rounded-xl"></div>
+            <div class="skeleton h-10 rounded-xl"></div>
+          </div>
+          <div class="space-y-4">
+            <div class="skeleton h-10 rounded-xl"></div>
+            <div class="skeleton h-24 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
       <form
+        v-else
         autocomplete="off"
         @submit="onSubmit"
         class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 md:p-10"
@@ -261,105 +240,24 @@ const onSubmit = handleSubmit((formValues) => {
               Métricas de Progreso
             </div>
             <div class="collapse-content">
-              <div class="grid grid-cols-12 gap-4 pt-2">
-                <div class="col-span-12 md:col-span-6">
-                  <AppSelect
-                    select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
-                    select-container-option-class="bg-cyan-500/10 text-cyan-400"
-                    selected-text="text-cyan-500"
-                    label="Progress Status"
-                    :items="progressStatuses || []"
-                    labelFor="progress_status_id"
-                    v-model="progress_status_id"
-                    v-bind="progress_status_idAttrs"
-                    :error="errors.progress_status_id"
-                  >
-                  </AppSelect>
-                </div>
-                <!-- Day of the week for emission-->
-                <div
-                  v-if="
-                    selectedProgressStatus?.name === 'en emisión' ||
-                    selectedProgressStatus?.name === 'viendo'
-                  "
-                  class="col-span-12 md:col-span-6"
-                >
-                  <AppSelect
-                    select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
-                    select-container-option-class="bg-cyan-500/10 text-cyan-400"
-                    selected-text="text-cyan-500"
-                    :label="t('contentItem.form_content_item.release_date')"
-                    :items="
-                      Object.entries(DayOfWeekValues).map(([key, value]) => ({
-                        id: value,
-                        name: t(`common.days.${value}`),
-                      }))
-                    "
-                    labelFor="day_of_week_id"
-                    v-model="day_of_week"
-                    v-bind="day_of_weekAttrs"
-                    :error="errors.day_of_week"
-                    :placeholder="
-                      t('contentItem.form_content_item.select_placeholder_release_date')
-                    "
-                  ></AppSelect>
-                </div>
-
-                <!-- Current progress of the project -->
-                <div class="col-span-12 md:col-span-6">
-                  <AppInput
-                    input-class="bg-base-100 focus:outline-cyan-500"
-                    label="Current Progress"
-                    type="number"
-                    labelFor="current_progress"
-                    v-model="current_progress"
-                    v-bind="current_progressAttrs"
-                    :error="errors.current_progress || crossFieldError"
-                  />
-                </div>
-                <div class="col-span-12 md:col-span-6">
-                  <AppInput
-                    input-class="bg-base-100 focus:outline-cyan-500"
-                    label="Total Progress"
-                    type="number"
-                    labelFor="total_progress"
-                    v-model="total_progress"
-                    v-bind="total_progressAttrs"
-                    :error="errors.total_progress"
-                  />
-                </div>
-                <div class="col-span-12 md:col-span-6">
-                  <AppSelect
-                    label="Progress Unit"
-                    select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
-                    select-container-option-class="bg-cyan-500/10 text-cyan-400"
-                    selected-text="text-cyan-500"
-                    :items="allowedUnits"
-                    labelFor="progress_unit"
-                    v-model="progress_unit"
-                    v-bind="progress_unitAttrs"
-                    :error="errors.progress_unit"
-                  >
-                    <option
-                      v-for="unit in allowedUnits"
-                      :key="unit.id"
-                      :value="unit"
-                    >
-                      {{ unit }}
-                    </option>
-                  </AppSelect>
-                </div>
-                <div class="col-span-12 flex items-center gap-3 mt-2">
-                  <progress
-                    class="progress progress-info flex-1 h-2"
-                    :value="progressPercent"
-                    max="100"
-                  ></progress>
-                  <span class="text-cyan-500 font-mono font-bold text-sm whitespace-nowrap">
-                    {{ progressPercent }}% Complete
-                  </span>
-                </div>
-              </div>
+              <ProgressMetricsSection
+                :progressStatuses="progressStatuses"
+                :selectedProgressStatus="selectedProgressStatus"
+                :progressPercent="progressPercent"
+                :allowedUnits="allowedUnits"
+                v-model:current_progress="current_progress"
+                v-model:total_progress="total_progress"
+                v-model:progress_unit="progress_unit"
+                v-model:day_of_week="day_of_week"
+                v-model:progress_status_id="progress_status_id"
+                :current_progressAttrs="current_progressAttrs"
+                :progress_status_idAttrs="progress_status_idAttrs"
+                :total_progressAttrs="total_progressAttrs"
+                :progress_unitAttrs="progress_unitAttrs"
+                :day_of_weekAttrs="day_of_weekAttrs"
+                :errors="errors"
+                :crossFieldError="crossFieldError"
+              />
             </div>
           </div>
 
@@ -376,76 +274,25 @@ const onSubmit = handleSubmit((formValues) => {
               Evaluación y Registro
             </div>
             <div class="collapse-content">
-              <div class="grid grid-cols-12 gap-4 pt-2">
-                <div class="col-span-12 md:col-span-6">
-                  <AppDatePicker
-                    id="viewing_started_at"
-                    label="Fecha inicio visionado"
-                    v-model="viewing_started_at"
-                    v-bind="viewing_started_atAttrs"
-                    :error="errors.viewing_started_at"
-                  />
-                </div>
-                <div class="col-span-12 md:col-span-6">
-                  <AppDatePicker
-                    id="viewing_finished_at"
-                    label="Fecha fin visionado"
-                    v-model="viewing_finished_at"
-                    v-bind="viewing_finished_atAttrs"
-                    :error="errors.viewing_finished_at"
-                  />
-                </div>
-                <div
-                  v-if="showAiredFields"
-                  class="col-span-12 grid grid-cols-2 gap-4"
-                >
-                  <AppDatePicker
-                    id="aired_from"
-                    label="Emisión desde"
-                    v-model="aired_from"
-                    v-bind="aired_fromAttrs"
-                    :error="errors.aired_from"
-                  />
-                  <AppDatePicker
-                    id="aired_to"
-                    label="Emisión hasta"
-                    v-model="aired_to"
-                    v-bind="aired_toAttrs"
-                    :error="errors.aired_to"
-                  />
-                </div>
-                <div class="col-span-12 md:col-span-4">
-                  <AppRating
-                    id="rating"
-                    label="Rating"
-                    v-model="rating"
-                    v-bind="ratingAttrs"
-                    name="rating"
-                  />
-                </div>
-                <div class="col-span-12">
-                  <label class="label"
-                    ><span class="label-text text-base-content/60">Notes</span></label
-                  >
-                  <textarea
-                    v-model="notes"
-                    v-bind="notesAttrs"
-                    class="textarea textarea-bordered w-full bg-base-100 rounded-btn h-[60px] min-h-0 resize-none focus-within:border-cyan-500 focus:border-cyan-500 focus:outline-none"
-                  ></textarea>
-                </div>
-
-                <div class="col-span-12">
-                  <AppSelectComboBox
-                    :badgeVariant="isLightTheme ? '' : 'soft'"
-                    v-bind="tagsAttrs"
-                    v-model="tags"
-                    :items="data_tags || []"
-                    placeholder="Selecciona tags..."
-                    containerClass="border-zinc-800 bg-base-100 focus-within:border-cyan-500"
-                    :error-message="errors.tags"
-                  />
-                </div>
-              </div>
+              <EvaluationSection
+                v-model:viewing_started_at="viewing_started_at"
+                v-model:viewing_finished_at="viewing_finished_at"
+                v-model:aired_from="aired_from"
+                v-model:aired_to="aired_to"
+                v-model:rating="rating"
+                v-model:notes="notes"
+                v-model:tags="tags"
+                :viewing_started_atAttrs="viewing_started_atAttrs"
+                :viewing_finished_atAttrs="viewing_finished_atAttrs"
+                :aired_fromAttrs="aired_fromAttrs"
+                :aired_toAttrs="aired_toAttrs"
+                :ratingAttrs="ratingAttrs"
+                :notesAttrs="notesAttrs"
+                :tagsAttrs="tagsAttrs"
+                :errors="errors"
+                :showAiredFields="showAiredFields"
+                :data_tags="data_tags"
+              />
             </div>
           </div>
 

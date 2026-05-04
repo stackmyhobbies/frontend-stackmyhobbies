@@ -17,10 +17,10 @@
         </thead>
         <tbody>
           <tr
-            v-for="hobbie in hobbies"
-            :key="hobbie.id"
+            v-for="hobby in hobbies"
+            :key="hobby.id"
             :class="
-              activeId === hobbie.id
+              activeId === hobby.id
                 ? 'bg-base-content/10 ring-1 ring-inset ring-white/10'
                 : 'hover:bg-base-content/5'
             "
@@ -30,7 +30,7 @@
               <div class="flex flex-row gap-4">
                 <div>
                   <img
-                    v-image-fallback="hobbie.thumbnail_url"
+                    v-image-fallback="hobby.thumbnail_url"
                     alt="not_found"
                     class="mx-auto w-14 h-14 object-fill rounded-lg border-transparent"
                   />
@@ -38,7 +38,7 @@
                 <div class="flex flex-col">
                   <div>
                     <span class="inline-block font-bold text-white mb-1">
-                      {{ `${hobbie.title} ${hobbie.segment_label}` }}
+                      {{ `${hobby.title} ${hobby.segment_label}` }}
                     </span>
                   </div>
                   <div>
@@ -46,7 +46,7 @@
                       class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-white inset-ring inset-ring-gray-400/20"
                     >
                       {{
-                        hobbie.tags
+                        hobby.tags
                           .slice(0, 2)
                           .map((h) => h.name)
                           .join('/')
@@ -58,29 +58,29 @@
             </td>
             <td>
               <div
-                v-if="hobbie.progress_status?.name"
-                v-status-badge="hobbie.progress_status.name"
+                v-if="hobby.progress_status?.name"
+                v-status-badge="hobby.progress_status.name"
               >
-                {{ hobbie.progress_status.name }}
+                {{ hobby.progress_status.name }}
               </div>
               <div v-else>
                 <span>No status</span>
               </div>
             </td>
-            <td>{{ hobbie.type.name }}</td>
+            <td>{{ hobby.type.name }}</td>
             <td>
               <div class="flex items-center gap-2 flex-col">
                 <div class="self-start">
-                  <span class="text-sm font-bold me-2">{{ hobbie.progress_percent }}%</span>
+                  <span class="text-sm font-bold me-2">{{ hobby.progress_percent }}%</span>
                   <span>
-                    {{ hobbie.current_progress }}/{{ hobbie.total_progress }}
-                    {{ hobbie.progress_unit }}
+                    {{ hobby.current_progress }}/{{ hobby.total_progress }}
+                    {{ hobby.progress_unit }}
                   </span>
                 </div>
                 <progress
                   class="progress progress-success w-full"
-                  :value="hobbie.current_progress"
-                  :max="hobbie.total_progress"
+                  :value="hobby.current_progress"
+                  :max="hobby.total_progress"
                 ></progress>
               </div>
             </td>
@@ -88,7 +88,7 @@
             <!--Actions-->
             <td>
               <DropdownActionContentItem
-                :hobbie="hobbie"
+                :hobby="hobby"
                 @focus="activeId = $event"
                 @blur="activeId = null"
               />

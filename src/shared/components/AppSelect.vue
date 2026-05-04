@@ -36,7 +36,6 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Seleccionar...',
 })
 
-console.log(props.items)
 const toggleBtnRef = ref<any>(null)
 
 /* ------------------------------------------------------------------
