@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import type { CreateContentItemDto } from '../dto/CreateContentItemDto'
+import type { createContentItemDto } from '../dto/createContentItemDto'
 import { postContentItemAction } from '../actions/post-content-item.action'
 import type { Hobby } from '../interfaces/contentItemListResponse'
 
@@ -7,9 +7,9 @@ export const usePostContentItemMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (createContentItem: CreateContentItemDto) =>
+    mutationFn: (createContentItem: createContentItemDto) =>
       postContentItemAction(createContentItem),
-    onMutate: async (createContentItem: CreateContentItemDto) => {
+    onMutate: async (createContentItem: createContentItemDto) => {
       await queryClient.cancelQueries({ queryKey: ['content-item-list'] })
 
       const previousData = queryClient.getQueryData(['content-item-list'])

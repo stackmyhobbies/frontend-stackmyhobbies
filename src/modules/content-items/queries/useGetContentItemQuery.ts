@@ -47,6 +47,6 @@ export const useGetContentItemQuery = (
     },
     // Solo se ejecuta si tenemos un valor
     enabled: toValue(options.enabled),
-    staleTime: 1000 * 60,
+    // staleTime: 1000 * 60,
   })
 }

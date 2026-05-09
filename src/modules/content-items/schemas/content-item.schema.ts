@@ -32,7 +32,7 @@ const validatedDayOfWeek = (val: unknown) => {
   return validateValueInSet(val, DayOfWeekValues)
 }
 
-const BaseContentItem = z.object({
+export const BaseContentItem = z.object({
   title: z
     .string({
       required_error: 'El título es obligatorio',
@@ -103,7 +103,10 @@ const BaseContentItem = z.object({
     })
     .min(1, { message: 'El número del segmento debe ser mayor o igual a 1' }),
   segment_subtype: z.enum(SubSegmentTypeValues).nullable().optional(),
-  segment_subnumber: z.number().default(0).nullable().optional(),
+  segment_subnumber: z.preprocess(
+    (val) => (val === '' || val === undefined || val === null ? null : Number(val)),
+    z.number().nullable().optional(),
+  ),
 
   viewing_started_at: z.preprocess(
     (val) => (val === '' || val === null ? undefined : String(val)),
@@ -131,7 +134,14 @@ const BaseContentItem = z.object({
   rating: z.number().min(0).max(5),
 
   tags: z
-    .array(z.object({ id: z.number(), name: z.string(), slug: z.string(), status: z.boolean() }))
+    .array(
+      z.object({
+        id: z.number(),
+        name: z.string(),
+        slug: z.string().optional(),
+        status: z.boolean().optional(),
+      }),
+    )
     .min(1, { message: 'Debe tener al menos un tag' }),
 })
 

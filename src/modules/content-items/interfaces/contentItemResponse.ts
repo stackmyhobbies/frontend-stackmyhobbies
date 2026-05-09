@@ -4,6 +4,7 @@ export interface ContentItemResponse {
   success: boolean
   data: Hobby
   message: string
+  errors?: Record<string, string | undefined>
 }
 
 export interface Hobby {
@@ -34,6 +35,7 @@ export interface Hobby {
   tags: Tag[]
   type: Type
   progress_status: ProgressStatus
+  detail_url?: string
 }
 
 export interface ProgressStatus {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 //** Queries **//
@@ -23,12 +23,14 @@ import AppSelectComboBox from '@/shared/components/AppSelectComboBox.vue'
 /** Enum */
 import { DayOfWeekValues, DayOfWeek } from '@/modules/content-items/enum/dayOfWeek.enum'
 import type { Hobby, ProgressStatus } from '../interfaces/contentItemListResponse'
+import type { BaseFieldProps, GenericObject } from 'vee-validate'
 import IndentitySection from './SectionsForm/IndentitySection.vue'
 import ProgressMetricsSection from './SectionsForm/ProgressMetricsSection.vue'
 import EvaluationSection from './SectionsForm/EvaluationSection.vue'
 
 import { useThemeStore } from '@/stores/theme'
 import { useGetContentItemQuery } from '../queries/useGetContentItemQuery'
+import { twMerge } from 'tailwind-merge'
 
 enum actionform {
   create = 'create',
@@ -44,7 +46,6 @@ const props = defineProps<{
 const { data } = useGetContentTypesQuery()
 const { data: progressStatuses } = useProgressStatusesQuery()
 const { data: data_tags } = useGetTagsQuery()
-const { isLightTheme } = useThemeStore()
 const { t } = useI18n({ useScope: 'global' })
 
 // 1. Definimos la lógica de activación
@@ -73,6 +74,12 @@ const {
   isResetting,
 } = useFormContentItem(computed(() => contentItemData.value))
 
+const defineSegmentSubNumber = () =>
+  defineField('segment_subnumber') as unknown as [
+    Ref<string | number | undefined>,
+    BaseFieldProps & GenericObject,
+  ]
+
 const [title, titleAttrs] = defineField('title', { validateOnModelUpdate: true })
 const [description, descriptionAttrs] = defineField('description')
 const [notes, notesAttrs] = defineField('notes')
@@ -84,7 +91,7 @@ const [progress_unit, progress_unitAttrs] = defineField('progress_unit')
 const [segment_type, segment_typeAttrs] = defineField('segment_type')
 const [segment_number, segment_numberAttrs] = defineField('segment_number')
 const [segment_subtype, segment_subtypeAttrs] = defineField('segment_subtype')
-const [segment_subnumber, segment_subnumberAttrs] = defineField('segment_subnumber')
+const [segment_subnumber, segment_subnumberAttrs] = defineSegmentSubNumber()
 const [viewing_started_at, viewing_started_atAttrs] = defineField('viewing_started_at')
 const [viewing_finished_at, viewing_finished_atAttrs] = defineField('viewing_finished_at')
 const [aired_from, aired_fromAttrs] = defineField('aired_from')
@@ -116,7 +123,7 @@ const showAiredFields = computed(
     CONTENT_TYPE_HOBBY.includes(selectedTypeData.value?.name ?? ''),
 )
 
-const { previewUrl, handleImageUpload } = useImagePreview(
+const { previewUrl, dropError, handleImageUpload, setFileFromDrop } = useImagePreview(
   computed(() => values.image),
   setFieldValue as (field: string, value: unknown) => void,
 )
@@ -136,12 +143,29 @@ const crossFieldError = computed(() => {
     ? 'El progreso actual no puede ser mayor al total'
     : undefined
 })
+
+const isDragging = ref(false)
+
+const onDragOver = () => (isDragging.value = true)
+const onDragLeave = () => (isDragging.value = false)
+const onDragEnd = () => (isDragging.value = false)
+
+const onDrop = (event: DragEvent) => {
+  isDragging.value = false
+  const files = event.dataTransfer?.files
+  if (files && files.length > 0) {
+    setFileFromDrop(files[0])
+  }
+}
 </script>
 
 <template>
   <div class="min-h-screen p-4 md:p-6 flex justify-center items-start text-gray-300">
     <div class="w-full rounded-3xl p-1">
-      <div v-if="isPlaceholderData || (!contentItemData && isUpdating)" class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 md:p-10">
+      <div
+        v-if="isPlaceholderData || (!contentItemData && isUpdating)"
+        class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 md:p-10"
+      >
         <div class="lg:col-span-5 flex flex-col gap-4">
           <div class="skeleton aspect-[3/4] rounded-2xl"></div>
         </div>
@@ -167,11 +191,35 @@ const crossFieldError = computed(() => {
         @submit="onSubmit"
         class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 md:p-10"
       >
-        <div class="lg:col-span-5 flex flex-col gap-4">
+        <div class="lg:col-span-5 flex flex-col gap-4 text-center">
+          {{ previewUrl }}
           <label
-            class="relative flex flex-col items-center justify-center w-full aspect-[3/4] rounded-2xl border-2 border-dashed border-cyan-500/20 bg-[#1a1c23] hover:bg-white/5 transition-all cursor-pointer group overflow-hidden"
+            @dragover.prevent="onDragOver"
+            @dragleave.prevent="onDragLeave"
+            @dragend="onDragEnd"
+            @drop.prevent="onDrop"
+            :class="
+              twMerge(
+                'relative flex flex-col items-center justify-center w-full aspect-[3/4] rounded-2xl border-2 border-dashed border-cyan-500/20 bg-[#1a1c23] hover:bg-white/5 transition-all cursor-pointer group overflow-hidden',
+                errors.image ? 'border-red-500 border-4' : '',
+                isDragging && 'dragging',
+              )
+            "
+            class=""
           >
-            <template v-if="!previewUrl">
+            <template
+              v-if="
+                !previewUrl &&
+                !!contentItemData?.detail_url &&
+                !contentItemData?.detail_url?.includes('default')
+              "
+            >
+              <img
+                :src="contentItemData.detail_url"
+                class="w-full h-full object-cover"
+              />
+            </template>
+            <template v-else-if="!previewUrl">
               <div class="flex flex-col items-center justify-center pb-6 pt-5">
                 <svg
                   class="w-16 h-16 mb-4 text-cyan-500/50 group-hover:scale-110 transition-transform"
@@ -193,10 +241,13 @@ const crossFieldError = computed(() => {
             <input
               type="file"
               class="hidden"
+              ref="fileInput"
               @change="handleImageUpload"
               name="image"
+              accept="image/png, image/jpeg, image/gif, image/webp"
             />
           </label>
+          <p class="text-red-400 text-xl">{{ errors.image || dropError }}</p>
         </div>
 
         <div class="lg:col-span-7 flex flex-col gap-y-6">
@@ -298,6 +349,7 @@ const crossFieldError = computed(() => {
 
           <button
             type="submit"
+            @click.stop
             class="btn btn-info w-full text-lg shadow-[0_0_20px_-5px_rgba(34,211,238,0.4)] mb-10"
           >
             Guardar Hobby
@@ -314,5 +366,15 @@ const crossFieldError = computed(() => {
   .md\:collapse-open.collapse-arrow > .collapse-title:after {
     display: none;
   }
+}
+
+.drop-zone {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+}
+.dragging {
+  border-color: #22d3ee;
+  background-color: rgba(34, 211, 238, 0.1);
 }
 </style>
