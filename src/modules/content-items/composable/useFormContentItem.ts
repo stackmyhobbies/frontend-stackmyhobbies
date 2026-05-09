@@ -5,6 +5,7 @@ import { usePostContentItemMutation } from '../mutations/usePostContentItemMutat
 import { usePutContentItemMutation } from '../mutations/usePutContentItemMutation'
 import { CreateContentItem } from '../schemas/content-item.schema'
 import { ref, watch, nextTick, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 export const useFormContentItem = (initialData?: any) => {
   const toast = useToast()
@@ -27,7 +28,7 @@ export const useFormContentItem = (initialData?: any) => {
     progress_status_id: 1,
     rating: 1.0,
     segment_number: 0,
-    segment_subnumber: 0,
+    segment_subnumber: null,
     segment_type: undefined,
     segment_subtype: null,
     tags: [],
@@ -36,6 +37,7 @@ export const useFormContentItem = (initialData?: any) => {
     viewing_finished_at: null,
     aired_from: null,
     aired_to: null,
+    detail_url: '',
   }
 
   const { handleSubmit, errors, values, defineField, setFieldValue, resetForm, setErrors } =
@@ -66,20 +68,22 @@ export const useFormContentItem = (initialData?: any) => {
           segment_type: hobbyData.segment_type || undefined,
           segment_number: hobbyData.segment_number || 0,
           segment_subtype: hobbyData.segment_subtype || null,
-          segment_subnumber: hobbyData.segment_subnumber || 0,
+          segment_subnumber: hobbyData.segment_subnumber ?? undefined,
           viewing_started_at: hobbyData.viewing_started_at
             ? hobbyData.viewing_started_at.toString()
             : '',
           viewing_finished_at: hobbyData.viewing_finished_at || null,
           aired_from: hobbyData.aired_from || null,
           aired_to: hobbyData.aired_to || null,
-          rating: hobbyData.rating || 1.0,
+          rating: (hobbyData.rating >= 5.0 && 5.0) || 1.0,
           day_of_week: hobbyData.day_of_week || null,
           tags: hobbyData.tags || [],
         },
       })
-       // nextTick para que el watch de content_type_id en el componente ya haya corrido
-       nextTick(() => { isResetting.value = false })
+      // nextTick para que el watch de content_type_id en el componente ya haya corrido
+      nextTick(() => {
+        isResetting.value = false
+      })
     },
     { immediate: true },
   )
@@ -101,49 +105,65 @@ export const useFormContentItem = (initialData?: any) => {
     return formatted
   }
 
+  const router = useRouter()
+
   const onSubmit = handleSubmit((formValues) => {
     console.log('Formulario válido:', formValues)
     console.log('Deberia enviar un submit')
     const tags = formValues.tags.map((tag) => tag.id)
 
-    const successMessage = isEdit.value ? 'hobby actualizado exitosamente' : 'hobby creado exitosamente'
+    const successMessage = isEdit.value
+      ? 'hobby actualizado exitosamente'
+      : 'hobby creado exitosamente'
     const errorMessage = isEdit.value ? 'Error al actualizar el hobby' : 'Error al crear el hobby'
 
     const mutationFn = isEdit.value
-      ? () => updateMutate({
-          payload: { ...formValues, tags },
-          id: contentItemId.value!,
-        }, {
-          onSuccess: (data) => {
-            if (!data.success && data.errors) {
-              const cleanErrors = formatBackendErrors(data.errors)
-              setErrors(cleanErrors)
-              toast.error(errorMessage)
-              return
-            }
-            toast.success(successMessage)
-          },
-          onError: () => {
-            toast.error(errorMessage)
-          },
-        })
-      : () => createMutate(
-          { ...formValues, tags },
-          {
-            onSuccess: (data) => {
-              if (!data.success && data.errors) {
-                const cleanErrors = formatBackendErrors(data.errors)
-                setErrors(cleanErrors)
+      ? () =>
+          updateMutate(
+            {
+              payload: { ...formValues, tags },
+              id: contentItemId.value!,
+            },
+            {
+              onSuccess: (data) => {
+                console.log('Editado con exito')
+                if (!data.success && data.errors) {
+                  const cleanErrors = formatBackendErrors(data.errors)
+                  setErrors(cleanErrors)
+                  toast.error(errorMessage)
+                  return
+                }
+                toast.success(successMessage)
+                const newSlug = (data.data as any)?.slug
+                if (newSlug) {
+                  router.replace({ name: 'content-item-edit', params: { slug: newSlug } })
+                }
+                router.push({ name: 'content-item-list' })
+              },
+              onError: () => {
                 toast.error(errorMessage)
-                return
-              }
-              toast.success(successMessage)
+              },
             },
-            onError: () => {
-              toast.error(errorMessage)
+          )
+      : () =>
+          createMutate(
+            { ...formValues, tags },
+            {
+              onSuccess: (data) => {
+                if (!data.success && data.errors) {
+                  const cleanErrors = formatBackendErrors(data.errors)
+                  setErrors(cleanErrors)
+                  toast.error(errorMessage)
+                  return
+                }
+                toast.success(successMessage)
+                router.push({ name: 'content-item-list' })
+              },
+              onError: () => {
+                toast.error(errorMessage)
+              },
             },
-          },
-        )
+          )
 
     mutationFn()
   })

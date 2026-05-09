@@ -12,7 +12,7 @@ export interface createContentItemDto {
   segment_type: string
   segment_number: number
   segment_subtype?: string | null
-  segment_subnumber?: number | null
+  segment_subnumber?: number | string | null
   image?: File | null
   viewing_started_at: Date | string
   viewing_finished_at?: Date | string | null

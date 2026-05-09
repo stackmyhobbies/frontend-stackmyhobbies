@@ -42,12 +42,12 @@ const props = defineProps<{
 
 /* Valores por defecto */
 const {
-  displayKey = "name",
-  valueKey = "id",
-  placeholder = "Seleccionar...",
-  badgeVariant = "soft",
-  badgeClass = "border-primary/40 text-primary bg-primary/10",
-  containerClass = "border-base-300 bg-base-200 focus-within:border-primary/60"
+  displayKey = 'name',
+  valueKey = 'id',
+  placeholder = 'Seleccionar...',
+  badgeVariant = 'soft',
+  badgeClass = 'border-primary/40 text-primary bg-primary/10',
+  containerClass = 'border-base-300 bg-base-200 focus-within:border-primary/60',
 } = props
 
 const resolvedActiveOptionClass = computed(
@@ -129,6 +129,7 @@ defineOptions({ inheritAttrs: false })
       multiple
       v-slot="{ open }"
       :by="valueKey.toString()"
+      @blur="onBlur?.()"
     >
       <div
         class="relative"
@@ -157,25 +158,36 @@ defineOptions({ inheritAttrs: false })
             </AppBadge>
           </TransitionGroup>
 
-           <!-- INPUT -->
-           <ComboboxInput
-             ref="inputRef"
-             class="flex-1 border-none text-sm text-base-content bg-transparent focus:outline-none placeholder:text-base-content/50 w-full"
-             :placeholder="placeholder"
-             @input="query = $event.target.value"
-             :display-value="() => ''"
-             @blur="onBlur?.()"
-             @keydown="handleKeydown"
-           />
+          <!-- INPUT -->
+          <ComboboxInput
+            ref="inputRef"
+            class="flex-1 border-none text-sm text-base-content bg-transparent focus:outline-none placeholder:text-base-content/50 w-full"
+            :placeholder="placeholder"
+            @input="query = $event.target.value"
+            :display-value="() => ''"
+            @blur="onBlur?.()"
+            @keydown="handleKeydown"
+          />
 
-           <!-- TOGGLE BUTTON -->
-            <ComboboxButton ref="toggleBtnRef" class="absolute inset-y-0 right-0 flex items-center pr-2" @click.stop>
-              <svg class="h-5 w-5 text-base-content/60 transition-colors" :class="{ [resolvedSelectedTextClass]: true }" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                  clip-rule="evenodd" />
-              </svg>
-            </ComboboxButton>
+          <!-- TOGGLE BUTTON -->
+          <ComboboxButton
+            ref="toggleBtnRef"
+            class="absolute inset-y-0 right-0 flex items-center pr-2 z-50"
+            @click.stop
+          >
+            <svg
+              class="h-5 w-5 text-base-content/60 transition-colors"
+              :class="{ [resolvedSelectedTextClass]: true }"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </ComboboxButton>
         </div>
 
         <!-- ERROR -->
@@ -212,12 +224,12 @@ defineOptions({ inheritAttrs: false })
                 :value="item"
                 v-slot="{ selected, active }"
               >
-                 <li
-                   :class="[
-                     'cursor-pointer select-none py-2.5 pl-10 pr-4 text-sm flex justify-between',
-                     active ? resolvedActiveOptionClass : 'text-base-content/50',
-                   ]"
-                 >
+                <li
+                  :class="[
+                    'cursor-pointer select-none py-2.5 pl-10 pr-4 text-sm flex justify-between',
+                    active ? resolvedActiveOptionClass : 'text-base-content/50',
+                  ]"
+                >
                   <span
                     :class="selected ? ['font-bold', resolvedSelectedTextClass] : 'font-normal'"
                   >

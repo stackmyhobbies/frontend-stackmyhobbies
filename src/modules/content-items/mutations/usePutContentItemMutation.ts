@@ -37,8 +37,9 @@ export const usePutContentItemMutation = () => {
     onError: (err, variables, context) => {
       queryClient.setQueryData(['content-item-list'], context?.previousData)
     },
-    onSettled: () => {
+    onSettled: (data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey: ['content-item-list'] })
+      queryClient.invalidateQueries({ queryKey: ['content-item', variables.id.toString()] })
     },
   })
 }

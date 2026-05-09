@@ -100,25 +100,29 @@
           <div class="col-span-12 md:col-span-6">
             <AppInput
               input-class="bg-base-100 focus:outline-cyan-500"
-              label="Number"
+              label="Segment SubNumber"
               type="number"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              placeholder="Ingrese número"
               labelFor="segment_subnumber"
               v-model="segment_subnumber!"
               v-bind="segment_subnumberAttrs"
-              placeholder="0"
               :error="errors_segment_subnumber"
             />
           </div>
         </template>
 
-         <div class="col-span-12">
-           <label class="label"><span class="label-text text-base-content/60">Description</span></label>
-           <textarea
-             v-model="description"
-             v-bind="descriptionAttrs"
-             class="textarea textarea-bordered w-full bg-base-100 focus-within:border-cyan-500 focus:border-cyan-500 focus:outline-none rounded-btn h-[60px] min-h-0 resize-none"
-           ></textarea>
-         </div>
+        <div class="col-span-12">
+          <label class="label"
+            ><span class="label-text text-base-content/60">Description</span></label
+          >
+          <textarea
+            v-model="description"
+            v-bind="descriptionAttrs"
+            class="textarea textarea-bordered w-full bg-base-100 focus-within:border-cyan-500 focus:border-cyan-500 focus:outline-none rounded-btn h-[60px] min-h-0 resize-none"
+          ></textarea>
+        </div>
       </div>
     </div>
   </div>
@@ -140,7 +144,7 @@ const segment_type = defineModel<SegmentType | null>('segment_type') // Ajusta e
 const segment_number = defineModel<number>('segment_number')
 const advancedSegmentSubtypes = defineModel<boolean>('advancedSegmentSubtypes')
 const segment_subtype = defineModel<SubSegmentType | null>('segment_subtype')
-const segment_subnumber = defineModel<number | null>('segment_subnumber')
+const segment_subnumber = defineModel<string | number | undefined>('segment_subnumber')
 const description = defineModel<string>('description')
 
 // 2. Las demás propiedades (las que no cambian) se quedan como props

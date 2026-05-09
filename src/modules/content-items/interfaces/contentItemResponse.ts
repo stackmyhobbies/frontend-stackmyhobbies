@@ -35,6 +35,7 @@ export interface Hobby {
   tags: Tag[]
   type: Type
   progress_status: ProgressStatus
+  detail_url?: string
 }
 
 export interface ProgressStatus {
