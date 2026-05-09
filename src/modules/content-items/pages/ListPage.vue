@@ -3,8 +3,8 @@
   <span v-else-if="isError">Error: {{ error }}</span>
   <!-- We can assume by this point that `isSuccess === true` -->
 
-  <div v-else-if="data">
-    <div class="min-h-dvh overflow-x-auto">
+  <div v-else-if="data" class="h-full flex flex-col">
+    <div class="flex-1 overflow-auto">
       <table class="table table-pin-rows bg-base-200">
         <thead>
           <tr class="text-white capitalize">
@@ -97,6 +97,11 @@
         </tbody>
       </table>
     </div>
+    <AppPagination
+      :current-page="hobbiesMeta.current_page"
+      :last-page="hobbiesMeta.last_page ?? 1"
+      @up-current-page="handlePageChange"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -106,10 +111,20 @@ import { vStatusBadge } from '../directives/v-status-badge'
 import { vImageFallback } from '../directives/v-image-fallback'
 import type { Hobby } from '../interfaces/contentItemListResponse'
 import DropdownActionContentItem from '../components/DropdownActionContentItem.vue'
+import AppPagination from '@/shared/components/AppPagination.vue'
 
-const { data, isPending, isError, error } = useGetContentItemsQuery()
+const currentPage = ref<number>(1)
 
-const hobbies = computed<Hobby[]>(() => data.value || [])
+const { data, isPending, isError, error } = useGetContentItemsQuery({
+  pageCurrent: currentPage, // 👈 pasas el ref directamente
+})
+
+const handlePageChange = (page: number) => {
+  currentPage.value = page // 👈 al cambiar, la queryKey cambia y re-fetcha sola
+}
+
+const hobbies = computed<Hobby[]>(() => data.value?.data.items ?? [])
+const hobbiesMeta = computed(() => data.value?.data.meta_data ?? {})
 const activeId = ref<number | null>(null)
 </script>
 <style lang="css" scoped>
