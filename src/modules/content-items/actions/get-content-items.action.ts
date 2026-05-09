@@ -6,10 +6,12 @@ import type { ContentItemListResponse } from '../interfaces/contentItemListRespo
 /**
  *  TODO IMEPLEMENTAR PAGINACION
  * */
-export const getContentItemsAction = async (): Promise<ContentItemListResponse | ErrorResponse> => {
+export const getContentItemsAction = async (
+  pageCurrent: number,
+): Promise<ContentItemListResponse | ErrorResponse> => {
   try {
     const { data } = await stackMyHobbiesApi.get<ContentItemListResponse>(
-      '/content-items?per_page=9&page=1',
+      `/content-items?per_page=6&page=${pageCurrent}`,
     )
     console.log(data, 'ContentItem data')
     return data
