@@ -1,9 +1,46 @@
 <template>
+  <form class="grid grid-cols-12 gap-4 px-3 my-2">
+    <div class="col-span-12 md:col-span-3">
+      <AppInput
+        v-model="filters.search"
+        type="text"
+        name="search"
+        placeholder="Buscar..."
+      />
+    </div>
+    <div class="col-span-6 md:col-span-3">
+      <AppSelectComboBox
+        v-model="selectedTags"
+        :items="tagsData ?? []"
+        placeholder="Filtrar tags..."
+      />
+    </div>
+
+    <div class="col-span-6 md:col-span-3">
+      <AppSelectComboBox
+        v-model="selectedTypes"
+        :items="typesData ?? []"
+        placeholder="Filtrar tipos..."
+      />
+    </div>
+
+    <div class="col-span-6 md:col-span-3">
+      <AppSelectComboBox
+        v-model="selectedProgresses"
+        :items="progressesData ?? []"
+        placeholder="Filtrar progreso..."
+      />
+    </div>
+  </form>
+
   <span v-if="isPending">Loading...</span>
   <span v-else-if="isError">Error: {{ error }}</span>
   <!-- We can assume by this point that `isSuccess === true` -->
 
-  <div v-else-if="data" class="h-full flex flex-col">
+  <div
+    v-else-if="data"
+    class="h-full flex flex-col"
+  >
     <div class="flex-1 overflow-auto">
       <table class="table table-pin-rows bg-base-200">
         <thead>
@@ -106,25 +143,85 @@
 </template>
 <script setup lang="ts">
 import { useGetContentItemsQuery } from '../queries/useGetContentItemsQuery'
-import { computed, ref } from 'vue'
+import { useGetTagsQuery } from '../queries/useGetTagsQuery'
+import { useGetContentTypesQuery } from '../queries/useGetContentTypesQuery'
+import { useProgressStatusesQuery } from '../queries/useGetProgressStatusesQuery'
+import { computed, ref, reactive, watch } from 'vue'
 import { vStatusBadge } from '../directives/v-status-badge'
 import { vImageFallback } from '../directives/v-image-fallback'
-import type { Hobby } from '../interfaces/contentItemListResponse'
+import type { Hobby, MetaData } from '../interfaces/contentItemListResponse'
+import type { Tag } from '../interfaces/TagResponse'
+import type { Type } from '../interfaces/ContentTypeResponse'
+import type { ProgressStatus } from '../interfaces/progressStatusResponse'
 import DropdownActionContentItem from '../components/DropdownActionContentItem.vue'
 import AppPagination from '@/shared/components/AppPagination.vue'
+import AppSelectComboBox from '@/shared/components/AppSelectComboBox.vue'
+import AppInput from '@/shared/components/AppInput.vue'
+import { type filterProps } from '../actions/get-content-items.action'
 
 const currentPage = ref<number>(1)
+const filters = reactive({
+  search: '',
+  tags: [],
+  content_type: [],
+  progress: [],
+}) as filterProps
+
+const { data: tagsData } = useGetTagsQuery()
+const { data: typesData } = useGetContentTypesQuery()
+const { data: progressesData } = useProgressStatusesQuery()
+
+const selectedTags = ref<Tag[]>([])
+const selectedTypes = ref<Type[]>([])
+const selectedProgresses = ref<ProgressStatus[]>([])
+
+watch(
+  selectedTags,
+  (v) => {
+    filters.tags = v.map((t) => t.slug)
+  },
+  { deep: true },
+)
+watch(
+  selectedTypes,
+  (v) => {
+    filters.content_type = v.map((t) => t.name.toLowerCase())
+  },
+  { deep: true },
+)
+watch(
+  selectedProgresses,
+  (v) => {
+    filters.progress = v.map((t) => t.name.toLowerCase())
+  },
+  { deep: true },
+)
 
 const { data, isPending, isError, error } = useGetContentItemsQuery({
-  pageCurrent: currentPage, // 👈 pasas el ref directamente
+  pageCurrent: currentPage,
+  filters,
 })
 
+console.log(data, 'desde lispage')
+
 const handlePageChange = (page: number) => {
-  currentPage.value = page // 👈 al cambiar, la queryKey cambia y re-fetcha sola
+  currentPage.value = page
 }
 
 const hobbies = computed<Hobby[]>(() => data.value?.data.items ?? [])
-const hobbiesMeta = computed(() => data.value?.data.meta_data ?? {})
+const hobbiesMeta = computed<MetaData>(
+  () =>
+    data.value?.data.meta_data ?? {
+      current_page: 1,
+      last_page: 1,
+      per_page: 15,
+      total: 0,
+      filters_applied: [],
+      next_page_url: null,
+      prev_page_url: null,
+    },
+)
+
 const activeId = ref<number | null>(null)
 </script>
 <style lang="css" scoped>

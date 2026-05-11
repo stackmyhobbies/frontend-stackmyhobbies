@@ -35,6 +35,7 @@ Add icon
       <div class="p-4 px-0">
         <router-view />
       </div>
+      <footer-component class="mt-10" />
 
       <dialog
         id="my_modal_5"
@@ -58,7 +59,6 @@ Add icon
           @click="toggleStore.close()"
         />
       </dialog>
-      <footer-component />
     </div>
   </div>
 </template>
