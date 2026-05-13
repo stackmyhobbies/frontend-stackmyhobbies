@@ -21,6 +21,8 @@ export const getContentItemsAction = async (
     if (filters?.content_type?.length) params.content_type = filters.content_type.join(',')
     if (filters?.progress?.length) params.progress = filters.progress.join(',')
 
+    console.log(params)
+
     const { data } = await stackMyHobbiesApi.get<ContentItemListResponse>('/content-items', {
       params,
     })

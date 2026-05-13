@@ -1,38 +1,4 @@
 <template>
-  <form class="grid grid-cols-12 gap-4 px-3 my-2">
-    <div class="col-span-12 md:col-span-3">
-      <AppInput
-        v-model="filters.search"
-        type="text"
-        name="search"
-        placeholder="Buscar..."
-      />
-    </div>
-    <div class="col-span-6 md:col-span-3">
-      <AppSelectComboBox
-        v-model="selectedTags"
-        :items="tagsData ?? []"
-        placeholder="Filtrar tags..."
-      />
-    </div>
-
-    <div class="col-span-6 md:col-span-3">
-      <AppSelectComboBox
-        v-model="selectedTypes"
-        :items="typesData ?? []"
-        placeholder="Filtrar tipos..."
-      />
-    </div>
-
-    <div class="col-span-6 md:col-span-3">
-      <AppSelectComboBox
-        v-model="selectedProgresses"
-        :items="progressesData ?? []"
-        placeholder="Filtrar progreso..."
-      />
-    </div>
-  </form>
-
   <span v-if="isPending">Loading...</span>
   <span v-else-if="isError">Error: {{ error }}</span>
   <!-- We can assume by this point that `isSuccess === true` -->
@@ -41,6 +7,39 @@
     v-else-if="data"
     class="h-full flex flex-col"
   >
+    <form class="sticky top-0 z-20 bg-base-200 grid grid-cols-12 gap-4 px-3 py-2">
+      <div class="col-span-12 md:col-span-3">
+        <AppInput
+          v-model="searchTerm"
+          type="text"
+          name="search"
+          placeholder="Buscar..."
+        />
+      </div>
+      <div class="col-span-6 md:col-span-3">
+        <AppSelectComboBox
+          v-model="selectedTags"
+          :items="tagsData ?? []"
+          placeholder="Filtrar tags..."
+        />
+      </div>
+
+      <div class="col-span-6 md:col-span-3">
+        <AppSelectComboBox
+          v-model="selectedTypes"
+          :items="typesData ?? []"
+          placeholder="Filtrar tipos..."
+        />
+      </div>
+
+      <div class="col-span-6 md:col-span-3">
+        <AppSelectComboBox
+          v-model="selectedProgresses"
+          :items="progressesData ?? []"
+          placeholder="Filtrar progreso..."
+        />
+      </div>
+    </form>
     <div class="flex-1 overflow-auto">
       <table class="table table-pin-rows bg-base-200">
         <thead>
@@ -146,56 +145,28 @@ import { useGetContentItemsQuery } from '../queries/useGetContentItemsQuery'
 import { useGetTagsQuery } from '../queries/useGetTagsQuery'
 import { useGetContentTypesQuery } from '../queries/useGetContentTypesQuery'
 import { useProgressStatusesQuery } from '../queries/useGetProgressStatusesQuery'
-import { computed, ref, reactive, watch } from 'vue'
+import { useContentFilters } from '../composable/useContentFilters'
+import { computed, ref } from 'vue'
 import { vStatusBadge } from '../directives/v-status-badge'
 import { vImageFallback } from '../directives/v-image-fallback'
 import type { Hobby, MetaData } from '../interfaces/contentItemListResponse'
-import type { Tag } from '../interfaces/TagResponse'
-import type { Type } from '../interfaces/ContentTypeResponse'
-import type { ProgressStatus } from '../interfaces/progressStatusResponse'
 import DropdownActionContentItem from '../components/DropdownActionContentItem.vue'
 import AppPagination from '@/shared/components/AppPagination.vue'
 import AppSelectComboBox from '@/shared/components/AppSelectComboBox.vue'
 import AppInput from '@/shared/components/AppInput.vue'
-import { type filterProps } from '../actions/get-content-items.action'
-
-const currentPage = ref<number>(1)
-const filters = reactive({
-  search: '',
-  tags: [],
-  content_type: [],
-  progress: [],
-}) as filterProps
 
 const { data: tagsData } = useGetTagsQuery()
 const { data: typesData } = useGetContentTypesQuery()
 const { data: progressesData } = useProgressStatusesQuery()
 
-const selectedTags = ref<Tag[]>([])
-const selectedTypes = ref<Type[]>([])
-const selectedProgresses = ref<ProgressStatus[]>([])
-
-watch(
+const {
+  currentPage,
+  searchTerm,
+  filters,
   selectedTags,
-  (v) => {
-    filters.tags = v.map((t) => t.slug)
-  },
-  { deep: true },
-)
-watch(
   selectedTypes,
-  (v) => {
-    filters.content_type = v.map((t) => t.name.toLowerCase())
-  },
-  { deep: true },
-)
-watch(
   selectedProgresses,
-  (v) => {
-    filters.progress = v.map((t) => t.name.toLowerCase())
-  },
-  { deep: true },
-)
+} = useContentFilters(tagsData, typesData, progressesData)
 
 const { data, isPending, isError, error } = useGetContentItemsQuery({
   pageCurrent: currentPage,

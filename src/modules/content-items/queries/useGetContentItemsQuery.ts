@@ -11,11 +11,10 @@ interface Props {
 
 export const useGetContentItemsQuery = ({ pageCurrent, filters }: Props) => {
   return useQuery({
-    queryKey: computed(() => ['content-item-list', toValue(pageCurrent), { ...filters }]),
+    queryKey: computed(() => ['content-item-list', toValue(pageCurrent), filters ? { search: filters.search, tags: [...(filters.tags ?? [])], content_type: [...(filters.content_type ?? [])], progress: [...(filters.progress ?? [])] } : {}]),
     queryFn: async (): Promise<ContentItemListResponse> => {
       const response = await getContentItemsAction(toValue(pageCurrent), filters)
       if (!response.success) throw new Error(response.message || 'Error al cargar')
-      console.log(response, 'useQuery')
       return response
     },
     staleTime: 1000 * 60,

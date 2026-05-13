@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const stackMyHobbiesApi = axios.create({
   baseURL: import.meta.env.VITE_STACKMYHOBBIES_BASE_URL,
+  timeout: 10000,
 })
 
 stackMyHobbiesApi.interceptors.request.use((config) => {

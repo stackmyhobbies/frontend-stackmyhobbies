@@ -154,7 +154,7 @@ defineOptions({ inheritAttrs: false })
               :variant="badgeVariant"
             >
               {{ item[displayKey] }}
-              <button @click.stop="removeItem(item)">×</button>
+              <button type="button" @click.stop.prevent="removeItem(item)">×</button>
             </AppBadge>
           </TransitionGroup>
 

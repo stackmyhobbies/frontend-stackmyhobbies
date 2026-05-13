@@ -7,6 +7,7 @@ export interface ContentTypeResponse {
 export interface Type {
   id: number
   name: string
+  slug: string
   status: boolean
   created_at: Date
   updated_at: Date

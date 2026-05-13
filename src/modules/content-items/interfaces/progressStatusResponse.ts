@@ -7,5 +7,6 @@ export interface ProgressStatusResponse {
 export interface ProgressStatus {
   id: number
   name: string
+  slug: string
   status: boolean
 }
