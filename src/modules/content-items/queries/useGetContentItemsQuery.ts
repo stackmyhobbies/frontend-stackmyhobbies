@@ -1,27 +1,20 @@
 import { useQuery } from '@tanstack/vue-query'
-import { getContentItemsAction } from '../actions/get-content-items.action'
+import { getContentItemsAction, type filterProps } from '../actions/get-content-items.action'
 import type { ContentItemListResponse } from '../interfaces/contentItemListResponse'
-import type { ErrorResponse } from '@/utils/handleApiError'
 import type { Ref } from 'vue'
-import { toValue } from 'vue'
+import { computed, toValue } from 'vue'
 
 interface Props {
-  pageCurrent: Ref<number> | number // 👈 acepta ref o número plano
+  pageCurrent: Ref<number> | number
+  filters?: filterProps
 }
 
-export const useGetContentItemsQuery = ({ pageCurrent }: Props) => {
+export const useGetContentItemsQuery = ({ pageCurrent, filters }: Props) => {
   return useQuery({
-    queryKey: ['content-item-list', pageCurrent], // 👈 página en la key
-    queryFn: async (): Promise<ContentItemListResponse | ErrorResponse> => {
-      const response = await getContentItemsAction(toValue(pageCurrent)) // 👈 toValue() resuelve ref o number
-      if (!response.success) {
-        return {
-          success: false,
-          data: [],
-          message: '',
-          errors: {},
-        }
-      }
+    queryKey: computed(() => ['content-item-list', toValue(pageCurrent), filters ? { search: filters.search, tags: [...(filters.tags ?? [])], content_type: [...(filters.content_type ?? [])], progress: [...(filters.progress ?? [])] } : {}]),
+    queryFn: async (): Promise<ContentItemListResponse> => {
+      const response = await getContentItemsAction(toValue(pageCurrent), filters)
+      if (!response.success) throw new Error(response.message || 'Error al cargar')
       return response
     },
     staleTime: 1000 * 60,

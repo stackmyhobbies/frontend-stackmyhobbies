@@ -15,6 +15,16 @@ export function handleApiError(
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as any
 
+    if (error.code === 'ECONNABORTED') {
+      console.error('⏱️ La solicitud tardó demasiado')
+      return {
+        success: false,
+        message: 'La solicitud tardó demasiado. Verifica tu conexión.',
+        errors: {},
+        data: [],
+      }
+    }
+
     console.error(data, '📋 error instance of axios')
 
     // Si el backend envía errores de validación
