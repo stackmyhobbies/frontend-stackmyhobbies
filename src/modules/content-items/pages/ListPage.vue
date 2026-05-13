@@ -3,7 +3,43 @@
   <span v-else-if="isError">Error: {{ error }}</span>
   <!-- We can assume by this point that `isSuccess === true` -->
 
-  <div v-else-if="data" class="h-full flex flex-col">
+  <div
+    v-else-if="data"
+    class="h-full flex flex-col"
+  >
+    <form class="sticky top-0 z-20 bg-base-200 grid grid-cols-12 gap-4 px-3 py-2">
+      <div class="col-span-12 md:col-span-3">
+        <AppInput
+          v-model="searchTerm"
+          type="text"
+          name="search"
+          placeholder="Buscar..."
+        />
+      </div>
+      <div class="col-span-6 md:col-span-3">
+        <AppSelectComboBox
+          v-model="selectedTags"
+          :items="tagsData ?? []"
+          placeholder="Filtrar tags..."
+        />
+      </div>
+
+      <div class="col-span-6 md:col-span-3">
+        <AppSelectComboBox
+          v-model="selectedTypes"
+          :items="typesData ?? []"
+          placeholder="Filtrar tipos..."
+        />
+      </div>
+
+      <div class="col-span-6 md:col-span-3">
+        <AppSelectComboBox
+          v-model="selectedProgresses"
+          :items="progressesData ?? []"
+          placeholder="Filtrar progreso..."
+        />
+      </div>
+    </form>
     <div class="flex-1 overflow-auto">
       <table class="table table-pin-rows bg-base-200">
         <thead>
@@ -106,25 +142,57 @@
 </template>
 <script setup lang="ts">
 import { useGetContentItemsQuery } from '../queries/useGetContentItemsQuery'
+import { useGetTagsQuery } from '../queries/useGetTagsQuery'
+import { useGetContentTypesQuery } from '../queries/useGetContentTypesQuery'
+import { useProgressStatusesQuery } from '../queries/useGetProgressStatusesQuery'
+import { useContentFilters } from '../composable/useContentFilters'
 import { computed, ref } from 'vue'
 import { vStatusBadge } from '../directives/v-status-badge'
 import { vImageFallback } from '../directives/v-image-fallback'
-import type { Hobby } from '../interfaces/contentItemListResponse'
+import type { Hobby, MetaData } from '../interfaces/contentItemListResponse'
 import DropdownActionContentItem from '../components/DropdownActionContentItem.vue'
 import AppPagination from '@/shared/components/AppPagination.vue'
+import AppSelectComboBox from '@/shared/components/AppSelectComboBox.vue'
+import AppInput from '@/shared/components/AppInput.vue'
 
-const currentPage = ref<number>(1)
+const { data: tagsData } = useGetTagsQuery()
+const { data: typesData } = useGetContentTypesQuery()
+const { data: progressesData } = useProgressStatusesQuery()
+
+const {
+  currentPage,
+  searchTerm,
+  filters,
+  selectedTags,
+  selectedTypes,
+  selectedProgresses,
+} = useContentFilters(tagsData, typesData, progressesData)
 
 const { data, isPending, isError, error } = useGetContentItemsQuery({
-  pageCurrent: currentPage, // 👈 pasas el ref directamente
+  pageCurrent: currentPage,
+  filters,
 })
 
+console.log(data, 'desde lispage')
+
 const handlePageChange = (page: number) => {
-  currentPage.value = page // 👈 al cambiar, la queryKey cambia y re-fetcha sola
+  currentPage.value = page
 }
 
 const hobbies = computed<Hobby[]>(() => data.value?.data.items ?? [])
-const hobbiesMeta = computed(() => data.value?.data.meta_data ?? {})
+const hobbiesMeta = computed<MetaData>(
+  () =>
+    data.value?.data.meta_data ?? {
+      current_page: 1,
+      last_page: 1,
+      per_page: 15,
+      total: 0,
+      filters_applied: [],
+      next_page_url: null,
+      prev_page_url: null,
+    },
+)
+
 const activeId = ref<number | null>(null)
 </script>
 <style lang="css" scoped>
