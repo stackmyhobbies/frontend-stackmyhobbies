@@ -14,7 +14,7 @@ const isNotAuthenticatedGuard = async (
     if (!authStore.user?.email_verified_at) {
       return next({ name: 'resendEmail' })
     }
-    return next({ name: 'content-items' })
+    return next({ name: 'content-item-list' })
   }
 
   return next()

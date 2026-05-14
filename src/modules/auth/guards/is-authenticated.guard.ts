@@ -11,6 +11,11 @@ const isAuthenticatedGuard = async (
 
   await authStore.checkAuthStatus()
 
+  const checkStatus = await authStore.checkAuthStatus()
+
+  if (checkStatus === null) {
+    return next({ name: 'signIn' })
+  }
   // ❌ No autenticado → login
   if (authStore.authStatus === AuthStatus.UNAUTHENTICATED) {
     return next({ name: 'signIn' })

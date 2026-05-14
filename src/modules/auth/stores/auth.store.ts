@@ -88,8 +88,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const checkAuthStatus = async (): Promise<boolean> => {
+  const checkAuthStatus = async (): Promise<boolean | null> => {
     const resp = await checkAuthStatusAction()
+
+    if (!resp) {
+      return null
+    }
 
     if (!resp.success || !resp.data?.user) {
       signOut()

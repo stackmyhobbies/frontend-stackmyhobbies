@@ -11,11 +11,11 @@ const router = createRouter({
     },
     {
       path: '/reset-password',
-      name: 'resetPasswordDirect',
       component: () => import('@/modules/auth/layouts/AuthLayout.vue'),
       children: [
         {
           path: '',
+          name: 'resetPasswordDirect',
           component: () => import('@/modules/auth/pages/ResetPasswordPage.vue'),
         },
       ],
