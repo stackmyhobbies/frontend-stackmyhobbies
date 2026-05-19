@@ -9,12 +9,13 @@ import type { ProgressStatus } from '../interfaces/progressStatusResponse'
 export function useContentFilters(
   tagsData: Ref<Tag[] | undefined>,
   typesData: Ref<Type[] | undefined>,
-  progressesData: Ref<ProgressStatus[] | undefined>
+  progressesData: Ref<ProgressStatus[] | undefined>,
 ) {
   const router = useRouter()
   const route = useRoute()
 
   const currentPage = ref<number>(1)
+  const per_page = ref<number>(5)
   const searchTerm = ref('')
   const debouncedSearch = useDebounce(searchTerm, 500)
 
@@ -126,6 +127,7 @@ export function useContentFilters(
 
   return {
     currentPage,
+    per_page,
     searchTerm,
     filters,
     selectedTags,

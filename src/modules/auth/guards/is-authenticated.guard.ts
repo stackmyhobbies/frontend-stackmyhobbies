@@ -8,25 +8,16 @@ const isAuthenticatedGuard = async (
   next: NavigationGuardNext,
 ) => {
   const authStore = useAuthStore()
-
   await authStore.checkAuthStatus()
 
-  const checkStatus = await authStore.checkAuthStatus()
-
-  if (checkStatus === null) {
-    return next({ name: 'signIn' })
+  if (authStore.authStatus === AuthStatus.UNVERIFIED) {
+    return next({ name: 'resendEmail' })
   }
-  // ❌ No autenticado → login
+
   if (authStore.authStatus === AuthStatus.UNAUTHENTICATED) {
     return next({ name: 'signIn' })
   }
 
-  // ❌ Autenticado pero NO verificado → resend-email
-  if (!authStore.user?.email_verified_at) {
-    return next({ name: 'resendEmail' })
-  }
-
-  // ✔ Todo OK
   return next()
 }
 

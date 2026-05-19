@@ -9,7 +9,7 @@ export const checkAuthStatusAction = async (): Promise<AuthResponse | null> => {
     return data
   } catch (error: unknown) {
     console.log('Error interno del servidor')
-    return null
-    // return handleApiError(error)
+    // return null
+    return handleApiError(error)
   }
 }

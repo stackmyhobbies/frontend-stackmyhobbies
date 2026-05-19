@@ -8,7 +8,7 @@ import {
   ComboboxButton,
   TransitionRoot,
 } from '@headlessui/vue'
-import { useElementBounding } from '@vueuse/core'
+import { useFloating, autoUpdate, flip, shift, offset, size } from '@floating-ui/vue'
 import { twMerge } from 'tailwind-merge'
 
 /* ------------------------------------------------------------------
@@ -50,8 +50,27 @@ const selectedItem = computed({
     model.value = item ? item[props.valueKey] : null
   },
 })
-const containerRef = ref(null)
-const { x, y, width, height } = useElementBounding(containerRef)
+
+const referenceRef = ref<HTMLElement | null>(null)
+const floatingRef = ref<HTMLElement | null>(null)
+
+const { floatingStyles, isPositioned } = useFloating(referenceRef, floatingRef, {
+  strategy: 'fixed',
+  placement: 'bottom-start',
+  middleware: [
+    offset(4),
+    flip(),
+    shift({ padding: 8 }),
+    size({
+      apply({ rects, elements }) {
+        Object.assign(elements.floating.style, {
+          width: `${rects.reference.width}px`,
+        })
+      },
+    }),
+  ],
+  whileElementsMounted: autoUpdate,
+})
 
 const filteredItems = computed(() =>
   query.value === ''
@@ -99,9 +118,9 @@ defineOptions({ inheritAttrs: false })
     >
       <div
         class="relative"
-        ref="containerRef"
+        ref="referenceRef"
       >
-        <div @click="handleContainerClick">
+        <div @click.stop="handleContainerClick">
           <div
             :class="
               twMerge(
@@ -121,6 +140,7 @@ defineOptions({ inheritAttrs: false })
 
             <ComboboxButton
               ref="toggleBtnRef"
+              type="button"
               class="absolute inset-y-0 right-0 flex items-center pr-3"
               @click.stop
             >
@@ -137,13 +157,10 @@ defineOptions({ inheritAttrs: false })
             @after-leave="query = ''"
           >
             <ComboboxOptions
+              ref="floatingRef"
+              v-show="isPositioned"
+              :style="floatingStyles"
               static
-              :style="{
-                position: 'fixed',
-                top: `${y + height + 4}px`,
-                left: `${x}px`,
-                width: `${width}px`,
-              }"
               class="z-[9999] max-h-60 overflow-auto rounded-xl bg-base-100 border border-base-content/20 py-1 shadow-2xl focus:outline-none sm:text-sm"
             >
               <div

@@ -10,10 +10,11 @@ const isNotAuthenticatedGuard = async (
   const authStore = useAuthStore()
   await authStore.checkAuthStatus()
 
+  if (authStore.authStatus === AuthStatus.UNVERIFIED) {
+    return next({ name: 'resendEmail' })
+  }
+
   if (authStore.authStatus === AuthStatus.AUTHENTICATED) {
-    if (!authStore.user?.email_verified_at) {
-      return next({ name: 'resendEmail' })
-    }
     return next({ name: 'content-item-list' })
   }
 

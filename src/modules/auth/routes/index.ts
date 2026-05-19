@@ -32,10 +32,5 @@ export const authRoutes: RouteRecordRaw = {
       name: 'resetPassword',
       component: () => import('@/modules/auth/pages/ResetPasswordPage.vue'),
     },
-    {
-      path: 'resend-email',
-      name: 'resendEmail',
-      component: () => import('@/modules/auth/pages/ResendEmailVerificationPage.vue'),
-    },
   ],
 }

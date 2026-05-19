@@ -45,6 +45,12 @@
 }
 
 @layer base {
+  html,
+  body,
+  #app {
+    height: 100%;
+  }
+
   /* Toastify - tema claro */
   .Toastify__toast-theme--light {
     background-color: rgb(238, 239, 239) !important;
