@@ -3,12 +3,12 @@ import type { RouteRecordRaw } from 'vue-router'
 
 export const contentItemRoutes: RouteRecordRaw = {
   path: '/content-items',
-  name: 'content-items',
   beforeEnter: [isAuthenticatedGuard],
   component: () => import('@/modules/content-items/layouts/ContentItemLayout.vue'),
   children: [
     {
       path: '',
+      name: 'content-items',
       redirect: { name: 'content-item-list' },
     },
     {
