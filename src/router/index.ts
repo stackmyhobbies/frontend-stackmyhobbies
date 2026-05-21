@@ -10,12 +10,23 @@ const router = createRouter({
       redirect: { name: 'signIn' },
     },
     {
-      path: '/reset-password',
-      name: 'resetPasswordDirect',
+      path: '/resend-verification',
       component: () => import('@/modules/auth/layouts/AuthLayout.vue'),
       children: [
         {
           path: '',
+          name: 'resendEmail',
+          component: () => import('@/modules/auth/pages/ResendEmailVerificationPage.vue'),
+        },
+      ],
+    },
+    {
+      path: '/reset-password',
+      component: () => import('@/modules/auth/layouts/AuthLayout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'resetPasswordDirect',
           component: () => import('@/modules/auth/pages/ResetPasswordPage.vue'),
         },
       ],

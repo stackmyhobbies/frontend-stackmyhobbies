@@ -131,7 +131,7 @@ export const BaseContentItem = z.object({
     validDateString.nullable().optional(),
   ),
 
-  rating: z.number().min(0).max(5),
+  rating: z.number().min(1).max(5),
 
   tags: z
     .array(

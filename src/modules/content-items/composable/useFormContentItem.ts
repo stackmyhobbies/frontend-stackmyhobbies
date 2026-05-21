@@ -55,6 +55,8 @@ export const useFormContentItem = (initialData?: any) => {
       if (!newData) return
       const hobbyData = newData.data || newData
       isResetting.value = true
+
+      console.log()
       resetForm({
         values: {
           title: hobbyData.title || '',
@@ -75,7 +77,7 @@ export const useFormContentItem = (initialData?: any) => {
           viewing_finished_at: hobbyData.viewing_finished_at || null,
           aired_from: hobbyData.aired_from || null,
           aired_to: hobbyData.aired_to || null,
-          rating: (hobbyData.rating >= 5.0 && 5.0) || 1.0,
+          rating: Number(hobbyData.rating) >= 1.0 ? Number(hobbyData.rating) : 1.0,
           day_of_week: hobbyData.day_of_week || null,
           tags: hobbyData.tags || [],
         },
@@ -111,6 +113,7 @@ export const useFormContentItem = (initialData?: any) => {
     console.log('Formulario válido:', formValues)
     console.log('Deberia enviar un submit')
     const tags = formValues.tags.map((tag) => tag.id)
+    const rating = Number(formValues.rating).toFixed(1)
 
     const successMessage = isEdit.value
       ? 'hobby actualizado exitosamente'
@@ -121,7 +124,7 @@ export const useFormContentItem = (initialData?: any) => {
       ? () =>
           updateMutate(
             {
-              payload: { ...formValues, tags },
+              payload: { ...formValues, tags, rating },
               id: contentItemId.value!,
             },
             {
@@ -147,7 +150,7 @@ export const useFormContentItem = (initialData?: any) => {
           )
       : () =>
           createMutate(
-            { ...formValues, tags },
+            { ...formValues, tags, rating },
             {
               onSuccess: (data) => {
                 if (!data.success && data.errors) {

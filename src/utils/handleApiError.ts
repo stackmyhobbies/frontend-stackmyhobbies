@@ -21,7 +21,7 @@ export function handleApiError(
         success: false,
         message: 'La solicitud tardó demasiado. Verifica tu conexión.',
         errors: {},
-        data: [],
+        data: undefined,
       }
     }
 
@@ -34,9 +34,9 @@ export function handleApiError(
 
       return {
         success: false,
-        message: firstErrorMsg, // muestra el primer error legible
+        message: firstErrorMsg,
         errors: data.errors || {},
-        data: data.data || [],
+        data: data.data,
       }
     }
 
@@ -44,7 +44,7 @@ export function handleApiError(
       success: false,
       message: data?.message ?? axiosMessage,
       errors: data?.errors || {},
-      data: data.data || [],
+      data: data.data,
     }
   }
 

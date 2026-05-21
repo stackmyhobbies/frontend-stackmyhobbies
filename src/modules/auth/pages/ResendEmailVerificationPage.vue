@@ -3,7 +3,7 @@
     <header-form
       :url="reSendEmailImage"
       alt="icon_resend_email"
-      text_title="ResendEmail"
+      text_title="Reenviar verificación"
     />
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -14,24 +14,47 @@
         @submit.prevent="onResendEmailVerification"
       >
         <div>
+          <label
+            for="email"
+            class="block text-sm/6 font-medium text-base-content"
+          >Correo electrónico</label>
+          <div class="mt-2">
+            <input
+              id="email"
+              v-model="emailInput"
+              type="email"
+              name="email"
+              autocomplete="email"
+              required
+              :placeholder="emailInput ? '' : 'tu@correo.com'"
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+            />
+          </div>
+        </div>
+
+        <div>
           <button
             type="submit"
+            :disabled="!emailInput"
             :class="[
-              'flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white bg-indigo-500 hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all',
+              'flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all',
+              emailInput
+                ? 'bg-indigo-500 hover:bg-indigo-400'
+                : 'bg-gray-400 cursor-not-allowed opacity-70',
             ]"
           >
-            Reset Resend email
+            Reenviar correo de verificación
           </button>
         </div>
       </form>
 
       <p class="mt-10 text-center text-sm/6 text-base-content">
-        Do you have an account?
+        ¿Ya tienes cuenta?
         <router-link
           :to="{ name: 'signIn' }"
           class="font-semibold text-indigo-400 hover:text-indigo-300"
         >
-          Sign In
+          Iniciar sesión
         </router-link>
       </p>
     </div>
@@ -39,34 +62,44 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { toast } from 'vue3-toastify'
+import { computed, ref, watchEffect } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
 import HeaderForm from '../components/HeaderForm.vue'
 import reSendEmailImage from '../../../assets/images/resend_email.webp'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useToast } from '@/shared/composables/useToast'
 
-const authStore = useAuthStore()
+const toast = useToast()
 const router = useRouter()
+const route = useRoute()
+const authStore = useAuthStore()
 
-const email = computed(() => authStore.user?.email)
+const emailInput = ref('')
+
+const emailFromStore = computed(() => authStore.user?.email ?? '')
+
+watchEffect(() => {
+  const emailParam = route.query?.email as string | undefined
+  if (emailParam) {
+    emailInput.value = emailParam
+  } else if (emailFromStore.value) {
+    emailInput.value = emailFromStore.value
+  }
+})
 
 const onResendEmailVerification = async () => {
-  const response = await authStore.resendEmail(email.value!)
+  if (!emailInput.value) return
+
+  const response = await authStore.resendEmail(emailInput.value)
 
   if (!response.success) {
-    toast.error('Error al reenviar el correo de validación', {
-      position: toast.POSITION.BOTTOM_RIGHT,
-      toastClassName: 'custom-error-toast',
-    })
+    toast.error('Error al reenviar el correo de verificación')
     return
   }
 
-  toast.success('Correo de verificación reenviado', {
-    position: toast.POSITION.BOTTOM_RIGHT,
-  })
+  toast.success('Correo de verificación reenviado. Revisa tu bandeja de entrada.')
 
-  router.push({ name: 'signIn', query: { from: 'resend-email' } })
+  router.push({ name: 'signIn', query: { from: 'resend-email', email: emailInput.value } })
 }
 </script>
 
