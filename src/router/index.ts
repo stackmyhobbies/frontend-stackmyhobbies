@@ -31,6 +31,17 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: '/auth/verify-email',
+      component: () => import('@/modules/auth/layouts/AuthLayout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'verifyEmail',
+          component: () => import('@/modules/auth/pages/VerifyEmailPage.vue'),
+        },
+      ],
+    },
     authRoutes,
     contentItemRoutes,
   ],
