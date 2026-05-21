@@ -1,6 +1,6 @@
 <template>
   <div class="drawer-content">
-    <div class="grid grid-cols-1 grid-rows-[auto_1fr_auto] min-h-screen">
+    <div class="grid grid-cols-1 grid-rows-[auto_1fr_auto] h-[100dvh]">
       <nav class="navbar w-full bg-base-300 flex flex-row items-center justify-between p-3">
         <!-- Botón móvil -->
         <menu-mobile />
@@ -32,7 +32,7 @@ Add icon
 </button-custom> -->
       </nav>
 
-      <div class="p-4 px-0">
+      <div class="p-4 px-0 h-full overflow-hidden">
         <router-view />
       </div>
 

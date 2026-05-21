@@ -12,10 +12,11 @@ export interface filterProps {
 
 export const getContentItemsAction = async (
   pageCurrent: number,
+  per_page: number,
   filters?: filterProps,
 ): Promise<ContentItemListResponse | ErrorResponse> => {
   try {
-    const params: Record<string, unknown> = { per_page: 6, page: pageCurrent }
+    const params: Record<string, unknown> = { per_page: per_page, page: pageCurrent }
     if (filters?.search) params.search = filters.search
     if (filters?.tags?.length) params.tags = filters.tags.join(',')
     if (filters?.content_type?.length) params.content_type = filters.content_type.join(',')

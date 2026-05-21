@@ -8,6 +8,10 @@ export const contentItemRoutes: RouteRecordRaw = {
   component: () => import('@/modules/content-items/layouts/ContentItemLayout.vue'),
   children: [
     {
+      path: '',
+      redirect: { name: 'content-item-list' },
+    },
+    {
       path: 'list',
       name: 'content-item-list',
       component: () => import('@/modules/content-items/pages/ListPage.vue'),
@@ -23,7 +27,7 @@ export const contentItemRoutes: RouteRecordRaw = {
       component: () => import('@/modules/content-items/pages/EditPage.vue'),
     },
     {
-      path: '**',
+      path: ':pathMatch(.*)*',
       redirect: { name: 'content-item-list' },
     },
   ],

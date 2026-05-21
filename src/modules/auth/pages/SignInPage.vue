@@ -166,11 +166,11 @@ const onSignIn = async () => {
   console.log(response)
 
   if (!response.success) {
-    // Si es emailPending, mostrar toast pero dejar que el guard maneje la redirección
     if ('emailPending' in response && response.emailPending) {
       toast.error(response.message)
+      router.push({ name: 'resendEmail', query: { email: signInForm.login } })
+      return
     } else {
-      // Error real de credenciales
       toast.error(response.message)
       return
     }

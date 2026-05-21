@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isChecking = computed(() => authStatus.value === AuthStatus.CHECKING)
   const isAuthenticated = computed(() => authStatus.value === AuthStatus.AUTHENTICATED)
   const isUnAuthenticated = computed(() => authStatus.value === AuthStatus.UNAUTHENTICATED)
+  const isUnverified = computed(() => authStatus.value === AuthStatus.UNVERIFIED)
   const isAdmin = computed(() => !!user.value?.is_admin)
   const isVerified = computed(() => !!user.value?.email_verified_at)
 
@@ -36,11 +37,10 @@ export const useAuthStore = defineStore('auth', () => {
     const resp = await signInAction(login, password)
 
     if (!resp.success && !resp.data) {
-      return signOut(resp.message)
+      signOut()
+      return { success: false, message: resp.message }
     }
 
-    // Si la API responde SUCCESS = false
-    // ⚠️ Caso 2: email no verificado
     if (!resp.success && resp.data) {
       const { user: userData, token: apiToken } = resp.data
 
@@ -57,7 +57,6 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
 
-    // ✅ Caso 3: login correcto
     if (resp.success) {
       const { user: userData, token: apiToken } = resp.data
 
@@ -68,7 +67,8 @@ export const useAuthStore = defineStore('auth', () => {
       return { success: true, message: 'Inicio de sesión exitoso' }
     }
 
-    return signOut('Error inesperado')
+    signOut()
+    return { success: false, message: 'Error inesperado' }
   }
 
   const signUp = async (userRegister: AuthRegister) => {
@@ -91,12 +91,20 @@ export const useAuthStore = defineStore('auth', () => {
   const checkAuthStatus = async (): Promise<boolean> => {
     const resp = await checkAuthStatusAction()
 
-    if (!resp.success || !resp.data?.user) {
+    if (!resp?.success || !resp?.data?.user) {
       signOut()
       return false
     }
 
-    user.value = resp.data.user
+    const userData = resp.data.user
+
+    if (!userData.email_verified_at) {
+      signOut()
+      authStatus.value = AuthStatus.UNVERIFIED
+      return false
+    }
+
+    user.value = userData
     authStatus.value = AuthStatus.AUTHENTICATED
 
     return true
@@ -130,6 +138,7 @@ export const useAuthStore = defineStore('auth', () => {
     isChecking,
     isAuthenticated,
     isUnAuthenticated,
+    isUnverified,
     isVerified,
     username,
 

@@ -8,7 +8,7 @@ import {
   ComboboxButton,
   TransitionRoot,
 } from '@headlessui/vue'
-import { useElementBounding } from '@vueuse/core'
+import { useFloating, autoUpdate, flip, shift, offset, size } from '@floating-ui/vue'
 import AppBadge from '@shared-components/AppBagde.vue'
 import { getBadgeColor } from '../../utils/badgeColor'
 
@@ -61,10 +61,28 @@ const resolvedFocusRingClass = computed(() => props.focusRingClass ?? 'border bo
 -------------------------------------------------------------------*/
 const query = ref('')
 const inputRef = ref<any>(null)
-const containerRef = ref(null)
 const toggleBtnRef = ref<any>(null)
 
-const { x, y, width, height } = useElementBounding(containerRef)
+const referenceRef = ref<HTMLElement | null>(null)
+const floatingRef = ref<HTMLElement | null>(null)
+
+const { floatingStyles, isPositioned } = useFloating(referenceRef, floatingRef, {
+  strategy: 'fixed',
+  placement: 'bottom-start',
+  middleware: [
+    offset(4),
+    flip(),
+    shift({ padding: 8 }),
+    size({
+      apply({ rects, elements }) {
+        Object.assign(elements.floating.style, {
+          width: `${rects.reference.width}px`,
+        })
+      },
+    }),
+  ],
+  whileElementsMounted: autoUpdate,
+})
 
 /* ------------------------------------------------------------------
    🔵 4. selectedItems usando defineModel<T[]>
@@ -133,11 +151,11 @@ defineOptions({ inheritAttrs: false })
     >
       <div
         class="relative"
-        ref="containerRef"
+        ref="referenceRef"
       >
         <!-- WRAPPER -->
         <div
-          @click="handleContainerClick"
+          @click.stop="handleContainerClick"
           class="group relative w-full flex flex-wrap gap-2 p-2 pr-10 min-h-[44px] rounded-lg transition-all cursor-text"
           :class="[containerClass, resolvedFocusRingClass]"
         >
@@ -172,6 +190,7 @@ defineOptions({ inheritAttrs: false })
           <!-- TOGGLE BUTTON -->
           <ComboboxButton
             ref="toggleBtnRef"
+            type="button"
             class="absolute inset-y-0 right-0 flex items-center pr-2 z-50"
             @click.stop
           >
@@ -202,13 +221,10 @@ defineOptions({ inheritAttrs: false })
         <Teleport to="body">
           <TransitionRoot :show="open">
             <ComboboxOptions
+              ref="floatingRef"
+              v-show="isPositioned"
+              :style="floatingStyles"
               static
-              :style="{
-                position: 'fixed',
-                top: `${y + height + 4}px`,
-                left: `${x}px`,
-                width: `${width}px`,
-              }"
               class="z-[9999] max-h-48 overflow-auto rounded-xl bg-base-100 border border-gray-700 py-1 shadow-2xl sm:text-sm"
             >
               <div

@@ -22,6 +22,6 @@ export interface createContentItemDto {
   total_progress: number
   progress_unit: string
   notes?: string
-  rating: number
+  rating: number | string
   tags: string[] | number[]
 }
