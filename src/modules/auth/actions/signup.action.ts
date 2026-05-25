@@ -5,9 +5,15 @@ import { handleApiError } from '@/utils/handleApiError'
 
 export const signUpAction = async (userRegister: AuthRegister): Promise<AuthResponse> => {
   try {
-    const { data } = await stackMyHobbiesApi.post<AuthResponse>('/auth/sign-up', {
-      ...userRegister,
-    })
+    const { data } = await stackMyHobbiesApi.post<AuthResponse>(
+      '/auth/sign-up',
+      {
+        ...userRegister,
+      },
+      {
+        timeout: 60000,
+      },
+    )
 
     console.log(data)
     return data
