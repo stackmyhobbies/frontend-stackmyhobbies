@@ -183,12 +183,12 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
-import { toast } from 'vue3-toastify'
 
 import { useRouter } from 'vue-router'
 import HeaderForm from '../components/HeaderForm.vue'
 
 import signUpImage from '@/assets/images/sign-up.webp'
+import { useToast } from '@/shared/composables/useToast'
 
 interface SignUpFormInterface {
   username: string
@@ -197,6 +197,8 @@ interface SignUpFormInterface {
   last_name: string
   email: string
 }
+
+const toast = useToast()
 
 const signUpForm = reactive<SignUpFormInterface>({
   username: 'john',
@@ -269,27 +271,26 @@ const onSignUp = async () => {
 
   if (!success) {
     if (errors?.username) {
-      toast.error('El usuario ya ha sido registrado', {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        toastClassName: 'custom-error-toast',
-      })
+      toast.error('El usuario ya ha sido registro', toast.toastOptions.POSITION.BOTTOM_RIGHT)
+
       return
     }
 
     if (errors?.email) {
-      toast.error('El correo electronico ya han sido registrado', {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        toastClassName: 'custom-error-toast',
-      })
+      toast.error(
+        'El correo electronico ya han sido registrado',
+        toast.toastOptions.POSITION.BOTTOM_RIGHT,
+      )
       return
     }
 
     return
   }
 
-  toast.success('¡Registro exitoso!\nConfirma tu cuenta desde el correo que te enviamos.', {
-    position: toast.POSITION.TOP_CENTER,
-  })
+  toast.success(
+    '¡Registro exitoso!\nConfirma tu cuenta desde el correo que te enviamos.',
+    toast.toastOptions.POSITION.TOP_CENTER,
+  )
 
   router.push({ name: 'signIn', query: { email: data?.email } })
   console.log('Formulario válido ✅', { ...signUpForm })

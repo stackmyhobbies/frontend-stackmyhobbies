@@ -1,6 +1,6 @@
 <template>
   <div class="drawer-content">
-    <div class="grid grid-cols-1 grid-rows-[auto_1fr_auto] h-[100dvh]">
+      <div class="grid grid-cols-1 grid-rows-[auto_1fr_auto] h-[100dvh]">
       <nav class="navbar w-full bg-base-300 flex flex-row items-center justify-between p-3">
         <!-- Botón móvil -->
         <menu-mobile />
@@ -32,7 +32,7 @@ Add icon
 </button-custom> -->
       </nav>
 
-      <div class="p-4 px-0 h-full overflow-hidden">
+      <div :class="twMerge('p-4 px-0 h-full overflow-y-auto', is_content_item_list ? 'overflow-hidden' : '')">
         <router-view />
       </div>
 
@@ -76,6 +76,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useToggleStore } from '@/stores/toggle'
 import { RouterLink } from 'vue-router'
 import BackIcon from '@/shared/icons/svg/BackIcon.vue'
+
+import { twMerge } from 'tailwind-merge'
 
 const emits = defineEmits<{ (e: 'toggleCollapsed'): void }>()
 const toggleStore = useToggleStore()
