@@ -88,7 +88,7 @@
               select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
               select-container-option-class="bg-cyan-500/10 text-cyan-400"
               selected-text="text-cyan-500"
-              label="Subtype"
+              label="Medida específica"
               labelFor="segment_subtype"
               :items="allowedSubsegmentType"
               v-model="segment_subtype"
@@ -100,7 +100,7 @@
           <div class="col-span-12 md:col-span-6">
             <AppInput
               input-class="bg-base-100 focus:outline-cyan-500"
-              label="Segment SubNumber"
+              label="Número"
               type="number"
               inputmode="numeric"
               pattern="[0-9]*"
@@ -115,7 +115,7 @@
 
         <div class="col-span-12">
           <label class="label"
-            ><span class="label-text text-base-content/60">Description</span></label
+            ><span class="label-text text-base-content/60">Descripción</span></label
           >
           <textarea
             v-model="description"

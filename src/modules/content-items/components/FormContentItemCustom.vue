@@ -60,7 +60,6 @@ const { data: contentItemData, isPlaceholderData } = useGetContentItemQuery(
   () => props.idOrSlug?.toString() ?? '',
   { enabled: canFetch }, // <-- Pasamos el booleano reactivo aquí
 )
-console.log({ contentItemDataShow: contentItemData.value })
 
 const {
   handleSubmit,
@@ -101,13 +100,19 @@ const [tags, tagsAttrs] = defineField('tags')
 const [day_of_week, day_of_weekAttrs] = defineField('day_of_week')
 const [image, imageAttrs] = defineField('image')
 
+// Computed wrappers que leen directamente de `values` (reactive proxy)
+// Esto evita el desfase de sincronización de los ModelRef de VeeValidate
+const contentTypeIdValue = computed(() => values.content_type_id)
+const currentProgressValue = computed(() => values.current_progress)
+const totalProgressValue = computed(() => values.total_progress)
+
 const {
   progressPercent,
   allowedSegmentType,
   allowedSubsegmentType,
   allowedUnits,
   selectedTypeData,
-} = useContentTypeCalculations(data, values)
+} = useContentTypeCalculations(data, contentTypeIdValue, currentProgressValue, totalProgressValue)
 
 const selectedProgressStatus = computed<ProgressStatus | null>(() => {
   if (!progressStatuses.value || !values.progress_status_id) return null
@@ -115,13 +120,21 @@ const selectedProgressStatus = computed<ProgressStatus | null>(() => {
 })
 
 const AIRED_STATUSES = ['en emisión', 'finalizado', 'abandonado']
-const CONTENT_TYPE_HOBBY = ['anime', 'serie']
+const CONTENT_TYPE_HOBBY = ['anime', 'serie', 'manga', 'manhwa']
 
 const showAiredFields = computed(
   () =>
-    AIRED_STATUSES.includes(selectedProgressStatus.value?.name ?? '') &&
-    CONTENT_TYPE_HOBBY.includes(selectedTypeData.value?.name ?? ''),
+    AIRED_STATUSES.includes(selectedProgressStatus.value?.name?.toLowerCase() ?? '') &&
+    CONTENT_TYPE_HOBBY.includes(selectedTypeData.value?.name?.toLowerCase() ?? ''),
 )
+
+watch([showAiredFields, selectedProgressStatus, selectedTypeData], ([showVal, statusVal, typeVal]) => {
+  console.warn('[DEBUG showAiredFields]', showVal, {
+    progressStatusName: statusVal?.name,
+    typeName: typeVal?.name,
+    contentTypeId: values.content_type_id,
+  })
+}, { immediate: true })
 
 const { previewUrl, dropError, handleImageUpload, setFileFromDrop } = useImagePreview(
   computed(() => values.image),
@@ -288,7 +301,7 @@ const onDrop = (event: DragEvent) => {
             <div
               class="collapse-title text-cyan-500 font-bold uppercase tracking-widest text-sm md:pointer-events-none"
             >
-              Métricas de Progreso
+              Tu Progreso
             </div>
             <div class="collapse-content">
               <ProgressMetricsSection
@@ -301,13 +314,18 @@ const onDrop = (event: DragEvent) => {
                 v-model:progress_unit="progress_unit"
                 v-model:day_of_week="day_of_week"
                 v-model:progress_status_id="progress_status_id"
+                v-model:aired_from="aired_from"
+                v-model:aired_to="aired_to"
                 :current_progressAttrs="current_progressAttrs"
                 :progress_status_idAttrs="progress_status_idAttrs"
                 :total_progressAttrs="total_progressAttrs"
                 :progress_unitAttrs="progress_unitAttrs"
                 :day_of_weekAttrs="day_of_weekAttrs"
+                :aired_fromAttrs="aired_fromAttrs"
+                :aired_toAttrs="aired_toAttrs"
                 :errors="errors"
                 :crossFieldError="crossFieldError"
+                :showAiredFields="showAiredFields"
               />
             </div>
           </div>
@@ -322,26 +340,21 @@ const onDrop = (event: DragEvent) => {
             <div
               class="collapse-title text-cyan-500 font-bold uppercase tracking-widest text-sm md:pointer-events-none"
             >
-              Evaluación y Registro
+              Tu Opinión
             </div>
             <div class="collapse-content">
               <EvaluationSection
                 v-model:viewing_started_at="viewing_started_at"
                 v-model:viewing_finished_at="viewing_finished_at"
-                v-model:aired_from="aired_from"
-                v-model:aired_to="aired_to"
                 v-model:rating="rating"
                 v-model:notes="notes"
                 v-model:tags="tags"
                 :viewing_started_atAttrs="viewing_started_atAttrs"
                 :viewing_finished_atAttrs="viewing_finished_atAttrs"
-                :aired_fromAttrs="aired_fromAttrs"
-                :aired_toAttrs="aired_toAttrs"
                 :ratingAttrs="ratingAttrs"
                 :notesAttrs="notesAttrs"
                 :tagsAttrs="tagsAttrs"
                 :errors="errors"
-                :showAiredFields="showAiredFields"
                 :data_tags="data_tags"
               />
             </div>

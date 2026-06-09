@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppSelect from '@shared-components/AppSelect.vue'
 import AppInput from '@shared-components/AppInput.vue'
+import AppDatePicker from '@shared-components/AppDatePicker.vue'
 import { DayOfWeekValues } from '@/modules/content-items/enum/dayOfWeek.enum'
 import type { ProgressStatus } from '../../interfaces/contentItemListResponse'
 import type { ProgressUnit } from '../../enum/progressUnit.enum'
@@ -14,6 +15,8 @@ const current_progress = defineModel<number | undefined>('current_progress')
 const total_progress = defineModel<number | undefined>('total_progress')
 const progress_unit = defineModel<ProgressUnit | string | undefined>('progress_unit')
 const day_of_week = defineModel<DayOfWeek | string | null | undefined>('day_of_week')
+const aired_from = defineModel<string | null | unknown>('aired_from')
+const aired_to = defineModel<string | null | unknown>('aired_to')
 
 const props = defineProps<{
   progressStatuses: ProgressStatus[] | null | undefined
@@ -25,28 +28,36 @@ const props = defineProps<{
   total_progressAttrs: BaseFieldProps & GenericObject
   progress_unitAttrs: BaseFieldProps & GenericObject
   day_of_weekAttrs: BaseFieldProps & GenericObject
+  aired_fromAttrs: BaseFieldProps & GenericObject
+  aired_toAttrs: BaseFieldProps & GenericObject
   errors?: Partial<Record<string, string | undefined>>
   crossFieldError: string | undefined
+  showAiredFields: boolean
 }>()
 
 const { t } = useI18n({ useScope: 'global' })
 
 const showDayOfWeek = computed(() => {
   return (
-    props.selectedProgressStatus?.name === 'en emisión' ||
-    props.selectedProgressStatus?.name === 'viendo'
+    props.selectedProgressStatus?.name?.toLowerCase() === 'en emisión' ||
+    props.selectedProgressStatus?.name?.toLowerCase() === 'viendo'
   )
+})
+
+const isCurrentlyAiring = computed(() => {
+  return props.selectedProgressStatus?.name?.toLowerCase() === 'en emisión'
 })
 </script>
 
 <template>
   <div class="grid grid-cols-12 gap-4 pt-2">
+    <!-- Fila 1: Estado y Día de emisión -->
     <div class="col-span-12 md:col-span-6">
       <AppSelect
         select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
         select-container-option-class="bg-cyan-500/10 text-cyan-400"
         selected-text="text-cyan-500"
-        label="Progress Status"
+        label="Estado actual"
         :items="progressStatuses || []"
         labelFor="progress_status_id"
         v-model="progress_status_id"
@@ -55,7 +66,6 @@ const showDayOfWeek = computed(() => {
       >
       </AppSelect>
     </div>
-    <!-- Day of the week for emission-->
     <div
       v-if="showDayOfWeek"
       class="col-span-12 md:col-span-6"
@@ -64,7 +74,7 @@ const showDayOfWeek = computed(() => {
         select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
         select-container-option-class="bg-cyan-500/10 text-cyan-400"
         selected-text="text-cyan-500"
-        :label="t('contentItem.form_content_item.release_date')"
+        label="Día de emisión"
         :items="
           Object.entries(DayOfWeekValues).map(([key, value]) => ({
             id: value,
@@ -79,11 +89,43 @@ const showDayOfWeek = computed(() => {
       ></AppSelect>
     </div>
 
-    <!-- Current progress of the project -->
+    <!-- Fila 2: Fechas de emisión (metadatos de la obra) -->
+    <div
+      v-if="showAiredFields"
+      class="col-span-12 md:col-span-6"
+    >
+      <AppDatePicker
+        id="aired_from"
+        label="Fecha de estreno"
+        v-model="aired_from"
+        v-bind="aired_fromAttrs"
+        :error="errors?.aired_from"
+      />
+    </div>
+    <div
+      v-if="showAiredFields && !isCurrentlyAiring"
+      class="col-span-12 md:col-span-6"
+    >
+      <AppDatePicker
+        id="aired_to"
+        label="Fin de emisión"
+        v-model="aired_to"
+        v-bind="aired_toAttrs"
+        :error="errors?.aired_to"
+      />
+    </div>
+    <div
+      v-if="showAiredFields && isCurrentlyAiring"
+      class="col-span-12 md:col-span-6 flex items-center"
+    >
+      <span class="badge badge-info badge-soft">En emisión</span>
+    </div>
+
+    <!-- Fila 3: Progreso actual y Total -->
     <div class="col-span-12 md:col-span-6">
       <AppInput
         input-class="bg-base-100 focus:outline-cyan-500"
-        label="Current Progress"
+        label="Progreso actual"
         type="number"
         labelFor="current_progress"
         v-model="current_progress"
@@ -94,7 +136,7 @@ const showDayOfWeek = computed(() => {
     <div class="col-span-12 md:col-span-6">
       <AppInput
         input-class="bg-base-100 focus:outline-cyan-500"
-        label="Total Progress"
+        label="Total de la unidad"
         type="number"
         labelFor="total_progress"
         v-model="total_progress"
@@ -102,9 +144,11 @@ const showDayOfWeek = computed(() => {
         :error="errors?.total_progress"
       />
     </div>
+
+    <!-- Fila 4: Unidad de medida -->
     <div class="col-span-12 md:col-span-6">
       <AppSelect
-        label="Progress Unit"
+        label="Unidad de medida"
         select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
         select-container-option-class="bg-cyan-500/10 text-cyan-400"
         selected-text="text-cyan-500"
@@ -123,6 +167,8 @@ const showDayOfWeek = computed(() => {
         </option>
       </AppSelect>
     </div>
+
+    <!-- Fila 5: Barra de progreso -->
     <div class="col-span-12 flex items-center gap-3 mt-2">
       <progress
         class="progress progress-info flex-1 h-2"
