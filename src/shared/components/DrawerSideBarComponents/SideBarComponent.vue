@@ -2,7 +2,7 @@
   <div class="drawer-side">
     <label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
-    <div class="flex min-h-full flex-col items-start bg-base-200 relative overflow-hidden" :style="{
+    <div class="flex min-h-full flex-col items-start bg-base-200 relative lg:overflow-hidden" :style="{
       width: width + 'px',
       transition: animating && !isDragging ? 'width 0.15s ease-out' : 'none',
     }">
@@ -12,7 +12,7 @@
         <li>
           <button class="flex items-center gap-3 tooltip tooltip-right" :data-tip="isNarrow ? 'Home' : ''">
             <span class="w-6 h-6 flex items-center justify-center">🏠</span>
-            <span v-if="!isNarrow">Home</span>
+            <span :class="{ 'invisible': isNarrow }">Home</span>
           </button>
         </li>
 
@@ -20,7 +20,7 @@
         <li>
           <button class="flex items-center gap-3 tooltip tooltip-right" :data-tip="isNarrow ? 'Settings' : ''">
             <span class="w-6 h-6 flex items-center justify-center">⚙️</span>
-            <span v-if="!isNarrow">Settings</span>
+            <span :class="{ 'invisible': isNarrow }">Settings</span>
           </button>
         </li>
       </ul>
@@ -28,8 +28,9 @@
       <button type="button" class="btn btn-outline-primary" @click="onSignOut">salir</button>
 
       <!-- BOTÓN MANUAL -->
-      <button class="btn btn-sm m-2" @click="toggleCollapsed">
-        {{ isNarrow ? 'Expandir' : 'Colapsar' }}
+      <button class="btn btn-sm m-2 relative min-w-[72px]" @click="toggleCollapsed">
+        <span class="absolute inset-0 flex items-center justify-center" :class="{ 'invisible': !isNarrow }">Expandir</span>
+        <span class="absolute inset-0 flex items-center justify-center" :class="{ 'invisible': isNarrow }">Colapsar</span>
       </button>
 
       <!-- HANDLE DRAG DESKTOP -->
