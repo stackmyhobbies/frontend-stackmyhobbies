@@ -5,6 +5,7 @@ const model = defineModel<number | string>({ default: '0.0' })
 
 interface Props {
   label?: string
+  labelFor?: string
   name: string
 }
 
@@ -14,6 +15,7 @@ defineProps<Props>()
 <template>
   <div class="form-control w-full">
     <label
+      :for="labelFor"
       v-if="label"
       class="label"
     >

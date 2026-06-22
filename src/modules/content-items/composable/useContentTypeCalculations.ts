@@ -1,20 +1,16 @@
 import { computed, type Ref } from 'vue'
 import type { Type } from '../interfaces/ContentTypeResponse'
 
-interface FormValues {
-  content_type_id?: number | string | null
-  total_progress?: number | null
-  current_progress?: number | null
-}
-
 export function useContentTypeCalculations(
   data: Ref<Type[] | undefined | null>,
-  values: FormValues,
+  content_type_id: Ref<number | string | null | undefined>,
+  current_progress: Ref<number | null | undefined>,
+  total_progress: Ref<number | null | undefined>,
 ) {
   // 1. Buscamos el tipo seleccionado basado en el ID
   const selectedTypeData = computed<Type | null>(() => {
-    if (!data.value || !values.content_type_id) return null
-    return data.value.find((t) => t.id === Number(values.content_type_id)) ?? null
+    if (!data.value || !content_type_id.value) return null
+    return data.value.find((t) => t.id === Number(content_type_id.value)) ?? null
   })
 
   // 2. Mapeo de propiedades del tipo seleccionado
@@ -30,9 +26,10 @@ export function useContentTypeCalculations(
 
   // 3. Cálculo de progreso (Lógica de negocio)
   const progressPercent = computed<number>(() => {
-    if (!values.total_progress || values.total_progress === 0) return 0
-    const current = values.current_progress ?? 0
-    return Math.round((current / values.total_progress) * 100)
+    const total = total_progress.value
+    if (!total || total === 0) return 0
+    const current = current_progress.value ?? 0
+    return Math.round((current / total) * 100)
   })
 
   return {

@@ -24,6 +24,8 @@ const model = defineModel<T[]>({
    🔵 2. Props tipadas
 -------------------------------------------------------------------*/
 const props = defineProps<{
+  labelFor?: string
+  label?: string
   items: T[]
   placeholder?: string
   displayKey?: keyof T
@@ -142,6 +144,14 @@ defineOptions({ inheritAttrs: false })
 
 <template>
   <div class="w-full">
+    <label
+      :for="labelFor"
+      v-if="label"
+      class="label"
+    >
+      <span class="label-text font-medium text-base-content/60">{{ label }}</span>
+    </label>
+
     <Combobox
       v-model="selectedItems"
       multiple
@@ -172,7 +182,12 @@ defineOptions({ inheritAttrs: false })
               :variant="badgeVariant"
             >
               {{ item[displayKey] }}
-              <button type="button" @click.stop.prevent="removeItem(item)">×</button>
+              <button
+                type="button"
+                @click.stop.prevent="removeItem(item)"
+              >
+                ×
+              </button>
             </AppBadge>
           </TransitionGroup>
 

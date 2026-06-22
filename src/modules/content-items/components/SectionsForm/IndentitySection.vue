@@ -9,14 +9,14 @@
     <div
       class="collapse-title text-cyan-500 font-bold uppercase tracking-widest text-sm md:pointer-events-none"
     >
-      Identidad y Ubicación
+      ¿Qué estás siguiendo?
     </div>
     <div class="collapse-content">
       <div class="grid grid-cols-12 gap-4 pt-2">
         <div class="col-span-12 md:col-span-6">
           <AppInput
             input-class="bg-base-100 focus:outline-cyan-500"
-            label="Title"
+            label="Título"
             placeholder="Ej: Naruto"
             labelFor="title"
             v-model="title"
@@ -29,7 +29,7 @@
             select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
             select-container-option-class="bg-cyan-500/10 text-cyan-400"
             selected-text="text-cyan-500"
-            label="Content Type"
+            label="Tipo de Contenido"
             display-key="name"
             :items="type || []"
             labelFor="content_type_id"
@@ -48,7 +48,7 @@
               select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
               select-container-option-class="bg-cyan-500/10 text-cyan-400"
               selected-text="text-cyan-500"
-              label="Segment Type"
+              label="Se divide en"
               :items="allowedSegmentType"
               labelFor="segment_type"
               v-model="segment_type"
@@ -60,7 +60,7 @@
           <div class="col-span-12 md:col-span-6">
             <AppInput
               input-class="bg-base-100 focus:outline-cyan-500"
-              label="Number"
+              label="Número"
               type="number"
               labelFor="segment_number"
               v-model="segment_number!"
@@ -88,7 +88,7 @@
               select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
               select-container-option-class="bg-cyan-500/10 text-cyan-400"
               selected-text="text-cyan-500"
-              label="Subtype"
+              label="Medida específica"
               labelFor="segment_subtype"
               :items="allowedSubsegmentType"
               v-model="segment_subtype"
@@ -100,7 +100,7 @@
           <div class="col-span-12 md:col-span-6">
             <AppInput
               input-class="bg-base-100 focus:outline-cyan-500"
-              label="Segment SubNumber"
+              label="Número"
               type="number"
               inputmode="numeric"
               pattern="[0-9]*"
@@ -115,7 +115,7 @@
 
         <div class="col-span-12">
           <label class="label"
-            ><span class="label-text text-base-content/60">Description</span></label
+            ><span class="label-text text-base-content/60">Descripción</span></label
           >
           <textarea
             v-model="description"
@@ -137,6 +137,9 @@ import type { SubSegmentType } from '../../enum/subSegmentType.enum'
 import AppInput from '@/shared/components/AppInput.vue'
 import AppSelect from '@/shared/components/AppSelect.vue'
 
+//*
+/**TODO: Evaluar la posibilidad de hacer de manera dinamica
+ */
 // 1. Definimos los modelos (reemplazan a las props de valor)
 const title = defineModel<string>('title')
 const content_type_id = defineModel<number | null | undefined>('content_type_id')
