@@ -58,3 +58,49 @@ export function handleApiError(
 
   return { success: false, message: defaultMessage }
 }
+
+export class ApiError extends Error {
+  success = false
+  errors?: Record<string, string | string[] | undefined>
+  status?: number
+
+  constructor(message: string, errors?: Record<string, string | string[] | undefined>, status?: number) {
+    super(message)
+    this.name = 'ApiError'
+    this.errors = errors
+    this.status = status
+  }
+}
+
+export function throwApiError(
+  error: unknown,
+  axiosMessage = 'Error en la solicitud',
+  defaultMessage = 'Error desconocido',
+): never {
+  if (error instanceof ApiError) {
+    throw error
+  }
+
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data as any
+    const status = error.response?.status
+
+    if (error.code === 'ECONNABORTED') {
+      throw new ApiError('La solicitud tardó demasiado. Verifica tu conexión.', {}, undefined)
+    }
+
+    if (data?.errors) {
+      const firstErrorKey = Object.keys(data.errors)[0]
+      const message = data.message || (data.errors[firstErrorKey]?.[0] ?? axiosMessage)
+      throw new ApiError(message, data.errors || {}, status)
+    }
+
+    throw new ApiError(data?.message ?? axiosMessage, data?.errors || {}, status)
+  }
+
+  if (error instanceof Error) {
+    throw new ApiError(error.message || defaultMessage)
+  }
+
+  throw new ApiError(defaultMessage)
+}

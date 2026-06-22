@@ -6,11 +6,7 @@ export const useGetContentTypesQuery = () => {
     queryKey: ['content-type'],
     queryFn: async (): Promise<Type[]> => {
       const response = await contentTypeAction()
-      // Mapeamos los items directamente desde el objeto data
-      if (!response.success) return []
-
       return response.data
     },
-    // M
   })
 }

@@ -13,13 +13,7 @@ export const useGetContentItemQuery = (
 
     queryFn: async (): Promise<Hobby> => {
       const val = toValue(idOrSlug)
-      console.log(val)
       const response = await getContentItemAction(val)
-
-      if (!response.success) {
-        throw new Error('No se pudo cargar el hobby')
-      }
-
       return response.data
     },
     placeholderData: () => {

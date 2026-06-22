@@ -7,9 +7,6 @@ export const useProgressStatusesQuery = () => {
     queryKey: ['progress-statuses'],
     queryFn: async (): Promise<ProgressStatus[]> => {
       const response = await progressStatusAction()
-
-      if (!response.success) return []
-
       return response.data
     },
   })

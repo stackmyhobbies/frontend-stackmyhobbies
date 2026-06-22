@@ -6,6 +6,7 @@ import { usePutContentItemMutation } from '../mutations/usePutContentItemMutatio
 import { CreateContentItem } from '../schemas/content-item.schema'
 import { ref, watch, nextTick, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { ApiError } from '@/utils/handleApiError'
 
 export const useFormContentItem = (initialData?: any) => {
   const toast = useToast()
@@ -132,20 +133,18 @@ export const useFormContentItem = (initialData?: any) => {
             },
             {
               onSuccess: (data) => {
-                if (!data.success && data.errors) {
-                  const cleanErrors = formatBackendErrors(data.errors)
-                  setErrors(cleanErrors)
-                  toast.error(errorMessage)
-                  return
-                }
                 toast.success(successMessage)
-                const newSlug = (data.data as any)?.slug
+                const newSlug = data.data?.slug
                 if (newSlug) {
                   router.replace({ name: 'content-item-edit', params: { slug: newSlug } })
                 }
                 router.push({ name: 'content-item-list' })
               },
-              onError: () => {
+              onError: (error) => {
+                if (error instanceof ApiError && error.errors) {
+                  const cleanErrors = formatBackendErrors(error.errors)
+                  setErrors(cleanErrors)
+                }
                 toast.error(errorMessage)
               },
             },
@@ -155,16 +154,14 @@ export const useFormContentItem = (initialData?: any) => {
             { ...formValues, tags, rating },
             {
               onSuccess: (data) => {
-                if (!data.success && data.errors) {
-                  const cleanErrors = formatBackendErrors(data.errors)
-                  setErrors(cleanErrors)
-                  toast.error(errorMessage)
-                  return
-                }
                 toast.success(successMessage)
                 router.push({ name: 'content-item-list' })
               },
-              onError: () => {
+              onError: (error) => {
+                if (error instanceof ApiError && error.errors) {
+                  const cleanErrors = formatBackendErrors(error.errors)
+                  setErrors(cleanErrors)
+                }
                 toast.error(errorMessage)
               },
             },

@@ -104,10 +104,7 @@ const queryClient = useQueryClient()
 const prefetchEditData = (slug: string) => {
   queryClient.prefetchQuery({
     queryKey: ['content-item', slug],
-    queryFn: () => getContentItemAction(slug).then((res) => {
-      if (!res.success) throw new Error('No se pudo cargar el hobby')
-      return res.data
-    }),
+    queryFn: () => getContentItemAction(slug).then((res) => res.data),
     staleTime: 1000 * 60,
   })
 }

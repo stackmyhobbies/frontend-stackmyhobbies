@@ -1,12 +1,15 @@
 import { stackMyHobbiesApi } from '@/api/stackMyHobbiesApi'
-import { handleApiError, type ErrorResponse } from '@/utils/handleApiError'
+import { throwApiError, ApiError } from '@/utils/handleApiError'
 import type { TagResponse } from '../interfaces/TagResponse'
 
-export const tagAction = async (): Promise<TagResponse | ErrorResponse> => {
+export const tagAction = async (): Promise<TagResponse> => {
   try {
     const { data } = await stackMyHobbiesApi.get<TagResponse>('tags')
+    if (!data.success) {
+      throw new ApiError(data.message)
+    }
     return data
   } catch (error: unknown) {
-    return handleApiError(error)
+    throwApiError(error)
   }
 }
