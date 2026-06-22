@@ -1,6 +1,7 @@
 <template>
-  <button @click="toast.success('hola')">toast</button>
   <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <button @click="toast.success('Hola')">TOAST</button>
+
     <header-form
       :url="signInImage"
       alt="icon_forgot_password"
@@ -171,11 +172,13 @@ const onSignIn = async () => {
       router.push({ name: 'resendEmail', query: { email: signInForm.login } })
       return
     } else {
-      toast.error(response.message)
+      const error_message = response.errors ? (response.errors as string) : response.message
+      toast.error(error_message)
       return
     }
   }
 
+  toast.success(response.message)
   router.push({ name: 'content-item-list' })
 }
 

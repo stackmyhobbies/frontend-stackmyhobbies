@@ -11,19 +11,26 @@ export const useToast = () => {
   const themeStore = useThemeStore()
 
   const getTheme = (): ToastTheme => {
-    const darkThemes = ['night', 'sunset']
-    return darkThemes.includes(themeStore.currentTheme) ? 'dark' : 'light'
+    return themeStore.isDarkTheme ? 'dark' : 'light'
   }
 
-  const baseOptions = (position?: ToastPosition, styles?: StylesProps): ToastOptions => ({
-    position: position,
-    theme: getTheme(),
-    style: {
-      maxWidth: styles?.maxWidth || '600px',
-      width: styles?.width || 'auto',
-      minWidth: styles?.minWidth || '300px',
-    },
-  })
+  const baseOptions = (position?: ToastPosition, styles?: StylesProps): ToastOptions => {
+    const opts: ToastOptions = { theme: getTheme() }
+
+    if (position) {
+      opts.position = position
+    }
+
+    if (styles) {
+      opts.style = {
+        maxWidth: styles.maxWidth || '600px',
+        width: styles.width || 'auto',
+        minWidth: styles.minWidth || '300px',
+      }
+    }
+
+    return opts
+  }
 
   const success = (message: string, position?: ToastPosition, styles?: StylesProps) =>
     toast.success(message, baseOptions(position, styles))

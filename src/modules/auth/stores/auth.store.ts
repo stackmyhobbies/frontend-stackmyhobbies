@@ -38,7 +38,12 @@ export const useAuthStore = defineStore('auth', () => {
 
     if (!resp.success && !resp.data) {
       signOut()
-      return { success: false, message: resp.message }
+      console.log(resp.errors)
+      return {
+        success: false,
+        message: resp.message,
+        errors: resp.errors || 'error en el inicio de sessión',
+      }
     }
 
     if (!resp.success && resp.data) {
@@ -55,6 +60,8 @@ export const useAuthStore = defineStore('auth', () => {
           message: resp.message,
         }
       }
+
+      return { success: false, message: resp.message }
     }
 
     if (resp.success) {
