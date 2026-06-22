@@ -1,5 +1,11 @@
-import { toast, type ToastOptions, type ToastTheme } from 'vue3-toastify'
+import { toast, type ToastOptions, type ToastPosition, type ToastTheme } from 'vue3-toastify'
 import { useThemeStore } from '@/stores/theme'
+
+interface StylesProps {
+  maxWidth: string
+  width: string
+  minWidth: string
+}
 
 export const useToast = () => {
   const themeStore = useThemeStore()
@@ -9,20 +15,27 @@ export const useToast = () => {
     return darkThemes.includes(themeStore.currentTheme) ? 'dark' : 'light'
   }
 
-  const baseOptions = (): ToastOptions => ({
-    position: toast.POSITION.BOTTOM_RIGHT,
+  const baseOptions = (position?: ToastPosition, styles?: StylesProps): ToastOptions => ({
+    position: position,
     theme: getTheme(),
     style: {
-      maxWidth: '600px',
-      width: 'auto',
-      minWidth: '300px',
+      maxWidth: styles?.maxWidth || '600px',
+      width: styles?.width || 'auto',
+      minWidth: styles?.minWidth || '300px',
     },
   })
 
-  const success = (message: string) => toast.success(message, baseOptions())
-  const error = (message: string) => toast.error(message, baseOptions())
-  const info = (message: string) => toast.info(message, baseOptions())
-  const warning = (message: string) => toast.warning(message, baseOptions())
+  const success = (message: string, position?: ToastPosition, styles?: StylesProps) =>
+    toast.success(message, baseOptions(position, styles))
 
-  return { success, error, info, warning }
+  const error = (message: string, position?: ToastPosition, styles?: StylesProps) =>
+    toast.error(message, baseOptions(position, styles))
+
+  const info = (message: string, position?: ToastPosition, styles?: StylesProps) =>
+    toast.info(message, baseOptions(position, styles))
+
+  const warning = (message: string, position?: ToastPosition, styles?: StylesProps) =>
+    toast.warning(message, baseOptions(position, styles))
+
+  return { success, error, info, warning, toastOptions: toast }
 }

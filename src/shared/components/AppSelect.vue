@@ -170,13 +170,7 @@ defineOptions({ inheritAttrs: false })
                 No hay resultados.
               </div>
 
-              <div
-                :class="
-                  twMerge(
-                    'relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors text-base-content/80',
-                  )
-                "
-              >
+              <div class="relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors text-base-content/80">
                 <slot name="option_prepend" />
               </div>
               <ComboboxOption
@@ -186,22 +180,18 @@ defineOptions({ inheritAttrs: false })
                 v-slot="{ selected, active }"
               >
                 <li
-                  :class="
-                    twMerge(
-                      'relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors',
-                      active ? activeOptionClass : 'text-base-content/80',
-                    )
-                  "
+                  :class="[
+                    'relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors',
+                    active ? activeOptionClass : 'text-base-content/80',
+                  ]"
                 >
-                  <span :class="selected ? twMerge('font-bold', selectedIconClass) : 'font-normal'">
+                  <span :class="selected ? ['font-bold', selectedIconClass] : 'font-normal'">
                     {{ item[displayKey] }}
                   </span>
 
                   <span
                     v-if="selected"
-                    :class="
-                      twMerge('absolute inset-y-0 left-0 flex items-center pl-3', selectedIconClass)
-                    "
+                    :class="['absolute inset-y-0 left-0 flex items-center pl-3', selectedIconClass]"
                   >
                     <svg
                       class="h-4 w-4"

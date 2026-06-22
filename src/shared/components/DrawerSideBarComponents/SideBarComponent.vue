@@ -2,7 +2,7 @@
   <div class="drawer-side">
     <label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
-    <div class="flex min-h-full flex-col items-start bg-base-200 relative" :style="{
+    <div class="flex min-h-full flex-col items-start bg-base-200 relative lg:overflow-hidden" :style="{
       width: width + 'px',
       transition: animating && !isDragging ? 'width 0.15s ease-out' : 'none',
     }">
@@ -10,17 +10,17 @@
       <ul class="menu w-full grow">
         <!-- HOME -->
         <li>
-          <button class="flex items-center gap-3 tooltip tooltip-right" :data-tip="width <= MIN + 10 ? 'Home' : ''">
+          <button class="flex items-center gap-3 tooltip tooltip-right" :data-tip="isNarrow ? 'Home' : ''">
             <span class="w-6 h-6 flex items-center justify-center">🏠</span>
-            <span v-if="width > MIN + 10">Home</span>
+            <span :class="{ 'invisible': isNarrow }">Home</span>
           </button>
         </li>
 
         <!-- SETTINGS -->
         <li>
-          <button class="flex items-center gap-3 tooltip tooltip-right" :data-tip="width <= MIN + 10 ? 'Settings' : ''">
+          <button class="flex items-center gap-3 tooltip tooltip-right" :data-tip="isNarrow ? 'Settings' : ''">
             <span class="w-6 h-6 flex items-center justify-center">⚙️</span>
-            <span v-if="width > MIN + 10">Settings</span>
+            <span :class="{ 'invisible': isNarrow }">Settings</span>
           </button>
         </li>
       </ul>
@@ -28,8 +28,9 @@
       <button type="button" class="btn btn-outline-primary" @click="onSignOut">salir</button>
 
       <!-- BOTÓN MANUAL -->
-      <button class="btn btn-sm m-2" @click="toggleCollapsed">
-        {{ width === MIN ? 'Expandir' : 'Colapsar' }}
+      <button class="btn btn-sm m-2 relative min-w-[72px]" @click="toggleCollapsed">
+        <span class="absolute inset-0 flex items-center justify-center" :class="{ 'invisible': !isNarrow }">Expandir</span>
+        <span class="absolute inset-0 flex items-center justify-center" :class="{ 'invisible': isNarrow }">Colapsar</span>
       </button>
 
       <!-- HANDLE DRAG DESKTOP -->
@@ -40,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useAuthStore } from '@/modules/auth/stores/auth.store'
 import { useRouter } from 'vue-router'
 const props = defineProps<{
@@ -53,7 +55,8 @@ const emits = defineEmits<{
   (e: 'toggleCollapsed'): void
   (e: 'mouseDown', event: MouseEvent): void
 }>()
-const MIN = props.min
+
+const isNarrow = computed(() => props.width <= props.min + 10)
 
 const toggleCollapsed = () => {
   emits('toggleCollapsed')
@@ -71,5 +74,3 @@ const onSignOut = () => {
   router.push({ name: 'signIn' })
 }
 </script>
-
-<style scoped></style>

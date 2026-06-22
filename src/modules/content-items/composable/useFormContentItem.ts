@@ -48,15 +48,20 @@ export const useFormContentItem = (initialData?: any) => {
     })
 
   const isResetting = ref(false)
+  let lastResetData: unknown = null
 
   watch(
     () => initialData?.value,
     (newData) => {
       if (!newData) return
       const hobbyData = newData.data || newData
+
+      // Evitar resets múltiples si los datos no cambiaron realmente
+      if (JSON.stringify(lastResetData) === JSON.stringify(hobbyData)) return
+      lastResetData = hobbyData
+
       isResetting.value = true
 
-      console.log()
       resetForm({
         values: {
           title: hobbyData.title || '',
@@ -110,8 +115,6 @@ export const useFormContentItem = (initialData?: any) => {
   const router = useRouter()
 
   const onSubmit = handleSubmit((formValues) => {
-    console.log('Formulario válido:', formValues)
-    console.log('Deberia enviar un submit')
     const tags = formValues.tags.map((tag) => tag.id)
     const rating = Number(formValues.rating).toFixed(1)
 
@@ -129,7 +132,6 @@ export const useFormContentItem = (initialData?: any) => {
             },
             {
               onSuccess: (data) => {
-                console.log('Editado con exito')
                 if (!data.success && data.errors) {
                   const cleanErrors = formatBackendErrors(data.errors)
                   setErrors(cleanErrors)
