@@ -23,6 +23,7 @@ const { currentTheme } = useThemeStore()
 
 app.use(Vue3Toastify, {
   autoClose: 3000,
+  clearOnUrlChange: false,
 } satisfies ToastContainerOptions)
 
 app.mount('#app')

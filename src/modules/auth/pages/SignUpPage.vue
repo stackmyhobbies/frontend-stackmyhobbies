@@ -25,7 +25,7 @@
               v-model.trim="signUpForm.username"
               @blur="touched.username = true"
               ref="usernameInputRef"
-              placeholder="johndoe019"
+              placeholder="Ej: johndoe019"
               type="text"
               class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
             />
@@ -50,7 +50,7 @@
               id="first_name"
               v-model.trim="signUpForm.first_name"
               @blur="touched.first_name = true"
-              placeholder="John"
+              placeholder="Ej: John"
               type="text"
               class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
             />
@@ -75,7 +75,7 @@
               id="last_name"
               v-model.trim="signUpForm.last_name"
               @blur="touched.last_name = true"
-              placeholder="Doe"
+              placeholder="Ej: Doe"
               type="text"
               class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
             />
@@ -100,7 +100,7 @@
               id="email"
               v-model.trim="signUpForm.email"
               @blur="touched.email = true"
-              placeholder="johndoe@gmail.com"
+              placeholder="Ej: johndoe@example.com"
               type="text"
               class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
             />

@@ -88,10 +88,14 @@ const emailInput = ref('')
 
 const emailFromStore = computed(() => authStore.user?.email ?? '')
 
+const isValidEmail = (value: unknown): value is string => {
+  if (typeof value !== 'string' || !value.trim()) return false
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+}
+
 watchEffect(() => {
-  const emailParam = route.query?.email as string | undefined
-  if (emailParam) {
-    emailInput.value = emailParam
+  if (isValidEmail(route.query?.email)) {
+    emailInput.value = route.query.email
   } else if (emailFromStore.value) {
     emailInput.value = emailFromStore.value
   }

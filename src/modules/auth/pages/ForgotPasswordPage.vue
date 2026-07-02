@@ -119,7 +119,7 @@ const onForgotPassword = async () => {
     toastClassName: 'custom-success-toast',
   })
 
-  // router.push({ name: 'content-items' })
+  router.push({ name: 'signIn' })
 }
 
 watch(

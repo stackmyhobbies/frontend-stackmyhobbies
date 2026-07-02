@@ -32,8 +32,13 @@ export const useToast = () => {
     return opts
   }
 
+  /**
+   * Toasts de éxito usan autoClose más largo (8s) para dar tiempo
+   * a leer instrucciones antes de que el toast desaparezca.
+   * El container está a nivel app, así que sobrevive a navegaciones.
+   */
   const success = (message: string, position?: ToastPosition, styles?: StylesProps) =>
-    toast.success(message, baseOptions(position, styles))
+    toast.success(message, { ...baseOptions(position, styles), autoClose: 8000 })
 
   const error = (message: string, position?: ToastPosition, styles?: StylesProps) =>
     toast.error(message, baseOptions(position, styles))
