@@ -1,7 +1,5 @@
 <template>
   <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-    <button @click="toast.success('Hola')">TOAST</button>
-
     <header-form
       :url="signInImage"
       alt="icon_forgot_password"
@@ -49,16 +47,33 @@
               >
             </div>
           </div>
-          <div class="mt-2">
+          <div class="mt-2 relative">
             <input
               id="password"
               v-model="signInForm.password"
               ref="passwordInputRef"
-              type="password"
+              :type="!showPassword ? 'password' : 'text'"
               name="password"
               autocomplete="current-password"
               class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
             />
+
+            <button
+              type="button"
+              class="btn absolute right-0.5 top-0 bg-transparent border-transparent"
+              @click="handleShowPassword"
+            >
+              <Icon
+                v-if="!showPassword"
+                icon="mingcute:eye-close-fill"
+                :inline="true"
+              />
+              <Icon
+                v-else
+                icon="mingcute:eye-fill"
+                :inline="true"
+              />
+            </button>
           </div>
         </div>
 
@@ -119,6 +134,7 @@
 import { computed, reactive, ref, watchEffect } from 'vue'
 import { useAuthStore } from '../stores/auth.store'
 import { useRoute, useRouter } from 'vue-router'
+import { Icon } from '@iconify/vue'
 
 import HeaderForm from '../components/HeaderForm.vue'
 import signInImage from '../../../assets/images/sign-in.webp'
@@ -144,6 +160,12 @@ const loginInputRef = ref<HTMLInputElement | null>(null)
 const passwordInputRef = ref<HTMLInputElement | null>(null)
 
 const isFormValid = computed(() => signInForm.login !== '' && signInForm.password !== '')
+
+const showPassword = ref(false)
+
+const handleShowPassword = () => {
+  showPassword.value = !showPassword.value
+}
 
 const onSignIn = async () => {
   console.log(signInForm.password, 'deberia hacer focus')
