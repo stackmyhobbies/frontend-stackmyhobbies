@@ -120,7 +120,7 @@
             class="block text-sm font-medium text-base-content"
             >Contraseña</label
           >
-          <div class="mt-2">
+          <div class="mt-2 relative">
             <input
               id="password"
               v-model="signUpForm.password"
@@ -128,6 +128,22 @@
               type="password"
               class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
             />
+            <button
+              type="button"
+              class="btn absolute right-0.5 top-0 bg-transparent border-transparent"
+              @click="handleShowPassword"
+            >
+              <Icon
+                v-if="!showPassword"
+                icon="mingcute:eye-close-fill"
+                :inline="true"
+              />
+              <Icon
+                v-else
+                icon="mingcute:eye-fill"
+                :inline="true"
+              />
+            </button>
             <span
               v-if="showError('password')"
               class="text-red-500 text-sm"
@@ -176,6 +192,25 @@
           </button>
         </div>
       </form>
+
+      <p class="mt-10 text-center text-sm/6 text-base-content">
+        ¿Ya tienes cuenta?
+        <router-link
+          :to="{ name: 'signIn' }"
+          class="font-semibold text-indigo-400 hover:text-indigo-300"
+        >
+          Iniciar sesión
+        </router-link>
+      </p>
+      <p class="text-center text-sm/6 text-base-content">
+        ¿No recibiste el correo?
+        <router-link
+          :to="{ name: 'resendEmail', query: { email: signUpForm.email } }"
+          class="font-semibold text-indigo-400 hover:text-indigo-300"
+        >
+          Reenviar verificación
+        </router-link>
+      </p>
     </div>
   </div>
 </template>
@@ -189,6 +224,7 @@ import HeaderForm from '../components/HeaderForm.vue'
 
 import signUpImage from '@/assets/images/sign-up.webp'
 import { useToast } from '@/shared/composables/useToast'
+import { Icon } from '@iconify/vue'
 
 interface SignUpFormInterface {
   username: string
@@ -199,13 +235,18 @@ interface SignUpFormInterface {
 }
 
 const toast = useToast()
+const showPassword = ref(false)
+
+const handleShowPassword = () => {
+  showPassword.value = !showPassword.value
+}
 
 const signUpForm = reactive<SignUpFormInterface>({
-  username: 'john',
-  password: '123456',
-  first_name: 'jhorge',
-  last_name: 'salgado',
-  email: 'jasen192021@gmail.com',
+  username: '',
+  password: '',
+  first_name: '',
+  last_name: '',
+  email: '',
 })
 
 // Estado para saber qué campos han sido tocados
@@ -270,13 +311,14 @@ const onSignUp = async () => {
   isSubmitting.value = false
 
   if (!success) {
-    if (errors?.username) {
+    const fieldErrors = errors as Record<string, any> | undefined
+    if (fieldErrors?.username) {
       toast.error('El usuario ya ha sido registro', toast.toastOptions.POSITION.BOTTOM_RIGHT)
 
       return
     }
 
-    if (errors?.email) {
+    if (fieldErrors?.email) {
       toast.error(
         'El correo electronico ya han sido registrado',
         toast.toastOptions.POSITION.BOTTOM_RIGHT,

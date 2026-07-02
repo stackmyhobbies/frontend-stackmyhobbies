@@ -17,7 +17,8 @@
           <label
             for="email"
             class="block text-sm/6 font-medium text-base-content"
-          >Correo electrónico</label>
+            >Correo electrónico</label
+          >
           <div class="mt-2">
             <input
               id="email"
@@ -55,6 +56,15 @@
           class="font-semibold text-indigo-400 hover:text-indigo-300"
         >
           Iniciar sesión
+        </router-link>
+      </p>
+      <p class="text-center text-sm/6 text-base-content">
+        Not a member?
+        <router-link
+          :to="{ name: 'signUp' }"
+          class="font-semibold text-indigo-400 hover:text-indigo-300"
+        >
+          Registrar
         </router-link>
       </p>
     </div>
