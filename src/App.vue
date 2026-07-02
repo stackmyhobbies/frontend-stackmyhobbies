@@ -11,9 +11,10 @@ import { updateGlobalOptions } from 'vue3-toastify'
 import { useThemeStore } from './stores/theme'
 import { storeToRefs } from 'pinia'
 
-const { currentTheme } = storeToRefs(useThemeStore())
+const themeStore = useThemeStore()
+const { currentTheme } = storeToRefs(themeStore)
 
-watch(currentTheme, (theme) => {
-  updateGlobalOptions({ theme: theme === 'pastel' ? 'light' : 'dark' })
+watch(currentTheme, () => {
+  updateGlobalOptions({ theme: themeStore.isDarkTheme ? 'dark' : 'light' })
 })
 </script>

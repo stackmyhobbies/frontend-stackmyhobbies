@@ -28,7 +28,7 @@ export const usePutContentItemMutation = () => {
     },
     onSuccess: (data, variables, context) => {
       queryClient.setQueryData(['content-item-list'], (old: Hobby[] | undefined) => {
-        const newData = data.data as Hobby
+        const newData = data.data
         if (!old) return [newData]
 
         return old.map((item) => (item.id === context?.contentItemOptimistic.id ? newData : item))

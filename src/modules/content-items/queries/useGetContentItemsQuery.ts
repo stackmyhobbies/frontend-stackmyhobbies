@@ -11,7 +11,6 @@ interface Props {
 }
 
 export const useGetContentItemsQuery = ({ pageCurrent, perPage, filters }: Props) => {
-  console.log(perPage)
   return useQuery({
     queryKey: computed(() => [
       'content-item-list',
@@ -27,9 +26,7 @@ export const useGetContentItemsQuery = ({ pageCurrent, perPage, filters }: Props
         : {},
     ]),
     queryFn: async (): Promise<ContentItemListResponse> => {
-      const response = await getContentItemsAction(toValue(pageCurrent), toValue(perPage), filters)
-      if (!response.success) throw new Error(response.message || 'Error al cargar')
-      return response
+      return getContentItemsAction(toValue(pageCurrent), toValue(perPage), filters)
     },
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60,
