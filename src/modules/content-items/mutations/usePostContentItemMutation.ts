@@ -26,9 +26,9 @@ export const usePostContentItemMutation = () => {
     },
     onSuccess: (data, variables, context) => {
       queryClient.setQueryData(['content-item-list'], (old: Hobby[] | undefined) => {
-        if (!old) return [data]
+        if (!old) return [data.data]
 
-        return old.map((item) => (item.id === context?.contentItemOptimistic.id ? data : item))
+        return old.map((item) => (item.id === context?.contentItemOptimistic.id ? data.data : item))
       })
     },
     onError: (err, newContentItem, context) => {

@@ -17,7 +17,8 @@
           <label
             for="email"
             class="block text-sm/6 font-medium text-base-content"
-          >Correo electrónico</label>
+            >Correo electrónico</label
+          >
           <div class="mt-2">
             <input
               id="email"
@@ -57,6 +58,15 @@
           Iniciar sesión
         </router-link>
       </p>
+      <p class="text-center text-sm/6 text-base-content">
+        Not a member?
+        <router-link
+          :to="{ name: 'signUp' }"
+          class="font-semibold text-indigo-400 hover:text-indigo-300"
+        >
+          Registrar
+        </router-link>
+      </p>
     </div>
   </div>
 </template>
@@ -78,10 +88,14 @@ const emailInput = ref('')
 
 const emailFromStore = computed(() => authStore.user?.email ?? '')
 
+const isValidEmail = (value: unknown): value is string => {
+  if (typeof value !== 'string' || !value.trim()) return false
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+}
+
 watchEffect(() => {
-  const emailParam = route.query?.email as string | undefined
-  if (emailParam) {
-    emailInput.value = emailParam
+  if (isValidEmail(route.query?.email)) {
+    emailInput.value = route.query.email
   } else if (emailFromStore.value) {
     emailInput.value = emailFromStore.value
   }

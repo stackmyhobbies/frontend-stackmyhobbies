@@ -32,5 +32,10 @@ export const authRoutes: RouteRecordRaw = {
       name: 'resetPassword',
       component: () => import('@/modules/auth/pages/ResetPasswordPage.vue'),
     },
+    {
+      path: 'already-verified',
+      name: 'alreadyVerified',
+      component: () => import('@/modules/auth/pages/AlreadyVerifiedPage.vue'),
+    },
   ],
 }

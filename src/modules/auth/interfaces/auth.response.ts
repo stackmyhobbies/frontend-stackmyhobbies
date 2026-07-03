@@ -12,7 +12,7 @@ export interface AuthResponseSuccess {
 export interface AuthResponseError {
   success: false
   message: string
-  errors?: Record<string, any>
+  errors?: string | Record<string, any>
   data?: Record<string, any>
 }
 
