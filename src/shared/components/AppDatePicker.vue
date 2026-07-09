@@ -18,7 +18,7 @@
       :popovertarget="id + '-popover'"
       :class="
         twMerge(
-          'input input-bordered bg-white/5 text-left flex items-center justify-between w-full',
+          'input text-left flex items-center justify-between w-full',
           error ? 'input-error' : '',
         )
       "

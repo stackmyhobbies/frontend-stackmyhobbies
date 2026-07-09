@@ -53,9 +53,9 @@ const {
 } = props
 
 const resolvedActiveOptionClass = computed(
-  () => props.activeOptionClass ?? 'bg-cyan-500/10 text-cyan-400',
+  () => props.activeOptionClass ?? 'bg-accent/10 text-accent',
 )
-const resolvedSelectedTextClass = computed(() => props.selectedTextClass ?? 'text-cyan-400')
+const resolvedSelectedTextClass = computed(() => props.selectedTextClass ?? 'text-accent')
 const resolvedFocusRingClass = computed(() => props.focusRingClass ?? 'border border-base-300')
 
 /* ------------------------------------------------------------------
@@ -227,7 +227,7 @@ defineOptions({ inheritAttrs: false })
         <!-- ERROR -->
         <p
           v-if="errorMessage"
-          class="text-sm text-red-400 mt-1 pl-1"
+          class="text-sm text-error mt-1 pl-1"
         >
           {{ errorMessage }}
         </p>
@@ -240,7 +240,7 @@ defineOptions({ inheritAttrs: false })
               v-show="isPositioned"
               :style="floatingStyles"
               static
-              class="z-[9999] max-h-48 overflow-auto rounded-xl bg-base-100 border border-gray-700 py-1 shadow-2xl sm:text-sm"
+              class="z-[9999] max-h-48 overflow-auto rounded-xl bg-base-100 border border-base-300 py-1 shadow-2xl sm:text-sm"
             >
               <div
                 v-if="filteredItems.length === 0"

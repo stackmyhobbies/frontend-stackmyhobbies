@@ -125,7 +125,7 @@ defineOptions({ inheritAttrs: false })
             :class="
               twMerge(
                 'relative w-full flex items-center rounded-lg border border-base-content/20 bg-base-100 transition-all',
-                'focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:border-indigo-500',
+                'focus-within:ring-2 focus-within:ring-primary/50 focus-within:border-primary',
                 error ? 'border-error' : '',
                 selectClass,
               )

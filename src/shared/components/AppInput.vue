@@ -6,7 +6,7 @@
 
     <div class="relative">
       <input :id="props.labelFor" v-model="model" v-bind="$attrs" :class="twMerge(
-        'block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6',
+        'block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6',
         inputClass,
         error ? 'input-error' : ''
       )" class="" />

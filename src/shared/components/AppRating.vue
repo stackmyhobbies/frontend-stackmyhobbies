@@ -44,7 +44,7 @@ defineProps<Props>()
             :class="
               twMerge(
                 'mask mask-star-2 transition-transform hover:scale-110',
-                '[--rating-color:theme(colors.cyan.400)] bg-[--rating-color]',
+                'bg-accent',
                 n % 2 !== 0 ? 'mask-half-1' : 'mask-half-2',
               )
             "
@@ -54,9 +54,9 @@ defineProps<Props>()
       </div>
 
       <div
-        class="flex items-center justify-center bg-cyan-500/10 border border-cyan-500/20 rounded-lg px-3 py-1"
+        class="flex items-center justify-center bg-accent/10 border border-accent/20 rounded-lg px-3 py-1"
       >
-        <span class="text-lg font-bold font-mono text-cyan-400">
+        <span class="text-lg font-bold font-mono text-accent">
           {{ Number(model).toFixed(1) }}
         </span>
       </div>
@@ -72,6 +72,6 @@ defineProps<Props>()
 
 .mask-star-2:checked,
 .mask-star-2:hover {
-  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.6));
+  filter: drop-shadow(0 0 8px color-mix(in oklch, var(--a) 60%, transparent));
 }
 </style>
