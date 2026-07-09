@@ -50,7 +50,7 @@
     <div class="flex-1 overflow-auto">
       <table class="table table-pin-rows bg-base-200">
         <thead>
-          <tr class="text-white capitalize">
+          <tr class="text-base-content capitalize">
             <th class="bg-base-200">Title</th>
             <th
               v-if="showStatus"
@@ -117,7 +117,7 @@
               v-for="hobby in hobbies"
               :key="hobby.id"
               class="group"
-              :class="activeId === hobby.id ? 'ring-1 ring-inset ring-white/10' : ''"
+              :class="activeId === hobby.id ? 'ring-1 ring-inset ring-base-content/10' : ''"
             >
               <td
                 class="transition-colors duration-150 group-hover:bg-base-content/5"
@@ -133,13 +133,13 @@
                   </div>
                   <div class="flex flex-col min-w-0 flex-1">
                     <div>
-                      <span class="inline-block font-bold text-white mb-1">
+                      <span class="inline-block font-bold text-base-content mb-1">
                         {{ `${hobby.title} ${hobby.segment_label}` }}
                       </span>
                     </div>
                     <div>
                       <span
-                        class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-white inset-ring inset-ring-gray-400/20"
+                        class="inline-flex items-center rounded-md bg-base-300 px-2 py-1 text-xs font-medium text-base-content inset-ring inset-ring-base-content/10"
                       >
                         {{
                           hobby.tags
@@ -237,7 +237,7 @@
           <span class="text-sm">Filas por página:</span>
           <select
             v-model="per_page"
-            class="select select-md bg-base-200 text-white w-20 ms-2"
+            class="select select-md bg-base-200 text-base-content w-20 ms-2"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>
@@ -250,8 +250,8 @@
           class="col-span-12 w-full md:w-auto flex justify-center items-center mx-0 md:mx-3 py-1 md:py-0"
         >
           <p v-if="hobbiesMeta.total > 0">
-            Página <span class="font-semibold text-white">{{ hobbiesMeta.current_page }}</span> de
-            <span class="font-semibold text-white">{{ hobbiesMeta.last_page }}</span>
+            Página <span class="font-semibold text-base-content">{{ hobbiesMeta.current_page }}</span> de
+            <span class="font-semibold text-base-content">{{ hobbiesMeta.last_page }}</span>
           </p>
           <p v-else>No hay elementos para mostrar</p>
         </div>

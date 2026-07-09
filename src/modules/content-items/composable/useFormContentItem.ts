@@ -119,9 +119,7 @@ export const useFormContentItem = (initialData?: any) => {
     const tags = formValues.tags.map((tag) => tag.id)
     const rating = Number(formValues.rating).toFixed(1)
 
-    const successMessage = isEdit.value
-      ? 'hobby actualizado exitosamente'
-      : 'hobby creado exitosamente'
+    const successMessage = isEdit.value ? 'hobby actualizado' : 'hobby creado'
     const errorMessage = isEdit.value ? 'Error al actualizar el hobby' : 'Error al crear el hobby'
 
     const mutationFn = isEdit.value

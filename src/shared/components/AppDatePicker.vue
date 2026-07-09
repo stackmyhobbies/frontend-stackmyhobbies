@@ -90,9 +90,9 @@ console.log(props.error, 'error appdatepicker')
 
 <style scoped>
 .cally {
-  --color-accent: var(--p);
-  --color-text: var(--bc);
-  --color-bg: var(--b1);
+  --color-accent: var(--color-primary);
+  --color-text: var(--color-base-content);
+  --color-bg: var(--color-base-100);
 }
 
 [popover] {

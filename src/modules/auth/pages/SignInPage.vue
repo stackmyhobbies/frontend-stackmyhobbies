@@ -27,7 +27,7 @@
               ref="emailInputRef"
               type="text"
               name="login"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:-outline-offset-2 focus:outline-accent sm:text-sm/6"
             />
           </div>
         </div>
@@ -42,7 +42,7 @@
             <div class="text-sm">
               <router-link
                 :to="{ name: 'forgotPassword' }"
-                class="font-semibold text-indigo-400 hover:text-indigo-300"
+                class="font-semibold text-accent hover:text-accent/80"
                 >Forgot password?</router-link
               >
             </div>
@@ -55,7 +55,7 @@
               :type="!showPassword ? 'password' : 'text'"
               name="password"
               autocomplete="current-password"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:-outline-offset-2 focus:outline-accent sm:text-sm/6"
             />
 
             <button
@@ -97,10 +97,10 @@
             type="submit"
             :disabled="!isFormValid"
             :class="[
-              'flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all',
+              'flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-accent-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent transition-all',
               isFormValid
-                ? 'bg-indigo-500 hover:bg-indigo-400'
-                : 'bg-gray-400 cursor-not-allowed opacity-70',
+                ? 'bg-accent/85 hover:bg-accent/95'
+                : 'bg-base-content/20 text-base-content/40 cursor-not-allowed',
             ]"
           >
             Sign in
@@ -112,7 +112,7 @@
         Not a member?
         <router-link
           :to="{ name: 'signUp' }"
-          class="font-semibold text-indigo-400 hover:text-indigo-300"
+          class="font-semibold text-accent hover:text-accent/80"
         >
           Registrar
         </router-link>
@@ -121,7 +121,7 @@
         ¿No recibiste el correo?
         <router-link
           :to="{ name: 'resendEmail', query: { email: signInForm.login } }"
-          class="font-semibold text-indigo-400 hover:text-indigo-300"
+          class="font-semibold text-accent hover:text-accent/80"
         >
           Reenviar verificación
         </router-link>

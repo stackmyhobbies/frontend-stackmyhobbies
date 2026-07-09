@@ -35,12 +35,12 @@
 
     <ul
       tabindex="0"
-      class="dropdown-content z-50 mt-2 w-38 p-2 rounded-2xl backdrop-blur-2xl border animate-fadeIn menu gap-1 border-white/5 bg-white/10 shadow-2xl"
+      class="dropdown-content z-50 mt-2 w-38 p-2 rounded-2xl backdrop-blur-2xl border animate-fadeIn menu gap-1 border-base-content/5 bg-base-100/10 shadow-2xl"
     >
       <li>
         <RouterLink
           :to="{ name: 'content-item-edit', params: { slug: hobby.slug } }"
-          class="flex items-center gap-3 rounded-xl hover:bg-white/10 hover:text-amber-300 transition"
+          class="flex items-center gap-3 rounded-xl hover:bg-base-content/10 hover:text-warning transition"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +57,7 @@
       </li>
 
       <li>
-        <a class="flex items-center gap-3 rounded-xl hover:bg-white/10 hover:text-info transition">
+        <a class="flex items-center gap-3 rounded-xl hover:bg-base-content/10 hover:text-accent transition">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="w-4 h-4"
@@ -73,7 +73,7 @@
       </li>
 
       <li>
-        <a class="flex items-center gap-3 rounded-xl text-error hover:bg-white/10 transition">
+        <a class="flex items-center gap-3 rounded-xl text-error hover:bg-base-content/10 transition">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="w-4 h-4"

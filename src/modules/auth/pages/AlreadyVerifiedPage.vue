@@ -14,7 +14,7 @@
       <p class="mt-10 text-center text-sm/6 text-base-content">
         <router-link
           :to="{ name: 'signIn' }"
-          class="font-semibold text-indigo-400 hover:text-indigo-300"
+          class="font-semibold text-accent hover:text-accent/80"
         >
           {{ $t('auth.already-verified.sign-in') }}
         </router-link>
