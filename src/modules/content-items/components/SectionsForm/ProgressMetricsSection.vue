@@ -39,13 +39,13 @@ const { t } = useI18n({ useScope: 'global' })
 
 const showDayOfWeek = computed(() => {
   return (
-    props.selectedProgressStatus?.name?.toLowerCase() === 'en emisión' ||
-    props.selectedProgressStatus?.name?.toLowerCase() === 'viendo'
+    props.selectedProgressStatus?.name?.toLowerCase() === 'airing' ||
+    props.selectedProgressStatus?.name?.toLowerCase() === 'watching'
   )
 })
 
 const isCurrentlyAiring = computed(() => {
-  return props.selectedProgressStatus?.name?.toLowerCase() === 'en emisión'
+  return props.selectedProgressStatus?.name?.toLowerCase() === 'airing'
 })
 </script>
 
@@ -54,9 +54,9 @@ const isCurrentlyAiring = computed(() => {
     <!-- Fila 1: Estado y Día de emisión -->
     <div class="col-span-12 md:col-span-6">
       <AppSelect
-        select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
-        select-container-option-class="bg-cyan-500/10 text-cyan-400"
-        selected-text="text-cyan-500"
+        select-class="bg-base-100 focus-within:ring-accent/50 focus-within:border-accent"
+        select-container-option-class="bg-accent/10 text-accent"
+        selected-text="text-accent"
         label="Estado actual"
         :items="progressStatuses || []"
         labelFor="progress_status_id"
@@ -71,9 +71,9 @@ const isCurrentlyAiring = computed(() => {
       class="col-span-12 md:col-span-6"
     >
       <AppSelect
-        select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
-        select-container-option-class="bg-cyan-500/10 text-cyan-400"
-        selected-text="text-cyan-500"
+        select-class="bg-base-100 focus-within:ring-accent/50 focus-within:border-accent"
+        select-container-option-class="bg-accent/10 text-accent"
+        selected-text="text-accent"
         label="Día de emisión"
         :items="
           Object.entries(DayOfWeekValues).map(([key, value]) => ({
@@ -118,13 +118,13 @@ const isCurrentlyAiring = computed(() => {
       v-if="showAiredFields && isCurrentlyAiring"
       class="col-span-12 md:col-span-6 flex items-center"
     >
-      <span class="badge badge-info badge-soft">En emisión</span>
+      <span class="badge badge-info badge-soft">{{ t('contentItem.status.airing') }}</span>
     </div>
 
     <!-- Fila 3: Progreso actual y Total -->
     <div class="col-span-12 md:col-span-6">
       <AppInput
-        input-class="bg-base-100 focus:outline-cyan-500"
+        input-class="bg-base-100 focus:outline-accent"
         label="Progreso actual"
         type="number"
         labelFor="current_progress"
@@ -135,7 +135,7 @@ const isCurrentlyAiring = computed(() => {
     </div>
     <div class="col-span-12 md:col-span-6">
       <AppInput
-        input-class="bg-base-100 focus:outline-cyan-500"
+        input-class="bg-base-100 focus:outline-accent"
         label="Total de la unidad"
         type="number"
         labelFor="total_progress"
@@ -149,9 +149,9 @@ const isCurrentlyAiring = computed(() => {
     <div class="col-span-12 md:col-span-6">
       <AppSelect
         label="Unidad de medida"
-        select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
-        select-container-option-class="bg-cyan-500/10 text-cyan-400"
-        selected-text="text-cyan-500"
+        select-class="bg-base-100 focus-within:ring-accent/50 focus-within:border-accent"
+        select-container-option-class="bg-accent/10 text-accent"
+        selected-text="text-accent"
         :items="allowedUnits"
         labelFor="progress_unit"
         v-model="progress_unit"
@@ -171,11 +171,11 @@ const isCurrentlyAiring = computed(() => {
     <!-- Fila 5: Barra de progreso -->
     <div class="col-span-12 flex items-center gap-3 mt-2">
       <progress
-        class="progress progress-info flex-1 h-2"
+        class="progress progress-accent flex-1 h-2"
         :value="progressPercent"
         max="100"
       ></progress>
-      <span class="text-cyan-500 font-mono font-bold text-sm whitespace-nowrap">
+      <span class="text-accent font-mono font-bold text-sm whitespace-nowrap">
         {{ progressPercent }}% Complete
       </span>
     </div>

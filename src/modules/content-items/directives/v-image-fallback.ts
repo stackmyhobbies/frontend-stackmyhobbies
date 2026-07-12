@@ -6,8 +6,12 @@ const OBSERVER_KEY = '__lazyObserver__'
 function loadImage(el: HTMLImageElement, src: string) {
   const img = new Image()
   img.src = src
-  img.onload = () => { el.src = src }
-  img.onerror = () => { el.src = notFoundImage }
+  img.onload = () => {
+    el.src = src
+  }
+  img.onerror = () => {
+    el.src = notFoundImage
+  }
 }
 
 function observe(el: HTMLImageElement, src: string) {
@@ -44,4 +48,3 @@ export const vImageFallback = {
     ;(el as any)[OBSERVER_KEY]?.disconnect()
   },
 }
-

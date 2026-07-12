@@ -27,11 +27,11 @@
               ref="usernameInputRef"
               placeholder="Ej: johndoe019"
               type="text"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
+              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
             />
             <span
               v-if="showError('username')"
-              class="text-red-500 text-sm"
+              class="text-error text-sm"
             >
               El usuario debe tener al menos 3 caracteres
             </span>
@@ -52,11 +52,11 @@
               @blur="touched.first_name = true"
               placeholder="Ej: John"
               type="text"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
+              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
             />
             <span
               v-if="showError('first_name')"
-              class="text-red-500 text-sm"
+              class="text-error text-sm"
             >
               El nombre es obligatorio
             </span>
@@ -77,11 +77,11 @@
               @blur="touched.last_name = true"
               placeholder="Ej: Doe"
               type="text"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
+              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
             />
             <span
               v-if="showError('last_name')"
-              class="text-red-500 text-sm"
+              class="text-error text-sm"
             >
               El apellido es obligatorio
             </span>
@@ -102,11 +102,11 @@
               @blur="touched.email = true"
               placeholder="Ej: johndoe@example.com"
               type="text"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
+              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
             />
             <span
               v-if="showError('email')"
-              class="text-red-500 text-sm"
+              class="text-error text-sm"
             >
               El correo electrónico no es válido
             </span>
@@ -126,7 +126,7 @@
               v-model="signUpForm.password"
               @blur="touched.password = true"
               type="password"
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:outline-indigo-500 sm:text-sm"
+              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
             />
             <button
               type="button"
@@ -146,7 +146,7 @@
             </button>
             <span
               v-if="showError('password')"
-              class="text-red-500 text-sm"
+              class="text-error text-sm"
             >
               La contraseña debe tener al menos 6 caracteres
             </span>
@@ -159,15 +159,15 @@
             type="submit"
             :disabled="!isFormValid || isSubmitting"
             :class="[
-              'flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold text-white transition-all',
+              'flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold text-accent-content transition-all',
               isFormValid && !isSubmitting
-                ? 'bg-indigo-500 hover:bg-indigo-400 focus-visible:outline-indigo-500'
-                : 'bg-gray-400 cursor-not-allowed opacity-70',
+                ? 'bg-accent hover:bg-accent/90 focus-visible:outline-accent'
+                : 'bg-base-content/20 text-base-content/40 cursor-not-allowed',
             ]"
           >
             <template v-if="isSubmitting">
               <svg
-                class="animate-spin h-5 w-5 mr-2 text-white"
+                class="animate-spin h-5 w-5 mr-2 text-accent-content"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -197,7 +197,7 @@
         ¿Ya tienes cuenta?
         <router-link
           :to="{ name: 'signIn' }"
-          class="font-semibold text-indigo-400 hover:text-indigo-300"
+          class="font-semibold text-accent hover:text-accent/80"
         >
           Iniciar sesión
         </router-link>
@@ -206,7 +206,7 @@
         ¿No recibiste el correo?
         <router-link
           :to="{ name: 'resendEmail', query: { email: signUpForm.email } }"
-          class="font-semibold text-indigo-400 hover:text-indigo-300"
+          class="font-semibold text-accent hover:text-accent/80"
         >
           Reenviar verificación
         </router-link>
@@ -313,26 +313,20 @@ const onSignUp = async () => {
   if (!success) {
     const fieldErrors = errors as Record<string, any> | undefined
     if (fieldErrors?.username) {
-      toast.error('El usuario ya ha sido registro', toast.toastOptions.POSITION.BOTTOM_RIGHT)
+      toast.error('El usuario ya ha sido registro')
 
       return
     }
 
     if (fieldErrors?.email) {
-      toast.error(
-        'El correo electronico ya han sido registrado',
-        toast.toastOptions.POSITION.BOTTOM_RIGHT,
-      )
+      toast.error('El correo electronico ya han sido registrado')
       return
     }
 
     return
   }
 
-  toast.success(
-    '¡Registro exitoso!\nConfirma tu cuenta desde el correo que te enviamos.',
-    toast.toastOptions.POSITION.TOP_CENTER,
-  )
+  toast.success('¡Registro exitoso!\nConfirma tu cuenta desde el correo que te enviamos.')
 
   router.push({ name: 'signIn', query: { email: data?.email } })
   console.log('Formulario válido ✅', { ...signUpForm })

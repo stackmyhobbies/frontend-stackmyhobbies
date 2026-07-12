@@ -1,6 +1,6 @@
 <template>
   <div class="drawer-content">
-      <div class="grid grid-cols-1 grid-rows-[auto_1fr_auto] h-[100dvh]">
+    <div class="grid grid-cols-1 grid-rows-[auto_1fr_auto] h-[100dvh] bg-base-200">
       <nav class="navbar w-full bg-base-300 flex flex-row items-center justify-between p-3">
         <!-- Botón móvil -->
         <menu-mobile />
@@ -9,7 +9,7 @@
         <router-link
           v-if="is_content_item_list"
           :to="{ name: 'content-item-create' }"
-          class="btn btn-soft btn-info"
+          class="btn btn-soft btn-accent"
         >
           <add-icon class="size-[1.5em]" />
           Add Hobby
@@ -18,7 +18,7 @@
         <router-link
           v-else-if="is_content_item_create || is_content_item_edit"
           :to="{ name: 'content-item-list' }"
-          class="btn btn-soft btn-primary"
+          class="btn btn-soft btn-accent"
         >
           <back-icon class="size-[1.5em]" />
           List of Hobbies
@@ -32,7 +32,11 @@ Add icon
 </button-custom> -->
       </nav>
 
-      <div :class="twMerge('p-4 px-0 h-full overflow-y-auto', is_content_item_list ? 'overflow-hidden' : '')">
+      <div
+        :class="
+          twMerge('p-4 px-0 h-full overflow-y-auto', is_content_item_list ? 'overflow-hidden' : '')
+        "
+      >
         <router-view />
       </div>
 

@@ -1,4 +1,4 @@
-import { toast, type ToastOptions, type ToastPosition, type ToastTheme } from 'vue3-toastify'
+import { toast, type ToastOptions, type ToastTheme } from 'vue3-toastify'
 import { useThemeStore } from '@/stores/theme'
 
 interface StylesProps {
@@ -14,12 +14,8 @@ export const useToast = () => {
     return themeStore.isDarkTheme ? 'dark' : 'light'
   }
 
-  const baseOptions = (position?: ToastPosition, styles?: StylesProps): ToastOptions => {
+  const baseOptions = (styles?: StylesProps): ToastOptions => {
     const opts: ToastOptions = { theme: getTheme() }
-
-    if (position) {
-      opts.position = position
-    }
 
     if (styles) {
       opts.style = {
@@ -32,22 +28,17 @@ export const useToast = () => {
     return opts
   }
 
-  /**
-   * Toasts de éxito usan autoClose más largo (8s) para dar tiempo
-   * a leer instrucciones antes de que el toast desaparezca.
-   * El container está a nivel app, así que sobrevive a navegaciones.
-   */
-  const success = (message: string, position?: ToastPosition, styles?: StylesProps) =>
-    toast.success(message, { ...baseOptions(position, styles), autoClose: 8000 })
+  const success = (message: string, styles?: StylesProps) =>
+    toast.success(message, { ...baseOptions(styles), position: 'top-center' })
 
-  const error = (message: string, position?: ToastPosition, styles?: StylesProps) =>
-    toast.error(message, baseOptions(position, styles))
+  const error = (message: string, styles?: StylesProps) =>
+    toast.error(message, { ...baseOptions(styles), position: 'top-right' })
 
-  const info = (message: string, position?: ToastPosition, styles?: StylesProps) =>
-    toast.info(message, baseOptions(position, styles))
+  const info = (message: string, styles?: StylesProps) =>
+    toast.info(message, { ...baseOptions(styles), position: 'top-right' })
 
-  const warning = (message: string, position?: ToastPosition, styles?: StylesProps) =>
-    toast.warning(message, baseOptions(position, styles))
+  const warning = (message: string, styles?: StylesProps) =>
+    toast.warning(message, { ...baseOptions(styles), position: 'top-right' })
 
   return { success, error, info, warning, toastOptions: toast }
 }

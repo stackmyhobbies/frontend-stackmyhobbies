@@ -18,7 +18,7 @@
       :popovertarget="id + '-popover'"
       :class="
         twMerge(
-          'input input-bordered bg-white/5 text-left flex items-center justify-between w-full',
+          'input text-left flex items-center justify-between w-full',
           error ? 'input-error' : '',
         )
       "
@@ -58,9 +58,9 @@
 import 'cally'
 import CalendarIcon from '../icons/svg/CalendarIcon.vue'
 import { twMerge } from 'tailwind-merge'
+import { watch } from 'vue'
+import { formatDateToYYYYMMDD } from '@/shared/utils/formatDateToYYYYMMDD'
 
-// Asegúrate de tener este componente de icono o cámbialo por un SVG manual
-// import CalendarIcon from './icons/CalendarIcon.vue';
 type ErrorType = { message: string } | string
 
 const dateValue = defineModel<string | null | undefined | unknown>()
@@ -75,6 +75,15 @@ interface Props {
 
 const props = defineProps<Props>()
 
+watch(dateValue, (newVal) => {
+  if (newVal && typeof newVal === 'string') {
+    const normalized = formatDateToYYYYMMDD(newVal)
+    if (normalized !== null && normalized !== newVal) {
+      dateValue.value = normalized
+    }
+  }
+})
+
 const handleDateChange = (event: any) => {
   dateValue.value = event.target.value
 }
@@ -82,17 +91,15 @@ const handleDateChange = (event: any) => {
 function getErrorMessage(error: ErrorType | undefined): string {
   if (!error) return ''
   if (typeof error === 'string') return error
-  return error.message // TypeScript sabe que aquí es { message: string }
+  return error.message
 }
-
-console.log(props.error, 'error appdatepicker')
 </script>
 
 <style scoped>
 .cally {
-  --color-accent: var(--p);
-  --color-text: var(--bc);
-  --color-bg: var(--b1);
+  --color-accent: var(--color-primary);
+  --color-text: var(--color-base-content);
+  --color-bg: var(--color-base-100);
 }
 
 [popover] {

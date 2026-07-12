@@ -22,8 +22,11 @@ app.use(i18n)
 const { currentTheme } = useThemeStore()
 
 app.use(Vue3Toastify, {
-  autoClose: 3000,
+  autoClose: 5000,
+  position: 'bottom-right',
   clearOnUrlChange: false,
+  pauseOnHover: true,
+  pauseOnFocusLoss: true,
 } satisfies ToastContainerOptions)
 
 app.mount('#app')

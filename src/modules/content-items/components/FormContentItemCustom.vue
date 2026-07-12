@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { slugifyKey } from '@/shared/utils/slugifyKey'
 
 //** Queries **//
 import { useGetContentTypesQuery } from '@content-queries/useGetContentTypesQuery'
@@ -46,7 +47,30 @@ const props = defineProps<{
 const { data } = useGetContentTypesQuery()
 const { data: progressStatuses } = useProgressStatusesQuery()
 const { data: data_tags } = useGetTagsQuery()
+const translatedDataTags = computed(
+  () =>
+    data_tags.value?.map((tag) => ({
+      ...tag,
+      name: t(`contentItem.tag.${slugifyKey(tag.name)}`),
+    })) ?? [],
+)
 const { t } = useI18n({ useScope: 'global' })
+
+const translatedContentTypes = computed(
+  () =>
+    data.value?.map((type) => ({
+      ...type,
+      name: t(`contentItem.type.${slugifyKey(type.name)}`),
+    })) ?? [],
+)
+
+const translatedProgressStatuses = computed(
+  () =>
+    progressStatuses.value?.map((status) => ({
+      ...status,
+      name: t(`contentItem.status.${slugifyKey(status.name)}`),
+    })) ?? [],
+)
 
 // 1. Definimos la lógica de activación
 const isUpdating = computed(() => props.action === 'update')
@@ -61,6 +85,18 @@ const { data: contentItemData, isPlaceholderData } = useGetContentItemQuery(
   { enabled: canFetch }, // <-- Pasamos el booleano reactivo aquí
 )
 
+const contentDataWithTranslatedTags = computed(() => {
+  const raw = contentItemData.value
+  if (!raw || !raw.tags) return raw
+  return {
+    ...raw,
+    tags: raw.tags.map((tag: { id: number; name: string }) => ({
+      ...tag,
+      name: t(`contentItem.tag.${slugifyKey(tag.name)}`),
+    })),
+  }
+})
+
 const {
   handleSubmit,
   errors,
@@ -71,7 +107,7 @@ const {
   setErrors,
   onSubmit,
   isResetting,
-} = useFormContentItem(computed(() => contentItemData.value))
+} = useFormContentItem(contentDataWithTranslatedTags)
 
 const defineSegmentSubNumber = () =>
   defineField('segment_subnumber') as unknown as [
@@ -119,8 +155,8 @@ const selectedProgressStatus = computed<ProgressStatus | null>(() => {
   return progressStatuses.value.find((t) => t.id === Number(values.progress_status_id)) ?? null
 })
 
-const AIRED_STATUSES = ['en emisión', 'finalizado', 'abandonado']
-const CONTENT_TYPE_HOBBY = ['anime', 'serie', 'manga', 'manhwa']
+const AIRED_STATUSES = ['airing', 'finished', 'dropped']
+const CONTENT_TYPE_HOBBY = ['anime', 'series', 'manga', 'manhwa']
 
 const showAiredFields = computed(
   () =>
@@ -128,13 +164,17 @@ const showAiredFields = computed(
     CONTENT_TYPE_HOBBY.includes(selectedTypeData.value?.name?.toLowerCase() ?? ''),
 )
 
-watch([showAiredFields, selectedProgressStatus, selectedTypeData], ([showVal, statusVal, typeVal]) => {
-  console.warn('[DEBUG showAiredFields]', showVal, {
-    progressStatusName: statusVal?.name,
-    typeName: typeVal?.name,
-    contentTypeId: values.content_type_id,
-  })
-}, { immediate: true })
+watch(
+  [showAiredFields, selectedProgressStatus, selectedTypeData],
+  ([showVal, statusVal, typeVal]) => {
+    console.warn('[DEBUG showAiredFields]', showVal, {
+      progressStatusName: statusVal?.name,
+      typeName: typeVal?.name,
+      contentTypeId: values.content_type_id,
+    })
+  },
+  { immediate: true },
+)
 
 const { previewUrl, dropError, handleImageUpload, setFileFromDrop } = useImagePreview(
   computed(() => values.image),
@@ -173,7 +213,7 @@ const onDrop = (event: DragEvent) => {
 </script>
 
 <template>
-  <div class="min-h-screen p-4 md:p-6 flex justify-center items-start text-gray-300">
+  <div class="min-h-screen p-4 md:p-6 flex justify-center items-start text-base-content">
     <div class="w-full rounded-3xl p-1">
       <div
         v-if="isPlaceholderData || (!contentItemData && isUpdating)"
@@ -213,8 +253,8 @@ const onDrop = (event: DragEvent) => {
             @drop.prevent="onDrop"
             :class="
               twMerge(
-                'relative flex flex-col items-center justify-center w-full aspect-[3/4] rounded-2xl border-2 border-dashed border-cyan-500/20 bg-[#1a1c23] hover:bg-white/5 transition-all cursor-pointer group overflow-hidden',
-                errors.image ? 'border-red-500 border-4' : '',
+                'relative flex flex-col items-center justify-center w-full aspect-[3/4] rounded-2xl border-2 border-dashed border-accent/20 bg-base-300 hover:bg-base-100/10 transition-all cursor-pointer group overflow-hidden',
+                errors.image ? 'border-error border-4' : '',
                 isDragging && 'dragging',
               )
             "
@@ -235,7 +275,7 @@ const onDrop = (event: DragEvent) => {
             <template v-else-if="!previewUrl">
               <div class="flex flex-col items-center justify-center pb-6 pt-5">
                 <svg
-                  class="w-16 h-16 mb-4 text-cyan-500/50 group-hover:scale-110 transition-transform"
+                  class="w-16 h-16 mb-4 text-accent/50 group-hover:scale-110 transition-transform"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -243,7 +283,7 @@ const onDrop = (event: DragEvent) => {
                     d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM3 18V6h5v12H3zm16 0h-5V6h5v12z"
                   />
                 </svg>
-                <p class="text-lg font-medium text-cyan-500/70">Upload Cover Image</p>
+                <p class="text-lg font-medium text-accent/70">Upload Cover Image</p>
               </div>
             </template>
             <img
@@ -260,7 +300,7 @@ const onDrop = (event: DragEvent) => {
               accept="image/png, image/jpeg, image/gif, image/webp"
             />
           </label>
-          <p class="text-red-400 text-xl">{{ errors.image || dropError }}</p>
+          <p class="text-error text-xl">{{ errors.image || dropError }}</p>
         </div>
 
         <div class="lg:col-span-7 flex flex-col gap-y-6">
@@ -275,7 +315,7 @@ const onDrop = (event: DragEvent) => {
             v-model:description="description"
             :titleAttrs="titleAttrs"
             :errors_title="errors.title"
-            :type="data"
+            :type="translatedContentTypes"
             :content_type_idAttrs="content_type_idAttrs"
             :errors_content_type="errors.content_type_id"
             :allowedSegmentType="allowedSegmentType"
@@ -292,20 +332,20 @@ const onDrop = (event: DragEvent) => {
           />
 
           <div
-            class="collapse collapse-arrow md:collapse-open border border-gray-700 bg-white/2 rounded-2xl"
+            class="collapse collapse-arrow md:collapse-open border border-base-300 bg-base-100/5 rounded-2xl"
           >
             <input
               type="checkbox"
               checked
             />
             <div
-              class="collapse-title text-cyan-500 font-bold uppercase tracking-widest text-sm md:pointer-events-none"
+              class="collapse-title text-accent font-bold uppercase tracking-widest text-sm md:pointer-events-none"
             >
               Tu Progreso
             </div>
             <div class="collapse-content">
               <ProgressMetricsSection
-                :progressStatuses="progressStatuses"
+                :progressStatuses="translatedProgressStatuses"
                 :selectedProgressStatus="selectedProgressStatus"
                 :progressPercent="progressPercent"
                 :allowedUnits="allowedUnits"
@@ -331,14 +371,14 @@ const onDrop = (event: DragEvent) => {
           </div>
 
           <div
-            class="collapse collapse-arrow md:collapse-open border border-gray-700 bg-white/2 rounded-2xl"
+            class="collapse collapse-arrow md:collapse-open border border-base-300 bg-base-100/5 rounded-2xl"
           >
             <input
               type="checkbox"
               checked
             />
             <div
-              class="collapse-title text-cyan-500 font-bold uppercase tracking-widest text-sm md:pointer-events-none"
+              class="collapse-title text-accent font-bold uppercase tracking-widest text-sm md:pointer-events-none"
             >
               Tu Opinión
             </div>
@@ -355,7 +395,7 @@ const onDrop = (event: DragEvent) => {
                 :notesAttrs="notesAttrs"
                 :tagsAttrs="tagsAttrs"
                 :errors="errors"
-                :data_tags="data_tags"
+                :data_tags="translatedDataTags"
               />
             </div>
           </div>
@@ -363,7 +403,7 @@ const onDrop = (event: DragEvent) => {
           <button
             type="submit"
             @click.stop
-            class="btn btn-info w-full text-lg shadow-[0_0_20px_-5px_rgba(34,211,238,0.4)] mb-10"
+            class="btn btn-accent bg-accent/85 hover:bg-accent/95 w-full text-lg shadow-lg shadow-accent/40 mb-10 transition-all"
           >
             Guardar Hobby
           </button>
@@ -387,7 +427,7 @@ const onDrop = (event: DragEvent) => {
   text-align: center;
 }
 .dragging {
-  border-color: #22d3ee;
-  background-color: rgba(34, 211, 238, 0.1);
+  border-color: var(--color-accent);
+  background-color: color-mix(in oklch, var(--color-accent) 10%, transparent);
 }
 </style>

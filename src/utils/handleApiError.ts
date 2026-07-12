@@ -64,7 +64,11 @@ export class ApiError extends Error {
   errors?: Record<string, string | string[] | undefined>
   status?: number
 
-  constructor(message: string, errors?: Record<string, string | string[] | undefined>, status?: number) {
+  constructor(
+    message: string,
+    errors?: Record<string, string | string[] | undefined>,
+    status?: number,
+  ) {
     super(message)
     this.name = 'ApiError'
     this.errors = errors

@@ -1,4 +1,5 @@
 import { computed, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Type } from '../interfaces/ContentTypeResponse'
 
 export function useContentTypeCalculations(
@@ -7,6 +8,7 @@ export function useContentTypeCalculations(
   current_progress: Ref<number | null | undefined>,
   total_progress: Ref<number | null | undefined>,
 ) {
+  const { t } = useI18n({ useScope: 'global' })
   // 1. Buscamos el tipo seleccionado basado en el ID
   const selectedTypeData = computed<Type | null>(() => {
     if (!data.value || !content_type_id.value) return null
@@ -15,13 +17,24 @@ export function useContentTypeCalculations(
 
   // 2. Mapeo de propiedades del tipo seleccionado
   const allowedSegmentType = computed(
-    () => selectedTypeData.value?.allowed_segment_types.map((s) => ({ id: s, name: s })) ?? [],
+    () =>
+      selectedTypeData.value?.allowed_segment_types.map((s) => ({
+        id: s,
+        name: t(`contentItem.segmentType.${s}`),
+      })) ?? [],
   )
   const allowedSubsegmentType = computed(() =>
-    selectedTypeData.value?.allowed_subsegment_types.map((s) => ({ id: s, name: s })),
+    selectedTypeData.value?.allowed_subsegment_types.map((s) => ({
+      id: s,
+      name: t(`contentItem.subSegmentType.${s}`),
+    })),
   )
   const allowedUnits = computed(
-    () => selectedTypeData.value?.allowed_units.map((s) => ({ id: s, name: s })) ?? [],
+    () =>
+      selectedTypeData.value?.allowed_units.map((s) => ({
+        id: s,
+        name: t(`contentItem.unit.${s}`),
+      })) ?? [],
   )
 
   // 3. Cálculo de progreso (Lógica de negocio)
