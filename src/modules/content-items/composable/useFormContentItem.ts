@@ -7,6 +7,7 @@ import { CreateContentItem } from '../schemas/content-item.schema'
 import { ref, watch, nextTick, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ApiError } from '@/utils/handleApiError'
+import { formatDateToYYYYMMDD } from '@/shared/utils/formatDateToYYYYMMDD'
 
 export const useFormContentItem = (initialData?: any) => {
   const toast = useToast()
@@ -77,12 +78,10 @@ export const useFormContentItem = (initialData?: any) => {
           segment_number: hobbyData.segment_number || 0,
           segment_subtype: hobbyData.segment_subtype || null,
           segment_subnumber: hobbyData.segment_subnumber ?? undefined,
-          viewing_started_at: hobbyData.viewing_started_at
-            ? hobbyData.viewing_started_at.toString()
-            : '',
-          viewing_finished_at: hobbyData.viewing_finished_at || null,
-          aired_from: hobbyData.aired_from || null,
-          aired_to: hobbyData.aired_to || null,
+          viewing_started_at: formatDateToYYYYMMDD(hobbyData.viewing_started_at) ?? '',
+          viewing_finished_at: formatDateToYYYYMMDD(hobbyData.viewing_finished_at),
+          aired_from: formatDateToYYYYMMDD(hobbyData.aired_from),
+          aired_to: formatDateToYYYYMMDD(hobbyData.aired_to),
           rating: Number(hobbyData.rating) >= 1.0 ? Number(hobbyData.rating) : 1.0,
           day_of_week: hobbyData.day_of_week || null,
           tags: hobbyData.tags || [],

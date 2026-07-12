@@ -57,7 +57,9 @@
       </li>
 
       <li>
-        <a class="flex items-center gap-3 rounded-xl hover:bg-base-content/10 hover:text-accent transition">
+        <a
+          class="flex items-center gap-3 rounded-xl hover:bg-base-content/10 hover:text-accent transition"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="w-4 h-4"
@@ -73,7 +75,9 @@
       </li>
 
       <li>
-        <a class="flex items-center gap-3 rounded-xl text-error hover:bg-base-content/10 transition">
+        <a
+          class="flex items-center gap-3 rounded-xl text-error hover:bg-base-content/10 transition"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="w-4 h-4"
@@ -110,4 +114,20 @@ const prefetchEditData = (slug: string) => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.15s ease-out;
+}
+</style>
