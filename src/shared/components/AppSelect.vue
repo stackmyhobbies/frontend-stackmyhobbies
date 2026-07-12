@@ -170,7 +170,9 @@ defineOptions({ inheritAttrs: false })
                 No hay resultados.
               </div>
 
-              <div class="relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors text-base-content/80">
+              <div
+                class="relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors text-base-content/80"
+              >
                 <slot name="option_prepend" />
               </div>
               <ComboboxOption

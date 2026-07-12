@@ -39,13 +39,13 @@ const { t } = useI18n({ useScope: 'global' })
 
 const showDayOfWeek = computed(() => {
   return (
-    props.selectedProgressStatus?.name?.toLowerCase() === 'en emisión' ||
-    props.selectedProgressStatus?.name?.toLowerCase() === 'viendo'
+    props.selectedProgressStatus?.name?.toLowerCase() === 'airing' ||
+    props.selectedProgressStatus?.name?.toLowerCase() === 'watching'
   )
 })
 
 const isCurrentlyAiring = computed(() => {
-  return props.selectedProgressStatus?.name?.toLowerCase() === 'en emisión'
+  return props.selectedProgressStatus?.name?.toLowerCase() === 'airing'
 })
 </script>
 
@@ -118,7 +118,7 @@ const isCurrentlyAiring = computed(() => {
       v-if="showAiredFields && isCurrentlyAiring"
       class="col-span-12 md:col-span-6 flex items-center"
     >
-      <span class="badge badge-info badge-soft">En emisión</span>
+      <span class="badge badge-info badge-soft">{{ t('contentItem.status.airing') }}</span>
     </div>
 
     <!-- Fila 3: Progreso actual y Total -->

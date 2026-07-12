@@ -1,17 +1,21 @@
 <template>
-  <div class="min-h-dvh grid grid-rows-[auto_1fr_auto] overflow-x-hidden">
-    <div class="grid" id="header-settings">
+  <div class="h-screen grid grid-rows-[auto_1fr_auto] overflow-hidden">
+    <div
+      class="flex justify-end items-end"
+      id="header-settings"
+    >
+      <SwitchLangComponent />
       <SwitchThemeComponent />
     </div>
     <RouterView />
-    <div>
-      footer
-    </div>
+    <FooterComponent />
   </div>
 </template>
 
 <script lang="ts" setup>
-import SwitchThemeComponent from '@/shared/components/SwitchThemeComponent.vue';
+import FooterComponent from '@/shared/components/FooterComponent.vue'
+import SwitchLangComponent from '@/shared/components/SwitchLangComponent.vue'
+import SwitchThemeComponent from '@/shared/components/SwitchThemeComponent.vue'
 import { RouterView } from 'vue-router'
 </script>
 

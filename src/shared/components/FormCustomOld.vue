@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { reactive, computed } from 'vue';
-import AppDatePicker from './AppDatePicker.vue';
-import AppInput from './AppInput.vue';
+import { reactive, computed } from 'vue'
+import AppDatePicker from './AppDatePicker.vue'
+import AppInput from './AppInput.vue'
 
 const hobbyForm = reactive({
   title: '',
@@ -17,56 +17,77 @@ const hobbyForm = reactive({
   start_date: '',
   end_date: '',
   rating: 4.5,
-  image: null as string | null
-});
+  image: null as string | null,
+})
 
 // Campos calculados
 const progressPercent = computed(() => {
-  if (!hobbyForm.total_progress) return 0;
-  return Math.round((hobbyForm.current_progress / hobbyForm.total_progress) * 100);
-});
+  if (!hobbyForm.total_progress) return 0
+  return Math.round((hobbyForm.current_progress / hobbyForm.total_progress) * 100)
+})
 
 const handleImageUpload = (e: any) => {
-  const file = e.target.files[0];
-  if (file) hobbyForm.image = URL.createObjectURL(file);
-};
+  const file = e.target.files[0]
+  if (file) hobbyForm.image = URL.createObjectURL(file)
+}
 </script>
 
 <template>
-  <div class="min-h-screen bg-base-300 p-4 md:p-8 flex justify-center items-start text-base-content">
-
+  <div
+    class="min-h-screen bg-base-300 p-4 md:p-8 flex justify-center items-start text-base-content"
+  >
     <div
-      class="w-full max-w-6xl bg-base-300 rounded-3xl p-1 shadow-lg shadow-accent/30 border border-accent/30">
-
+      class="w-full max-w-6xl bg-base-300 rounded-3xl p-1 shadow-lg shadow-accent/30 border border-accent/30"
+    >
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 md:p-10">
-
         <div class="lg:col-span-5 flex flex-col gap-4">
           <label
-            class="relative flex flex-col items-center justify-center w-full aspect-[3/4] rounded-2xl border-2 border-dashed border-accent/20 bg-base-300 hover:bg-base-200 transition-all cursor-pointer group overflow-hidden">
+            class="relative flex flex-col items-center justify-center w-full aspect-[3/4] rounded-2xl border-2 border-dashed border-accent/20 bg-base-300 hover:bg-base-200 transition-all cursor-pointer group overflow-hidden"
+          >
             <template v-if="!hobbyForm.image">
               <div class="flex flex-col items-center justify-center pb-6 pt-5">
-                <svg class="w-16 h-16 mb-4 text-accent/50 group-hover:scale-110 transition-transform"
-                  fill="currentColor" viewBox="0 0 24 24">
+                <svg
+                  class="w-16 h-16 mb-4 text-accent/50 group-hover:scale-110 transition-transform"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
-                    d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM3 18V6h5v12H3zm16 0h-5V6h5v12z" />
+                    d="M21 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM3 18V6h5v12H3zm16 0h-5V6h5v12z"
+                  />
                 </svg>
                 <p class="text-lg font-medium text-accent/70">Upload Cover Image</p>
               </div>
             </template>
-            <img v-else :src="hobbyForm.image" class="w-full h-full object-cover" />
-            <input type="file" class="hidden" @change="handleImageUpload" />
+            <img
+              v-else
+              :src="hobbyForm.image"
+              class="w-full h-full object-cover"
+            />
+            <input
+              type="file"
+              class="hidden"
+              @change="handleImageUpload"
+            />
           </label>
         </div>
 
         <div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-
           <div class="md:col-span-1">
-            <AppInput label="Hobby Title" placeholder="Hobby Title" id="title" v-model="hobbyForm.title" />
+            <AppInput
+              label="Hobby Title"
+              placeholder="Hobby Title"
+              id="title"
+              v-model="hobbyForm.title"
+            />
           </div>
           <div class="md:col-span-1">
-            <label class="label"><span class="label-text text-base-content/60">Hobby Type</span></label>
-            <select v-model="hobbyForm.content_type_id"
-              class="select select-bordered w-full bg-base-300 border-base-300 focus:border-accent">
+            <label class="label"
+              ><span class="label-text text-base-content/60">Hobby Type</span></label
+            >
+            <select
+              v-model="hobbyForm.content_type_id"
+              class="select select-bordered w-full bg-base-300 border-base-300 focus:border-accent"
+            >
               <option :value="null">Anime, Manga, Movie...</option>
               <option :value="5">Anime</option>
               <option :value="1">Manga</option>
@@ -74,9 +95,13 @@ const handleImageUpload = (e: any) => {
           </div>
 
           <div class="md:col-span-2">
-            <label class="label"><span class="label-text text-base-content/60">Hobby Status</span></label>
-            <select v-model="hobbyForm.progress_status_id"
-              class="select select-bordered w-full bg-base-300 border-base-300">
+            <label class="label"
+              ><span class="label-text text-base-content/60">Hobby Status</span></label
+            >
+            <select
+              v-model="hobbyForm.progress_status_id"
+              class="select select-bordered w-full bg-base-300 border-base-300"
+            >
               <option :value="1">🔵 Reading/Watching</option>
               <option :value="2">🟢 Completed</option>
               <option :value="3">🟡 On Hold</option>
@@ -85,14 +110,24 @@ const handleImageUpload = (e: any) => {
 
           <div class="md:col-span-1">
             <div class="grid grid-cols-2 gap-2">
-              <AppInput label="Current" type="number" v-model="hobbyForm.current_progress" />
-              <AppInput label="Total" type="number" v-model="hobbyForm.total_progress" />
+              <AppInput
+                label="Current"
+                type="number"
+                v-model="hobbyForm.current_progress"
+              />
+              <AppInput
+                label="Total"
+                type="number"
+                v-model="hobbyForm.total_progress"
+              />
             </div>
           </div>
           <div class="md:col-span-1">
             <label class="label"><span class="label-text text-base-content/60">Units</span></label>
-            <select v-model="hobbyForm.progress_unit"
-              class="select select-bordered w-full bg-base-300 border-base-300">
+            <select
+              v-model="hobbyForm.progress_unit"
+              class="select select-bordered w-full bg-base-300 border-base-300"
+            >
               <option value="episodes">Pages, Chapters, Minutes...</option>
               <option value="episodes">Episodes</option>
               <option value="pages">Pages</option>
@@ -100,36 +135,68 @@ const handleImageUpload = (e: any) => {
           </div>
 
           <div class="md:col-span-1">
-            <AppDatePicker id="start" label="Start Date" v-model="hobbyForm.start_date" />
+            <AppDatePicker
+              id="start"
+              label="Start Date"
+              v-model="hobbyForm.start_date"
+            />
           </div>
           <div class="md:col-span-1">
-            <AppDatePicker id="end" label="End Date" v-model="hobbyForm.end_date" />
+            <AppDatePicker
+              id="end"
+              label="End Date"
+              v-model="hobbyForm.end_date"
+            />
           </div>
 
           <div class="md:col-span-1">
-            <label class="label"><span class="label-text text-base-content/60">Short Description</span></label>
-            <textarea v-model="hobbyForm.description"
+            <label class="label"
+              ><span class="label-text text-base-content/60">Short Description</span></label
+            >
+            <textarea
+              v-model="hobbyForm.description"
               class="textarea textarea-bordered w-full bg-base-300 border-base-300 h-24"
-              placeholder="Short Description"></textarea>
+              placeholder="Short Description"
+            ></textarea>
           </div>
           <div class="md:col-span-1">
-            <label class="label"><span class="label-text text-base-content/60">Personal Notes</span></label>
-            <textarea v-model="hobbyForm.notes"
+            <label class="label"
+              ><span class="label-text text-base-content/60">Personal Notes</span></label
+            >
+            <textarea
+              v-model="hobbyForm.notes"
               class="textarea textarea-bordered w-full bg-base-300 border-base-300 h-24"
-              placeholder="Personal Notes"></textarea>
+              placeholder="Personal Notes"
+            ></textarea>
           </div>
 
           <div class="md:col-span-1">
             <label class="label"><span class="label-text text-base-content/60">Rating</span></label>
             <div class="rating rating-md">
-              <input v-for="i in 5" :key="i" type="radio" class="mask mask-star-2 bg-accent" :value="i"
-                v-model="hobbyForm.rating" />
+              <input
+                v-for="i in 5"
+                :key="i"
+                type="radio"
+                class="mask mask-star-2 bg-accent"
+                :value="i"
+                v-model="hobbyForm.rating"
+              />
             </div>
           </div>
           <div class="md:col-span-1">
-            <label class="label"><span class="label-text text-base-content/60">Completion Percentage (Auto)</span></label>
-            <progress class="progress progress-accent w-full" :value="progressPercent" max="100"></progress>
-            <span class="text-xs text-accent font-mono">{{ progressPercent }}% progressPercent</span>
+            <label class="label"
+              ><span class="label-text text-base-content/60"
+                >Completion Percentage (Auto)</span
+              ></label
+            >
+            <progress
+              class="progress progress-accent w-full"
+              :value="progressPercent"
+              max="100"
+            ></progress>
+            <span class="text-xs text-accent font-mono"
+              >{{ progressPercent }}% progressPercent</span
+            >
           </div>
 
           <div class="md:col-span-2 mt-4">
@@ -137,7 +204,6 @@ const handleImageUpload = (e: any) => {
               Save Hobby
             </button>
           </div>
-
         </div>
       </div>
     </div>

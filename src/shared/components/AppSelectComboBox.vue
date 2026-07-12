@@ -200,6 +200,7 @@ defineOptions({ inheritAttrs: false })
             :display-value="() => ''"
             @blur="onBlur?.()"
             @keydown="handleKeydown"
+            autocomplete="off"
           />
 
           <!-- TOGGLE BUTTON -->

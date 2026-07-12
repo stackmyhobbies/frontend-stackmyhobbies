@@ -1,8 +1,23 @@
 <template>
-  <div class="drawer lg:drawer-open select-none" @mousemove="handleMouseMove" @mouseup="handleMouseUp">
-    <input id="drawer" type="checkbox" class="drawer-toggle" v-model="isMobileSidebarOpen" />
-    <side-bar-component :width="width" :is-dragging="isDragging" :animating="animating" :min="MIN"
-      @mouse-down="handleMouseDown" @toggle-collapsed="toggleCollapsed" />
+  <div
+    class="drawer lg:drawer-open select-none"
+    @mousemove="handleMouseMove"
+    @mouseup="handleMouseUp"
+  >
+    <input
+      id="drawer"
+      type="checkbox"
+      class="drawer-toggle"
+      v-model="isMobileSidebarOpen"
+    />
+    <side-bar-component
+      :width="width"
+      :is-dragging="isDragging"
+      :animating="animating"
+      :min="MIN"
+      @mouse-down="handleMouseDown"
+      @toggle-collapsed="toggleCollapsed"
+    />
     <drawer-content-component @toggle-collapsed="toggleCollapsed" />
   </div>
 </template>
@@ -34,9 +49,11 @@ const isMobile = () => window.innerWidth < 1024
 watch(isMobileSidebarOpen, (isOpen) => {
   if (mobileDragging.value) return
 
-  if (isOpen) {
-    width.value = MAX
+  if (isMobile()) {
+    animating.value = false
   }
+
+  width.value = isOpen ? MAX : 0
 })
 
 const handleMouseDown = (e: MouseEvent) => {
@@ -77,13 +94,13 @@ const handleMouseUp = () => {
 }
 
 const toggleCollapsed = () => {
-  animating.value = true
-
   if (!isMobile()) {
+    animating.value = true
     width.value = width.value === MIN ? MAX : MIN
     return
   }
 
+  animating.value = false
   isMobileSidebarOpen.value = !isMobileSidebarOpen.value
 }
 
@@ -109,6 +126,8 @@ const handleTouchStart = (e: TouchEvent) => {
 const handleTouchMove = (e: TouchEvent) => {
   if (!mobileDragging.value || !isMobile()) return
 
+  e.preventDefault()
+
   const x = e.touches[0].clientX
   const delta = x - mobileStartX.value
 
@@ -122,7 +141,7 @@ const handleTouchEnd = () => {
   if (!mobileDragging.value || !isMobile()) return
 
   mobileDragging.value = false
-  animating.value = true
+  animating.value = false
 
   const threshold = MAX / 3
 

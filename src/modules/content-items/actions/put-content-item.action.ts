@@ -4,7 +4,10 @@ import { throwApiError, ApiError } from '@/utils/handleApiError'
 import type { updateContentItemDto } from '../dto/updateContentItemDto'
 import type { ContentItemResponse } from '../interfaces/contentItemResponse'
 
-export const putContentItemAction = async (payload: updateContentItemDto, id: string | number): Promise<ContentItemResponse> => {
+export const putContentItemAction = async (
+  payload: updateContentItemDto,
+  id: string | number,
+): Promise<ContentItemResponse> => {
   try {
     const formData = convertJsonToFormData({ ...payload, _method: 'PUT' })
     const { data } = await stackMyHobbiesApi.post<ContentItemResponse>(

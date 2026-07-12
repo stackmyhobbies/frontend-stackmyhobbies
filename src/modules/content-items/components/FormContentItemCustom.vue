@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { slugifyKey } from '@/shared/utils/slugifyKey'
 
 //** Queries **//
 import { useGetContentTypesQuery } from '@content-queries/useGetContentTypesQuery'
@@ -46,7 +47,30 @@ const props = defineProps<{
 const { data } = useGetContentTypesQuery()
 const { data: progressStatuses } = useProgressStatusesQuery()
 const { data: data_tags } = useGetTagsQuery()
+const translatedDataTags = computed(
+  () =>
+    data_tags.value?.map((tag) => ({
+      ...tag,
+      name: t(`contentItem.tag.${slugifyKey(tag.name)}`),
+    })) ?? [],
+)
 const { t } = useI18n({ useScope: 'global' })
+
+const translatedContentTypes = computed(
+  () =>
+    data.value?.map((type) => ({
+      ...type,
+      name: t(`contentItem.type.${slugifyKey(type.name)}`),
+    })) ?? [],
+)
+
+const translatedProgressStatuses = computed(
+  () =>
+    progressStatuses.value?.map((status) => ({
+      ...status,
+      name: t(`contentItem.status.${slugifyKey(status.name)}`),
+    })) ?? [],
+)
 
 // 1. Definimos la lógica de activación
 const isUpdating = computed(() => props.action === 'update')
@@ -61,6 +85,18 @@ const { data: contentItemData, isPlaceholderData } = useGetContentItemQuery(
   { enabled: canFetch }, // <-- Pasamos el booleano reactivo aquí
 )
 
+const contentDataWithTranslatedTags = computed(() => {
+  const raw = contentItemData.value
+  if (!raw || !raw.tags) return raw
+  return {
+    ...raw,
+    tags: raw.tags.map((tag: { id: number; name: string }) => ({
+      ...tag,
+      name: t(`contentItem.tag.${slugifyKey(tag.name)}`),
+    })),
+  }
+})
+
 const {
   handleSubmit,
   errors,
@@ -71,7 +107,7 @@ const {
   setErrors,
   onSubmit,
   isResetting,
-} = useFormContentItem(computed(() => contentItemData.value))
+} = useFormContentItem(contentDataWithTranslatedTags)
 
 const defineSegmentSubNumber = () =>
   defineField('segment_subnumber') as unknown as [
@@ -119,8 +155,8 @@ const selectedProgressStatus = computed<ProgressStatus | null>(() => {
   return progressStatuses.value.find((t) => t.id === Number(values.progress_status_id)) ?? null
 })
 
-const AIRED_STATUSES = ['en emisión', 'finalizado', 'abandonado']
-const CONTENT_TYPE_HOBBY = ['anime', 'serie', 'manga', 'manhwa']
+const AIRED_STATUSES = ['airing', 'finished', 'dropped']
+const CONTENT_TYPE_HOBBY = ['anime', 'series', 'manga', 'manhwa']
 
 const showAiredFields = computed(
   () =>
@@ -279,7 +315,7 @@ const onDrop = (event: DragEvent) => {
             v-model:description="description"
             :titleAttrs="titleAttrs"
             :errors_title="errors.title"
-            :type="data"
+            :type="translatedContentTypes"
             :content_type_idAttrs="content_type_idAttrs"
             :errors_content_type="errors.content_type_id"
             :allowedSegmentType="allowedSegmentType"
@@ -309,7 +345,7 @@ const onDrop = (event: DragEvent) => {
             </div>
             <div class="collapse-content">
               <ProgressMetricsSection
-                :progressStatuses="progressStatuses"
+                :progressStatuses="translatedProgressStatuses"
                 :selectedProgressStatus="selectedProgressStatus"
                 :progressPercent="progressPercent"
                 :allowedUnits="allowedUnits"
@@ -359,7 +395,7 @@ const onDrop = (event: DragEvent) => {
                 :notesAttrs="notesAttrs"
                 :tagsAttrs="tagsAttrs"
                 :errors="errors"
-                :data_tags="data_tags"
+                :data_tags="translatedDataTags"
               />
             </div>
           </div>

@@ -1,6 +1,89 @@
 {
-    "form_content_item": {
-        "release_date": "Release date",
-        "select_placeholder_release_date": "Select a release date"
-    }
+  "form_content_item": {
+    "release_date": "Release date",
+    "select_placeholder_release_date": "Select a release date"
+  },
+  "status": {
+    "airing": "Airing",
+    "finished": "Finished",
+    "upcoming": "Upcoming",
+    "watching": "Watching",
+    "plan_to_watch": "Plan to Watch",
+    "on_hold": "On Hold",
+    "dropped": "Dropped"
+  },
+  "type": {
+    "manga": "Manga",
+    "manhwa": "Manhwa",
+    "graphic_novel": "Graphic Novel",
+    "novel": "Novel",
+    "anime": "Anime",
+    "series": "Series",
+    "movie": "Movie",
+    "documentary": "Documentary"
+  },
+  "segmentType": {
+    "season": "Season",
+    "volume": "Volume",
+    "part": "Part",
+    "edition": "Edition",
+    "movie": "Movie",
+    "single": "Single"
+  },
+  "subSegmentType": {
+    "chapter": "Chapter",
+    "episode": "Episode",
+    "page": "Page",
+    "ova": "OVA",
+    "special": "Special",
+    "part": "Part"
+  },
+  "unit": {
+    "episodes": "Episodes",
+    "pages": "Pages",
+    "minutes": "Minutes",
+    "chapters": "Chapters"
+  },
+  "tag": {
+    "action": "Action",
+    "adventure": "Adventure",
+    "comedy": "Comedy",
+    "cyberpunk": "Cyberpunk",
+    "drama": "Drama",
+    "ecchi": "Ecchi",
+    "fantasy": "Fantasy",
+    "gore": "Gore",
+    "harem": "Harem",
+    "historical": "Historical",
+    "horror": "Horror",
+    "isekai": "Isekai",
+    "iyashikei": "Iyashikei",
+    "josei": "Josei",
+    "kids": "Kids",
+    "martial_arts": "Martial Arts",
+    "mecha": "Mecha",
+    "military": "Military",
+    "music": "Music",
+    "mystery": "Mystery",
+    "parody": "Parody",
+    "post_apocalyptic": "Post-Apocalyptic",
+    "psychological": "Psychological",
+    "reverse_harem": "Reverse Harem",
+    "romance": "Romance",
+    "school": "School",
+    "sci_fi": "Sci-Fi",
+    "seinen": "Seinen",
+    "shojo": "Shojo",
+    "shonen": "Shonen",
+    "slice_of_life": "Slice of Life",
+    "space": "Space",
+    "sports": "Sports",
+    "steampunk": "Steampunk",
+    "super_power": "Super Power",
+    "supernatural": "Supernatural",
+    "survival": "Survival",
+    "thriller": "Thriller",
+    "vampire": "Vampire",
+    "zombies": "Zombies"
+  }
 }

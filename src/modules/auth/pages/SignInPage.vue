@@ -17,7 +17,7 @@
           <label
             for="login"
             class="block text-sm/6 font-medium text-base-content"
-            >Usuario</label
+            >{{ $t('auth.sign-in.username') }}</label
           >
           <div class="mt-2">
             <input
@@ -37,7 +37,7 @@
             <label
               for="password"
               class="block text-sm/6 font-medium text-base-content"
-              >Password</label
+              >{{ $t('auth.sign-in.password') }}</label
             >
             <div class="text-sm">
               <router-link

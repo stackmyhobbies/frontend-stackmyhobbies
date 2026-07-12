@@ -30,25 +30,20 @@ const applyStatusStyles = (el: HTMLSpanElement, status: string) => {
   el.classList.add('badge', 'font-medium', 'border-none', 'badge-soft')
 
   switch (status?.toLowerCase()) {
-    case 'finalizado':
-      // Solid Purple
+    case 'finished':
       el.classList.add('badge-secondary')
       break
-    case 'viendo':
-      // Solid Green
+    case 'watching':
       el.classList.add('badge-success')
       break
-    case 'en emisión':
-      // Solid Yellow/Amber
+    case 'airing':
       el.classList.add('badge-warning')
       break
-    case 'abandonado':
-      // Solid Red
+    case 'dropped':
       el.classList.add('badge-error')
       break
-    case 'por ver':
-    case 'por estrenar':
-      // Solid Blue
+    case 'plan to watch':
+    case 'upcoming':
       el.classList.add('badge-info')
       break
     default:
