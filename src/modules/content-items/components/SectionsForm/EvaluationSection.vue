@@ -64,7 +64,7 @@ const { isLightTheme } = useThemeStore()
         id="your_review"
         v-model="notes"
         v-bind="notesAttrs"
-        class="textarea textarea-bordered w-full bg-base-100 rounded-btn h-[60px] min-h-0 resize-none focus-within:border-cyan-500 focus:border-cyan-500 focus:outline-none"
+        class="textarea textarea-bordered w-full bg-base-100 rounded-btn h-[60px] min-h-0 resize-none focus-within:border-accent focus:border-accent focus:outline-none"
       ></textarea>
     </div>
 
@@ -76,7 +76,7 @@ const { isLightTheme } = useThemeStore()
         v-model="tags"
         :items="data_tags || []"
         placeholder="Selecciona tags..."
-        containerClass="border-zinc-800 bg-base-100 focus-within:border-cyan-500"
+        containerClass="border-base-300 bg-base-100 focus-within:border-accent"
         :error-message="errors.tags"
       />
     </div>

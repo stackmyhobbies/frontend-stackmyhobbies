@@ -16,7 +16,6 @@ export interface Hobby {
   progress_status_id: number
   segment_type: string
   segment_number: number
-  segment_label: string
   segment_subtype: null
   segment_subnumber: null
   thumbnail_url: string

@@ -19,40 +19,40 @@
       </label>
       <ul
         tabindex="0"
-        class="dropdown-content z-50 mt-2 w-48 p-2 rounded-2xl backdrop-blur-2xl border animate-fadeIn menu gap-1 border-white/5 bg-white/10 shadow-2xl"
+        class="dropdown-content z-50 mt-2 w-48 p-2 rounded-2xl backdrop-blur-2xl border animate-fadeIn menu gap-1 border-base-content/5 bg-base-100/10 shadow-2xl"
       >
         <li>
           <label
-            class="flex items-center gap-3 rounded-xl hover:bg-white/10 cursor-pointer px-3 py-2"
+            class="flex items-center gap-3 rounded-xl hover:bg-base-content/10 cursor-pointer px-3 py-2"
           >
             <input
               type="checkbox"
               v-model="model!.type"
-              class="checkbox checkbox-sm checkbox-primary"
+              class="checkbox checkbox-sm checkbox-accent"
             />
             <span>Tipo</span>
           </label>
         </li>
         <li>
           <label
-            class="flex items-center gap-3 rounded-xl hover:bg-white/10 cursor-pointer px-3 py-2"
+            class="flex items-center gap-3 rounded-xl hover:bg-base-content/10 cursor-pointer px-3 py-2"
           >
             <input
               type="checkbox"
               v-model="model!.status"
-              class="checkbox checkbox-sm checkbox-primary"
+              class="checkbox checkbox-sm checkbox-accent"
             />
             <span>Estado</span>
           </label>
         </li>
         <li>
           <label
-            class="flex items-center gap-3 rounded-xl hover:bg-white/10 cursor-pointer px-3 py-2"
+            class="flex items-center gap-3 rounded-xl hover:bg-base-content/10 cursor-pointer px-3 py-2"
           >
             <input
               type="checkbox"
               v-model="model!.progress"
-              class="checkbox checkbox-sm checkbox-primary"
+              class="checkbox checkbox-sm checkbox-accent"
             />
             <span>Progreso</span>
           </label>
@@ -96,4 +96,20 @@ const emitChange = (key: keyof ColumnStructure, checked: boolean) => {
 } **/
 </script>
 
-<style scoped></style>
+<style scoped>
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.15s ease-out;
+}
+</style>

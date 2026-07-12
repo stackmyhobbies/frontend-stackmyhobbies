@@ -1,13 +1,13 @@
 <template>
   <div
-    class="collapse collapse-arrow md:collapse-open border border-gray-700 bg-white/2 rounded-2xl"
+    class="collapse collapse-arrow md:collapse-open border border-base-300 bg-base-100/5 rounded-2xl"
   >
     <input
       type="checkbox"
       checked
     />
     <div
-      class="collapse-title text-cyan-500 font-bold uppercase tracking-widest text-sm md:pointer-events-none"
+      class="collapse-title text-accent font-bold uppercase tracking-widest text-sm md:pointer-events-none"
     >
       ¿Qué estás siguiendo?
     </div>
@@ -15,7 +15,7 @@
       <div class="grid grid-cols-12 gap-4 pt-2">
         <div class="col-span-12 md:col-span-6">
           <AppInput
-            input-class="bg-base-100 focus:outline-cyan-500"
+            input-class="bg-base-100 focus:outline-accent"
             label="Título"
             placeholder="Ej: Naruto"
             labelFor="title"
@@ -26,9 +26,9 @@
         </div>
         <div class="col-span-12 md:col-span-6">
           <AppSelect
-            select-class="bg-base-100 focus-within:ring-cyan-500/50 focus-within:border-cyan-500"
-            select-container-option-class="bg-cyan-500/10 text-cyan-400"
-            selected-text="text-cyan-500"
+            select-class="bg-base-100 focus-within:ring-accent/50 focus-within:border-accent"
+            select-container-option-class="bg-accent/10 text-accent"
+            selected-text="text-accent"
             label="Tipo de Contenido"
             display-key="name"
             :items="type || []"
@@ -59,7 +59,7 @@
           </div>
           <div class="col-span-12 md:col-span-6">
             <AppInput
-              input-class="bg-base-100 focus:outline-cyan-500"
+              input-class="bg-base-100 focus:outline-accent"
               label="Número"
               type="number"
               labelFor="segment_number"
@@ -99,7 +99,7 @@
           </div>
           <div class="col-span-12 md:col-span-6">
             <AppInput
-              input-class="bg-base-100 focus:outline-cyan-500"
+              input-class="bg-base-100 focus:outline-accent"
               label="Número"
               type="number"
               inputmode="numeric"
@@ -120,7 +120,7 @@
           <textarea
             v-model="description"
             v-bind="descriptionAttrs"
-            class="textarea textarea-bordered w-full bg-base-100 focus-within:border-cyan-500 focus:border-cyan-500 focus:outline-none rounded-btn h-[60px] min-h-0 resize-none"
+            class="textarea textarea-bordered w-full bg-base-100 focus-within:border-accent focus:border-accent focus:outline-none rounded-btn h-[60px] min-h-0 resize-none"
           ></textarea>
         </div>
       </div>

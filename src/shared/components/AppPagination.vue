@@ -12,13 +12,13 @@
       type="button"
       class="join-item btn"
     >
-      Page {{ page }}
+      Page
     </button>
 
     <input
       type="number"
       min="1"
-      class="w-20 me-5"
+      class="w-10 me-1 border-gray-400/30 border-solid border-1 text-center"
       :value="currentPage"
       @input="changePage($event)"
       :max="lastPage"

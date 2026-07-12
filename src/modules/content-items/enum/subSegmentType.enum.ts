@@ -7,4 +7,7 @@ export enum SubSegmentType {
   PART = 'part',
 }
 
-export const SubSegmentTypeValues = Object.values(SubSegmentType) as [SubSegmentType, ...SubSegmentType[]]
+export const SubSegmentTypeValues = Object.values(SubSegmentType) as [
+  SubSegmentType,
+  ...SubSegmentType[],
+]

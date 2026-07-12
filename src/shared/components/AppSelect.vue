@@ -125,7 +125,7 @@ defineOptions({ inheritAttrs: false })
             :class="
               twMerge(
                 'relative w-full flex items-center rounded-lg border border-base-content/20 bg-base-100 transition-all',
-                'focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:border-indigo-500',
+                'focus-within:ring-2 focus-within:ring-primary/50 focus-within:border-primary',
                 error ? 'border-error' : '',
                 selectClass,
               )
@@ -170,7 +170,9 @@ defineOptions({ inheritAttrs: false })
                 No hay resultados.
               </div>
 
-              <div class="relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors text-base-content/80">
+              <div
+                class="relative cursor-pointer select-none py-2.5 pl-10 pr-4 transition-colors text-base-content/80"
+              >
                 <slot name="option_prepend" />
               </div>
               <ComboboxOption

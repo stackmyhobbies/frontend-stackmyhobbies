@@ -25,7 +25,7 @@
               type="password"
               name="password"
               :class="[
-                'block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6',
+                'block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6',
                 { 'border-2 border-red-500': passwordError },
               ]"
             />
@@ -51,7 +51,7 @@
               type="password"
               name="confirmPassword"
               :class="[
-                'block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6',
+                'block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 -outline-offset-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6',
                 { 'border-2 border-red-500': confirmPasswordError },
               ]"
             />
@@ -68,7 +68,7 @@
           <button
             type="submit"
             :disabled="isLoading"
-            class="flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-white bg-indigo-500 hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all disabled:opacity-50"
+            class="flex w-full justify-center rounded-md px-3 py-1.5 text-sm/6 font-semibold text-accent-content bg-accent hover:bg-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent transition-all disabled:opacity-50"
           >
             {{ isLoading ? 'Resetting...' : 'Reset Password' }}
           </button>
@@ -79,7 +79,7 @@
         Remember your password?
         <router-link
           :to="{ name: 'signIn' }"
-          class="font-semibold text-indigo-400 hover:text-indigo-300"
+          class="font-semibold text-accent hover:text-accent/80"
         >
           Sign In
         </router-link>
