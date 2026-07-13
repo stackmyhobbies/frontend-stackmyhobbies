@@ -30,6 +30,9 @@ export function useContentFilters(
   const selectedTypes = ref<Type[]>([])
   const selectedProgresses = ref<ProgressStatus[]>([])
 
+  // Almacenar el estado anterior de filtros para detectar cambios reales
+  const previousFilterKey = ref('')
+
   onMounted(() => {
     if (route.query.search) {
       searchTerm.value = route.query.search as string
@@ -37,6 +40,9 @@ export function useContentFilters(
     }
     if (route.query.page) {
       currentPage.value = parseInt(route.query.page as string) || 1
+    }
+    if (route.query.per_page) {
+      per_page.value = parseInt(route.query.per_page as string) || 5
     }
   })
 
@@ -103,7 +109,29 @@ export function useContentFilters(
     { deep: true },
   )
 
-  // Actualizar URL cuando los filtros cambian
+  // Build a serialized key to detect real filter changes
+  function filterKey() {
+    return JSON.stringify([filters.search, filters.tags, filters.content_type, filters.progress])
+  }
+
+  // Resetear página a 1 cuando cambian los filtros (pero no la página misma)
+  watch(
+    () => filterKey(),
+    (newKey, oldKey) => {
+      if (oldKey && newKey !== oldKey) {
+        currentPage.value = 1
+      }
+      previousFilterKey.value = newKey
+    },
+    { deep: true },
+  )
+
+  // Resetear página a 1 cuando cambia per_page
+  watch(per_page, () => {
+    currentPage.value = 1
+  })
+
+  // Actualizar URL cuando los filtros, página o per_page cambian
   watch(
     [
       () => filters.search,
@@ -111,6 +139,7 @@ export function useContentFilters(
       () => filters.content_type,
       () => filters.progress,
       currentPage,
+      per_page,
     ],
     () => {
       const query: Record<string, any> = {}
@@ -119,6 +148,7 @@ export function useContentFilters(
       if (filters.content_type.length) query.content_type = filters.content_type.join(',')
       if (filters.progress.length) query.progress = filters.progress.join(',')
       if (currentPage.value > 1) query.page = currentPage.value
+      if (per_page.value !== 5) query.per_page = per_page.value
 
       router.replace({ query })
     },

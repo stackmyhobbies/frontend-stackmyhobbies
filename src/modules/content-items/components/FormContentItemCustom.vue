@@ -1,3 +1,5 @@
+<!-- TODO: aplicar optimización de imágenes (lazy loading + placeholder + fade-in) similar a ContentItemsTableRow.vue usando v-image-fallback -->
+
 <script setup lang="ts">
 import { ref, computed, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
