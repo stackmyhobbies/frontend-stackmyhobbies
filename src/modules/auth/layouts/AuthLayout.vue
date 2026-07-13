@@ -1,13 +1,15 @@
 <template>
-  <div class="h-screen grid grid-rows-[auto_1fr_auto] overflow-hidden">
+  <div class="min-h-screen relative flex flex-col">
     <div
-      class="flex justify-end items-end"
+      class="absolute top-2 right-4 flex items-center gap-2 z-50"
       id="header-settings"
     >
       <SwitchLangComponent />
       <SwitchThemeComponent />
     </div>
-    <RouterView />
+    <main class="flex-1">
+      <RouterView />
+    </main>
     <FooterComponent />
   </div>
 </template>

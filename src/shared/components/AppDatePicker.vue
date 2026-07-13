@@ -58,12 +58,10 @@
 import 'cally'
 import CalendarIcon from '../icons/svg/CalendarIcon.vue'
 import { twMerge } from 'tailwind-merge'
-import { watch } from 'vue'
-import { formatDateToYYYYMMDD } from '@/shared/utils/formatDateToYYYYMMDD'
 
 type ErrorType = { message: string } | string
 
-const dateValue = defineModel<string | null | undefined | unknown>()
+const dateValue = defineModel<string | null | undefined>()
 
 interface Props {
   id: string
@@ -73,16 +71,7 @@ interface Props {
   labelClass?: string
 }
 
-const props = defineProps<Props>()
-
-watch(dateValue, (newVal) => {
-  if (newVal && typeof newVal === 'string') {
-    const normalized = formatDateToYYYYMMDD(newVal)
-    if (normalized !== null && normalized !== newVal) {
-      dateValue.value = normalized
-    }
-  }
-})
+defineProps<Props>()
 
 const handleDateChange = (event: any) => {
   dateValue.value = event.target.value
@@ -106,6 +95,5 @@ function getErrorMessage(error: ErrorType | undefined): string {
   margin: 0;
   inset: auto;
   position-area: bottom;
-  /* Ajustado para mejor compatibilidad */
 }
 </style>

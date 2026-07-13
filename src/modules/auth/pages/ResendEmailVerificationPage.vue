@@ -1,5 +1,6 @@
 <template>
-  <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  <div class="flex min-h-full flex-col px-6 pt-12 pb-4 lg:px-8">
+    <div class="my-auto w-full">
     <header-form
       :url="reSendEmailImage"
       alt="icon_resend_email"
@@ -67,6 +68,7 @@
           Registrar
         </router-link>
       </p>
+    </div>
     </div>
   </div>
 </template>

@@ -85,5 +85,34 @@
     "thriller": "Thriller",
     "vampire": "Vampiros",
     "zombies": "Zombies"
+  },
+  "tracking": {
+    "title": "Tu seguimiento actual",
+    "completed": "Completado",
+    "seen": "vistos",
+    "start": "Inicio",
+    "lastUpdate": "Último update"
+  },
+  "specs": {
+    "title": "Especificaciones",
+    "aired": "Estreno",
+    "broadcast": "Transmisión",
+    "format": "Formato",
+    "status": "Estado"
+  },
+  "review": {
+    "title": "Tu reseña",
+    "empty": "Sin reseña",
+    "lastEdited": "Editado por última vez",
+    "edit": "Editar"
+  },
+  "dayOfWeek": {
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
   }
 }

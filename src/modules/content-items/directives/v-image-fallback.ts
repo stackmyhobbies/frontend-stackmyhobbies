@@ -8,14 +8,16 @@ function loadImage(el: HTMLImageElement, src: string) {
   img.src = src
   img.onload = () => {
     el.src = src
+    el.style.removeProperty('opacity')
   }
   img.onerror = () => {
     el.src = notFoundImage
+    el.style.removeProperty('opacity')
   }
 }
 
 function observe(el: HTMLImageElement, src: string) {
-  el.src = notFoundImage
+  el.style.opacity = '0'
 
   const observer = new IntersectionObserver(
     ([entry]) => {

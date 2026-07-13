@@ -85,5 +85,34 @@
     "thriller": "Thriller",
     "vampire": "Vampire",
     "zombies": "Zombies"
+  },
+  "tracking": {
+    "title": "Your current tracking",
+    "completed": "Completed",
+    "seen": "seen",
+    "start": "Start",
+    "lastUpdate": "Last update"
+  },
+  "specs": {
+    "title": "Specifications",
+    "aired": "Released",
+    "broadcast": "Broadcast",
+    "format": "Format",
+    "status": "Status"
+  },
+  "review": {
+    "title": "Your review",
+    "empty": "No review",
+    "lastEdited": "Last edited",
+    "edit": "Edit"
+  },
+  "dayOfWeek": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
   }
 }

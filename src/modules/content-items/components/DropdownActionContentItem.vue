@@ -57,8 +57,9 @@
       </li>
 
       <li>
-        <a
-          class="flex items-center gap-3 rounded-xl hover:bg-base-content/10 hover:text-accent transition"
+        <RouterLink
+          :to="{ name: 'content-item-show', params: { slug: hobby.slug } }"
+          class="flex items-center gap-3 rounded-xl hover:bg-base-content/10 hover:text-warning transition"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +72,7 @@
             />
           </svg>
           Ver detalle
-        </a>
+        </RouterLink>
       </li>
 
       <li>
@@ -98,7 +99,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useQueryClient } from '@tanstack/vue-query'
-import { getContentItemAction } from '../actions/get-content-item.action'
+import { contentItemQueryOptions } from '../queries/useGetContentItemQuery'
 
 defineProps<{ hobby: { id: number; title: string; slug: string } }>()
 defineEmits<{ focus: [id: number]; blur: [] }>()
@@ -106,11 +107,7 @@ defineEmits<{ focus: [id: number]; blur: [] }>()
 const queryClient = useQueryClient()
 
 const prefetchEditData = (slug: string) => {
-  queryClient.prefetchQuery({
-    queryKey: ['content-item', slug],
-    queryFn: () => getContentItemAction(slug).then((res) => res.data),
-    staleTime: 1000 * 60,
-  })
+  queryClient.prefetchQuery(contentItemQueryOptions(queryClient, slug))
 }
 </script>
 

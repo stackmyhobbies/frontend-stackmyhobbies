@@ -1,160 +1,202 @@
 <template>
-  <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  <div class="flex min-h-full flex-col px-6 pt-12 pb-4 lg:px-8">
+    <div class="my-auto w-full">
     <header-form
       :url="signUpImage"
       alt="icon_sign_up"
       text_title="Sign in to your account"
     />
 
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-2xl">
       <form
         @submit.prevent="onSignUp"
-        class="space-y-6"
         autocomplete="off"
       >
-        <!-- Username -->
-        <div>
-          <label
-            for="username"
-            class="block text-sm font-medium text-base-content"
-            >Usuario</label
-          >
-          <div class="mt-2">
-            <input
-              id="username"
-              v-model.trim="signUpForm.username"
-              @blur="touched.username = true"
-              ref="usernameInputRef"
-              placeholder="Ej: johndoe019"
-              type="text"
-              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
-            />
-            <span
-              v-if="showError('username')"
-              class="text-error text-sm"
+        <div class="grid gap-y-4 lg:grid-cols-2 lg:gap-x-6">
+          <!-- Username -->
+          <div>
+            <label
+              for="username"
+              class="block text-sm font-medium text-base-content"
+              >Usuario</label
             >
-              El usuario debe tener al menos 3 caracteres
-            </span>
-          </div>
-        </div>
-
-        <!-- First Name -->
-        <div>
-          <label
-            for="first_name"
-            class="block text-sm font-medium text-base-content"
-            >Nombres</label
-          >
-          <div class="mt-2">
-            <input
-              id="first_name"
-              v-model.trim="signUpForm.first_name"
-              @blur="touched.first_name = true"
-              placeholder="Ej: John"
-              type="text"
-              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
-            />
-            <span
-              v-if="showError('first_name')"
-              class="text-error text-sm"
-            >
-              El nombre es obligatorio
-            </span>
-          </div>
-        </div>
-
-        <!-- Last Name -->
-        <div>
-          <label
-            for="last_name"
-            class="block text-sm font-medium text-base-content"
-            >Apellidos</label
-          >
-          <div class="mt-2">
-            <input
-              id="last_name"
-              v-model.trim="signUpForm.last_name"
-              @blur="touched.last_name = true"
-              placeholder="Ej: Doe"
-              type="text"
-              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
-            />
-            <span
-              v-if="showError('last_name')"
-              class="text-error text-sm"
-            >
-              El apellido es obligatorio
-            </span>
-          </div>
-        </div>
-
-        <!-- Email -->
-        <div>
-          <label
-            for="email"
-            class="block text-sm font-medium text-base-content"
-            >Correo Electrónico</label
-          >
-          <div class="mt-2">
-            <input
-              id="email"
-              v-model.trim="signUpForm.email"
-              @blur="touched.email = true"
-              placeholder="Ej: johndoe@example.com"
-              type="text"
-              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
-            />
-            <span
-              v-if="showError('email')"
-              class="text-error text-sm"
-            >
-              El correo electrónico no es válido
-            </span>
-          </div>
-        </div>
-
-        <!-- Password -->
-        <div>
-          <label
-            for="password"
-            class="block text-sm font-medium text-base-content"
-            >Contraseña</label
-          >
-          <div class="mt-2 relative">
-            <input
-              id="password"
-              v-model="signUpForm.password"
-              @blur="touched.password = true"
-              type="password"
-              class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
-            />
-            <button
-              type="button"
-              class="btn absolute right-0.5 top-0 bg-transparent border-transparent"
-              @click="handleShowPassword"
-            >
-              <Icon
-                v-if="!showPassword"
-                icon="mingcute:eye-close-fill"
-                :inline="true"
+            <div class="mt-2">
+              <input
+                id="username"
+                v-model.trim="signUpForm.username"
+                @blur="touched.username = true"
+                ref="usernameInputRef"
+                placeholder="Ej: johndoe019"
+                type="text"
+                class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
               />
-              <Icon
-                v-else
-                icon="mingcute:eye-fill"
-                :inline="true"
-              />
-            </button>
-            <span
-              v-if="showError('password')"
-              class="text-error text-sm"
+              <span
+                v-if="showError('username')"
+                class="text-error text-sm"
+              >
+                El usuario debe tener al menos 3 caracteres
+              </span>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label
+              for="email"
+              class="block text-sm font-medium text-base-content"
+              >Correo Electrónico</label
             >
-              La contraseña debe tener al menos 6 caracteres
-            </span>
+            <div class="mt-2">
+              <input
+                id="email"
+                v-model.trim="signUpForm.email"
+                @blur="touched.email = true"
+                placeholder="Ej: johndoe@example.com"
+                type="text"
+                class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
+              />
+              <span
+                v-if="showError('email')"
+                class="text-error text-sm"
+              >
+                El correo electrónico no es válido
+              </span>
+            </div>
+          </div>
+
+          <!-- First Name -->
+          <div>
+            <label
+              for="first_name"
+              class="block text-sm font-medium text-base-content"
+              >Nombres</label
+            >
+            <div class="mt-2">
+              <input
+                id="first_name"
+                v-model.trim="signUpForm.first_name"
+                @blur="touched.first_name = true"
+                placeholder="Ej: John"
+                type="text"
+                class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
+              />
+              <span
+                v-if="showError('first_name')"
+                class="text-error text-sm"
+              >
+                El nombre es obligatorio
+              </span>
+            </div>
+          </div>
+
+          <!-- Last Name -->
+          <div>
+            <label
+              for="last_name"
+              class="block text-sm font-medium text-base-content"
+              >Apellidos</label
+            >
+            <div class="mt-2">
+              <input
+                id="last_name"
+                v-model.trim="signUpForm.last_name"
+                @blur="touched.last_name = true"
+                placeholder="Ej: Doe"
+                type="text"
+                class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
+              />
+              <span
+                v-if="showError('last_name')"
+                class="text-error text-sm"
+              >
+                El apellido es obligatorio
+              </span>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label
+              for="password"
+              class="block text-sm font-medium text-base-content"
+              >Contraseña</label
+            >
+            <div class="mt-2 relative">
+              <input
+                id="password"
+                v-model="signUpForm.password"
+                @blur="touched.password = true"
+                :type="!showPassword ? 'password' : 'text'"
+                class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
+              />
+              <button
+                type="button"
+                class="btn absolute right-0.5 top-0 bg-transparent border-transparent"
+                @click="handleShowPassword"
+              >
+                <Icon
+                  v-if="!showPassword"
+                  icon="mingcute:eye-close-fill"
+                  :inline="true"
+                />
+                <Icon
+                  v-else
+                  icon="mingcute:eye-fill"
+                  :inline="true"
+                />
+              </button>
+              <span
+                v-if="showError('password')"
+                class="text-error text-sm"
+              >
+                La contraseña debe tener al menos 6 caracteres
+              </span>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div>
+            <label
+              for="confirmPassword"
+              class="block text-sm font-medium text-base-content"
+              >Confirmar Contraseña</label
+            >
+            <div class="mt-2 relative">
+              <input
+                id="confirmPassword"
+                v-model="signUpForm.confirmPassword"
+                @blur="touched.confirmPassword = true"
+                :type="!showConfirmPassword ? 'password' : 'text'"
+                class="block w-full rounded-md bg-base-100/50 px-3 py-1.5 text-base text-base-content outline-1 outline-base-content/10 placeholder:text-base-content/50 focus:outline-2 focus:outline-accent sm:text-sm"
+              />
+              <button
+                type="button"
+                class="btn absolute right-0.5 top-0 bg-transparent border-transparent"
+                @click="handleShowConfirmPassword"
+              >
+                <Icon
+                  v-if="!showConfirmPassword"
+                  icon="mingcute:eye-close-fill"
+                  :inline="true"
+                />
+                <Icon
+                  v-else
+                  icon="mingcute:eye-fill"
+                  :inline="true"
+                />
+              </button>
+              <span
+                v-if="showError('confirmPassword')"
+                class="text-error text-sm"
+              >
+                Las contraseñas no coinciden
+              </span>
+            </div>
           </div>
         </div>
 
         <!-- Submit -->
-        <div>
+        <div class="mt-6">
           <button
             type="submit"
             :disabled="!isFormValid || isSubmitting"
@@ -212,6 +254,7 @@
         </router-link>
       </p>
     </div>
+    </div>
   </div>
 </template>
 
@@ -229,6 +272,7 @@ import { Icon } from '@iconify/vue'
 interface SignUpFormInterface {
   username: string
   password: string
+  confirmPassword: string
   first_name: string
   last_name: string
   email: string
@@ -236,23 +280,28 @@ interface SignUpFormInterface {
 
 const toast = useToast()
 const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 const handleShowPassword = () => {
   showPassword.value = !showPassword.value
+}
+const handleShowConfirmPassword = () => {
+  showConfirmPassword.value = !showConfirmPassword.value
 }
 
 const signUpForm = reactive<SignUpFormInterface>({
   username: '',
   password: '',
+  confirmPassword: '',
   first_name: '',
   last_name: '',
   email: '',
 })
 
-// Estado para saber qué campos han sido tocados
 const touched = reactive<Record<keyof SignUpFormInterface, boolean>>({
   username: false,
   password: false,
+  confirmPassword: false,
   first_name: false,
   last_name: false,
   email: false,
@@ -261,9 +310,11 @@ const touched = reactive<Record<keyof SignUpFormInterface, boolean>>({
 const router = useRouter()
 const isSubmitting = ref(false)
 
-// Validaciones reactivas
 const isUsernameValid = computed(() => signUpForm.username.trim().length >= 3)
 const isPasswordValid = computed(() => signUpForm.password.length >= 6)
+const isConfirmPasswordValid = computed(
+  () => signUpForm.confirmPassword.length > 0 && signUpForm.password === signUpForm.confirmPassword,
+)
 const isEmailValid = computed(() => /\S+@\S+\.\S+/.test(signUpForm.email))
 const isFirstNameValid = computed(() => signUpForm.first_name.trim() !== '')
 const isLastNameValid = computed(() => signUpForm.last_name.trim() !== '')
@@ -272,6 +323,7 @@ const isFormValid = computed(
   () =>
     isUsernameValid.value &&
     isPasswordValid.value &&
+    isConfirmPasswordValid.value &&
     isEmailValid.value &&
     isFirstNameValid.value &&
     isLastNameValid.value,
@@ -280,7 +332,6 @@ const isFormValid = computed(
 const usernameInputRef = ref<HTMLInputElement | null>(null)
 const formSubmitted = ref(false)
 
-// Mostrar error solo si fue tocado o el formulario fue enviado
 const showError = (field: keyof SignUpFormInterface) => {
   if (!formSubmitted.value && !touched[field]) return false
   switch (field) {
@@ -288,6 +339,8 @@ const showError = (field: keyof SignUpFormInterface) => {
       return !isUsernameValid.value
     case 'password':
       return !isPasswordValid.value
+    case 'confirmPassword':
+      return !isConfirmPasswordValid.value
     case 'email':
       return !isEmailValid.value
     case 'first_name':
@@ -305,8 +358,16 @@ const onSignUp = async () => {
     console.warn('Formulario inválido ❌')
     return
   }
-  isSubmitting.value = true // ⏳ Inicia carga
-  const { success, errors, data } = await authStore.signUp({ ...signUpForm })
+  isSubmitting.value = true
+
+  const registerData = {
+    username: signUpForm.username,
+    password: signUpForm.password,
+    first_name: signUpForm.first_name,
+    last_name: signUpForm.last_name,
+    email: signUpForm.email,
+  }
+  const { success, errors, data } = await authStore.signUp(registerData)
 
   isSubmitting.value = false
 
@@ -329,7 +390,7 @@ const onSignUp = async () => {
   toast.success('¡Registro exitoso!\nConfirma tu cuenta desde el correo que te enviamos.')
 
   router.push({ name: 'signIn', query: { email: data?.email } })
-  console.log('Formulario válido ✅', { ...signUpForm })
+  console.log('Formulario válido ✅', { ...registerData })
 }
 </script>
 

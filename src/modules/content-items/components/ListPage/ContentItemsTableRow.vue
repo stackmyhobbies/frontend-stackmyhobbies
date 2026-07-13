@@ -8,11 +8,13 @@
       :class="activeId === hobby.id ? 'bg-base-content/10' : ''"
     >
       <div class="flex flex-row gap-4 items-center w-full min-w-0">
-        <div class="w-14 h-14">
+        <div class="w-14 h-14 bg-base-200 rounded-lg overflow-hidden">
           <img
             v-image-fallback="hobby.thumbnail_url"
             alt="not_found"
-            class="w-full h-full object-cover rounded-lg border-transparent"
+            loading="lazy"
+            decoding="async"
+            class="w-full h-full object-cover border-transparent transition-opacity duration-300"
           />
         </div>
         <div class="flex flex-col min-w-0 flex-1">
