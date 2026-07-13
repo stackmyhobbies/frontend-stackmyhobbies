@@ -27,6 +27,11 @@ export const contentItemRoutes: RouteRecordRaw = {
       component: () => import('@/modules/content-items/pages/EditPage.vue'),
     },
     {
+      path: 'show/:slug',
+      name: 'content-item-show',
+      component: () => import('@/modules/content-items/pages/DetailPage.vue'),
+    },
+    {
       path: ':pathMatch(.*)*',
       redirect: { name: 'content-item-list' },
     },

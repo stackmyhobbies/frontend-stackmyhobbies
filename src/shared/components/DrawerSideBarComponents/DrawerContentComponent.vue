@@ -16,7 +16,7 @@
         </router-link>
 
         <router-link
-          v-else-if="is_content_item_create || is_content_item_edit"
+          v-else-if="is_content_item_create || is_content_item_edit || is_content_item_show"
           :to="{ name: 'content-item-list' }"
           class="btn btn-soft btn-accent"
         >
@@ -89,6 +89,7 @@ const route = useRoute()
 const is_content_item_create = computed(() => route.name === 'content-item-create')
 const is_content_item_edit = computed(() => route.name === 'content-item-edit')
 const is_content_item_list = computed(() => route.name === 'content-item-list')
+const is_content_item_show = computed(() => route.name === 'content-item-show')
 
 console.log(is_content_item_create, is_content_item_edit)
 </script>

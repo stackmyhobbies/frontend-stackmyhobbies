@@ -9,7 +9,7 @@ import {
   TransitionRoot,
 } from '@headlessui/vue'
 import { useFloating, autoUpdate, flip, shift, offset, size } from '@floating-ui/vue'
-import AppBadge from '@shared-components/AppBagde.vue'
+import AppBadge from '@shared-components/AppBadge.vue'
 import { getBadgeColor } from '../../utils/badgeColor'
 
 /* ------------------------------------------------------------------
