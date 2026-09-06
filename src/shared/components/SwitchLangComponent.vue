@@ -1,43 +1,36 @@
 <template>
-  <div class="dropdown dropdown-end">
-    <div
-      ref="button"
-      tabindex="0"
-      role="button"
-      class="btn m-1 btn-ghost"
-    >
-      {{ showFlag() }} {{ currentLang.toUpperCase() }}
-    </div>
-    <ul
-      tabindex="-1"
-      class="dropdown-content menu bg-base-100 rounded-box z-1 w-24 p-2 shadow-sm"
-    >
-      <li><a @click="changeLang('es')">🇨🇴 ES</a></li>
-      <li><a @click="changeLang('en')">🏴󠁧󠁢󠁥󠁮󠁧󠁿 EN</a></li>
-    </ul>
-  </div>
+  <BaseDropdown>
+    <template #trigger="{ toggle }">
+      <button
+        class="btn m-1 btn-ghost"
+        @click="toggle"
+        aria-haspopup="true"
+      >
+        {{ showFlag() }} {{ currentLang.toUpperCase() }}
+      </button>
+    </template>
+
+    <template #content="{ close }">
+      <ul class="menu bg-base-100 rounded-box w-24 p-2 shadow-sm">
+        <li><a @click="changeLang('es', close)">🇨🇴 ES</a></li>
+        <li><a @click="changeLang('en', close)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 EN</a></li>
+      </ul>
+    </template>
+  </BaseDropdown>
 </template>
 
 <script setup lang="ts">
 import { useLangStore } from '@/stores/lang'
 import { storeToRefs } from 'pinia'
-import { nextTick, ref } from 'vue'
+import BaseDropdown from '@/shared/components/BaseDropdown.vue'
 
 const langStore = useLangStore()
 const { currentLang } = storeToRefs(useLangStore())
-const button = ref()
 
-const showFlag = () => {
-  return currentLang.value === 'es' ? '🇨🇴' : '🏴󠁧󠁢󠁥󠁮󠁧󠁿'
-}
+const showFlag = () => (currentLang.value === 'es' ? '🇨🇴' : '🏴󠁧󠁢󠁥󠁮󠁧󠁿')
 
-function changeLang(lang: string) {
+function changeLang(lang: string, close: () => void) {
   langStore.setLang(lang)
-  nextTick(() => {
-    ;(document.activeElement as HTMLElement)?.blur()
-  })
-  console.log('idiom:', lang)
+  close()
 }
 </script>
-
-<style scoped></style>

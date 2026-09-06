@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 overflow-auto">
+  <div class="flex-1">
     <table class="table table-pin-rows bg-base-200">
       <thead>
         <tr class="text-base-content capitalize">
