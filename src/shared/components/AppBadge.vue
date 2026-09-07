@@ -1,14 +1,23 @@
-<script setup>
-const props = defineProps({
-  color: String,
-  variant: { default: 'soft' },
+<script setup lang="ts">
+interface Props {
+  color?: string
+  variant?: string
+  size?: 'xs' | 'sm' | 'md' | 'lg'
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  color: 'primary',
+  variant: 'soft',
+  size: 'sm',
 })
-console.log({ props })
+
 const getClass = () => {
-  if (props.variant === 'solid') return `badge-${props.color}`
-  if (props.variant === 'outline') return `badge-outline badge-${props.color}`
-  if (props.variant === 'soft') return `badge-soft badge-${props.color}`
-  return `badge badge-${props.color}`
+  const base = `badge-${props.size}`
+  const color = `badge-${props.color}`
+  if (props.variant === 'solid') return `${base} ${color}`
+  if (props.variant === 'outline') return `${base} badge-outline ${color}`
+  if (props.variant === 'soft') return `${base} badge-soft ${color}`
+  return `${base} ${color}`
 }
 </script>
 
