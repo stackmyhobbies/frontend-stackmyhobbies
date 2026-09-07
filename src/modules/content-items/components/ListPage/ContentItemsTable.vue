@@ -11,6 +11,12 @@
             Status
           </th>
           <th
+            v-if="showDayOfWeek"
+            class="bg-base-200"
+          >
+            Día de emisión
+          </th>
+          <th
             v-if="showType"
             class="bg-base-200"
           >
@@ -52,6 +58,7 @@
               </div>
             </td>
             <td v-if="showStatus"><div class="skeleton h-6 w-20 rounded-md"></div></td>
+            <td v-if="showDayOfWeek"><div class="skeleton h-4 w-16"></div></td>
             <td v-if="showType"><div class="skeleton h-4 w-16"></div></td>
             <td v-if="showProgress">
               <div class="flex flex-col gap-2">
@@ -71,6 +78,7 @@
             :show-status="showStatus"
             :show-type="showType"
             :show-progress="showProgress"
+            :show-day-of-week="showDayOfWeek"
             :active-id="activeId"
             @focus="activeId = $event"
             @blur="activeId = null"
@@ -104,6 +112,7 @@ defineProps<{
   showStatus: boolean
   showType: boolean
   showProgress: boolean
+  showDayOfWeek: boolean
   visibleColumnCount: number
   data: ContentItemListResponse | undefined
 }>()
