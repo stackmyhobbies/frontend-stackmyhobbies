@@ -91,7 +91,20 @@
     "completed": "Completado",
     "seen": "vistos",
     "start": "Inicio",
-    "lastUpdate": "Último update"
+    "lastUpdate": "Último update",
+    "increment": "Aumentar progreso",
+    "decrement": "Disminuir progreso",
+    "minReached": "El progreso no puede ser menor que 0",
+    "maxReached": "Has alcanzado el progreso máximo",
+    "updateSuccess": "Progreso actualizado",
+    "updateError": "No se pudo actualizar el progreso"
+  },
+  "actions": {
+    "back": "Volver",
+    "share": "Compartir",
+    "bookmark": "Guardar",
+    "shared": "Enlace copiado al portapapeles",
+    "shareUnavailable": "No se pudo compartir"
   },
   "specs": {
     "title": "Especificaciones",
