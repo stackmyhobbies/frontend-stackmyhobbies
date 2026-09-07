@@ -1,7 +1,7 @@
-export const getBadgeColor = (
-  item: Record<string, string>,
+export const getBadgeColor = <T extends object>(
+  item: T,
   index: number,
-  valueKey: string | number,
+  valueKey: keyof T,
 ) => {
   const colors = ['primary', 'secondary', 'accent', 'info', 'success', 'warning', 'error']
 

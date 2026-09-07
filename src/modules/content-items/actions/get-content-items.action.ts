@@ -8,6 +8,7 @@ export interface filterProps {
   tags: string[]
   content_type: string[]
   progress: string[]
+  day_of_week: string[]
 }
 
 export const getContentItemsAction = async (
@@ -21,6 +22,7 @@ export const getContentItemsAction = async (
     if (filters?.tags?.length) params.tags = filters.tags.join(',')
     if (filters?.content_type?.length) params.content_type = filters.content_type.join(',')
     if (filters?.progress?.length) params.progress = filters.progress.join(',')
+    if (filters?.day_of_week?.length) params.day_of_week = filters.day_of_week.join(',')
 
     const { data } = await stackMyHobbiesApi.get<ContentItemListResponse>('/content-items', {
       params,

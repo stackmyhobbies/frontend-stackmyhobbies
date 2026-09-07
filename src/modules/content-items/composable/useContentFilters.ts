@@ -6,10 +6,16 @@ import type { Tag } from '../interfaces/TagResponse'
 import type { Type } from '../interfaces/ContentTypeResponse'
 import type { ProgressStatus } from '../interfaces/progressStatusResponse'
 
+export interface DayOption {
+  id: string
+  name: string
+}
+
 export function useContentFilters(
   tagsData: Ref<Tag[] | undefined>,
   typesData: Ref<Type[] | undefined>,
   progressesData: Ref<ProgressStatus[] | undefined>,
+  daysOptions: Ref<DayOption[]>,
 ) {
   const router = useRouter()
   const route = useRoute()
@@ -24,11 +30,13 @@ export function useContentFilters(
     tags: [],
     content_type: [],
     progress: [],
+    day_of_week: [],
   }) as filterProps
 
   const selectedTags = ref<Tag[]>([])
   const selectedTypes = ref<Type[]>([])
   const selectedProgresses = ref<ProgressStatus[]>([])
+  const selectedDays = ref<DayOption[]>([])
 
   // Almacenar el estado anterior de filtros para detectar cambios reales
   const previousFilterKey = ref('')
@@ -80,6 +88,24 @@ export function useContentFilters(
     { immediate: true },
   )
 
+  watch(
+    [() => route.query.day_of_week, daysOptions],
+    ([val]) => {
+      if (val && daysOptions.value.length > 0) {
+        const ids = (val as string)
+          .split(',')
+          .map((id) => id.trim())
+          .filter(Boolean)
+        selectedDays.value = ids
+          .map((id) => daysOptions.value.find((d) => d.id === id))
+          .filter((d): d is DayOption => d !== undefined)
+      } else if (!val) {
+        selectedDays.value = []
+      }
+    },
+    { immediate: true },
+  )
+
   // Mapear arrays de selección a slugs
   watch(debouncedSearch, (v) => {
     filters.search = v
@@ -109,9 +135,23 @@ export function useContentFilters(
     { deep: true },
   )
 
+  watch(
+    selectedDays,
+    (v) => {
+      filters.day_of_week = v.map((d) => d.id)
+    },
+    { deep: true },
+  )
+
   // Build a serialized key to detect real filter changes
   function filterKey() {
-    return JSON.stringify([filters.search, filters.tags, filters.content_type, filters.progress])
+    return JSON.stringify([
+      filters.search,
+      filters.tags,
+      filters.content_type,
+      filters.progress,
+      filters.day_of_week,
+    ])
   }
 
   // Resetear página a 1 cuando cambian los filtros (pero no la página misma)
@@ -138,6 +178,7 @@ export function useContentFilters(
       () => filters.tags,
       () => filters.content_type,
       () => filters.progress,
+      () => filters.day_of_week,
       currentPage,
       per_page,
     ],
@@ -147,6 +188,7 @@ export function useContentFilters(
       if (filters.tags.length) query.tags = filters.tags.join(',')
       if (filters.content_type.length) query.content_type = filters.content_type.join(',')
       if (filters.progress.length) query.progress = filters.progress.join(',')
+      if (filters.day_of_week.length) query.day_of_week = filters.day_of_week.join(',')
       if (currentPage.value > 1) query.page = currentPage.value
       if (per_page.value !== 5) query.per_page = per_page.value
 
@@ -163,5 +205,6 @@ export function useContentFilters(
     selectedTags,
     selectedTypes,
     selectedProgresses,
+    selectedDays,
   }
 }
