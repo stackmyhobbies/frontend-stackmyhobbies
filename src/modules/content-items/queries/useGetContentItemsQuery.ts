@@ -27,6 +27,7 @@ export function contentItemsQueryOptions(
             tags: [...(filters.tags ?? [])],
             content_type: [...(filters.content_type ?? [])],
             progress: [...(filters.progress ?? [])],
+            day_of_week: [...(filters.day_of_week ?? [])],
           }
         : {},
     ],
@@ -50,6 +51,7 @@ export const useGetContentItemsQuery = ({ pageCurrent, perPage, filters }: Props
             tags: [...(filters.tags ?? [])],
             content_type: [...(filters.content_type ?? [])],
             progress: [...(filters.progress ?? [])],
+            day_of_week: [...(filters.day_of_week ?? [])],
           }
         : {},
     ]),

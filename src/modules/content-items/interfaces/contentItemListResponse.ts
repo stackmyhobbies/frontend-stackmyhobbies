@@ -38,6 +38,7 @@ export interface Hobby {
   tags: Tag[]
   type: Type
   progress_status: ProgressStatus
+  day_of_week: string
 }
 
 export interface ProgressStatus {
