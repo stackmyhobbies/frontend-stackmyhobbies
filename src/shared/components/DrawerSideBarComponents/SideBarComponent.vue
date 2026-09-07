@@ -39,7 +39,7 @@
             :to="item.path"
             class="flex items-center gap-3 px-3 py-2.5 whitespace-nowrap"
             :class="{
-              'bg-indigo-500/20 border-l-4 border-cyan-400 text-cyan-400 font-medium': isActive(
+              'bg-accent/10 border-l-4  border-accent text-accent font-medium': isActive(
                 item.name_path,
               ),
             }"
