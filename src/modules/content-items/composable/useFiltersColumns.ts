@@ -1,31 +1,35 @@
-import { useMediaQuery, type RemovableRef } from '@vueuse/core'
 import { computed, type Ref } from 'vue'
 
 export interface ColumnStructure {
   type: boolean
-  progress: boolean
   status: boolean
+  progress: boolean
+  day_of_week: boolean
+  tags: boolean
 }
-export const useFilterColumns = (visibleColumns: Ref<Record<string, boolean>>) => {
-  const isMobile = useMediaQuery('(max-width: 767px)')
 
-  const showStatus = computed(() => !isMobile.value || visibleColumns.value.status)
-  const showType = computed(() => !isMobile.value || visibleColumns.value.type)
-  const showProgress = computed(() => !isMobile.value || visibleColumns.value.progress)
+export const useFilterColumns = (visibleColumns: Ref<ColumnStructure>) => {
+  const showStatus = computed(() => visibleColumns.value.status)
+  const showType = computed(() => visibleColumns.value.type)
+  const showProgress = computed(() => visibleColumns.value.progress)
+  const showDayOfWeek = computed(() => visibleColumns.value.day_of_week)
+  const showTags = computed(() => visibleColumns.value.tags)
 
   const visibleColumnCount = computed(() => {
-    let count = 2 // title + actions
+    let count = 2
     if (showStatus.value) count++
     if (showType.value) count++
     if (showProgress.value) count++
+    if (showDayOfWeek.value) count++
     return count
   })
 
   return {
-    isMobile,
     visibleColumnCount,
     showProgress,
     showStatus,
     showType,
+    showDayOfWeek,
+    showTags,
   }
 }

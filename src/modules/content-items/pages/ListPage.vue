@@ -5,9 +5,18 @@
       v-model:tags="selectedTags"
       v-model:types="selectedTypes"
       v-model:progresses="selectedProgresses"
+      v-model:days="selectedDays"
+      v-model:filters-collapsed="filtersCollapsed"
       :tags-options="translatedTagsData"
       :types-options="translatedTypesData"
       :progresses-options="translatedProgressesData"
+      :days-options="translatedDaysData"
+      :active-filter-count="activeFilterCount"
+      :active-filter-counts="activeFilterCounts"
+      :show-status="showStatus"
+      :show-type="showType"
+      :show-day-of-week="showDayOfWeek"
+      :show-tags="showTags"
       v-model:columns="visibleColumns"
     />
 
@@ -23,6 +32,7 @@
       :show-status="showStatus"
       :show-type="showType"
       :show-progress="showProgress"
+      :show-day-of-week="showDayOfWeek"
       :visible-column-count="visibleColumnCount"
       :data="data"
     />
@@ -46,10 +56,15 @@ const {
   selectedTags,
   selectedTypes,
   selectedProgresses,
+  selectedDays,
   translatedTagsData,
   translatedTypesData,
   translatedProgressesData,
+  translatedDaysData,
   visibleColumns,
+  filtersCollapsed,
+  activeFilterCount,
+  activeFilterCounts,
   isLoading,
   isFetching,
   isError,
@@ -60,6 +75,8 @@ const {
   showProgress,
   showStatus,
   showType,
+  showDayOfWeek,
+  showTags,
   visibleColumnCount,
   per_page,
   handlePageChange,

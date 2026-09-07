@@ -5,8 +5,9 @@ import { useGetContentItemsQuery } from '../queries/useGetContentItemsQuery'
 import { useGetTagsQuery } from '../queries/useGetTagsQuery'
 import { useGetContentTypesQuery } from '../queries/useGetContentTypesQuery'
 import { useProgressStatusesQuery } from '../queries/useGetProgressStatusesQuery'
-import { useContentFilters } from './useContentFilters'
+import { useContentFilters, type DayOption } from './useContentFilters'
 import { useFilterColumns } from './useFiltersColumns'
+import { DayOfWeekValues } from '../enum/dayOfWeek.enum'
 import { slugifyKey } from '@/shared/utils/slugifyKey'
 import type { Hobby, MetaData } from '../interfaces/contentItemListResponse'
 
@@ -15,6 +16,15 @@ export function useContentItemsList() {
   const { data: typesData } = useGetContentTypesQuery()
   const { data: progressesData } = useProgressStatusesQuery()
 
+  const { t } = useI18n({ useScope: 'global' })
+
+  const translatedDaysData = computed<DayOption[]>(() =>
+    DayOfWeekValues.map((id) => ({
+      id,
+      name: t(`common.days.${id}`),
+    })),
+  )
+
   const {
     currentPage,
     searchTerm,
@@ -22,8 +32,9 @@ export function useContentItemsList() {
     selectedTags,
     selectedTypes,
     selectedProgresses,
+    selectedDays,
     per_page,
-  } = useContentFilters(tagsData, typesData, progressesData)
+  } = useContentFilters(tagsData, typesData, progressesData, translatedDaysData)
 
   const { data, isLoading, isFetching, isError, error } = useGetContentItemsQuery({
     pageCurrent: currentPage,
@@ -35,16 +46,18 @@ export function useContentItemsList() {
     type: boolean
     status: boolean
     progress: boolean
+    day_of_week: boolean
+    tags: boolean
   }>('content-items-columns', {
     type: true,
-    status: false,
-    progress: false,
+    status: true,
+    progress: true,
+    day_of_week: true,
+    tags: false,
   })
 
-  const { showProgress, showStatus, showType, visibleColumnCount } =
+  const { showProgress, showStatus, showType, showDayOfWeek, showTags, visibleColumnCount } =
     useFilterColumns(visibleColumns)
-
-  const { t } = useI18n({ useScope: 'global' })
 
   const translatedTagsData = computed(
     () =>
@@ -69,6 +82,25 @@ export function useContentItemsList() {
         name: t(`contentItem.status.${slugifyKey(progress.name)}`),
       })) ?? [],
   )
+
+  const filtersCollapsed = useLocalStorage<boolean>('content-items-filters-collapsed', false)
+
+  const activeFilterCount = computed(
+    () =>
+      (searchTerm.value ? 1 : 0) +
+      selectedTags.value.length +
+      selectedTypes.value.length +
+      selectedProgresses.value.length +
+      selectedDays.value.length,
+  )
+
+  const activeFilterCounts = computed(() => ({
+    type: selectedTypes.value.length,
+    status: selectedProgresses.value.length,
+    progress: selectedProgresses.value.length,
+    day_of_week: selectedDays.value.length,
+    tags: selectedTags.value.length,
+  }))
 
   const errorMessage = computed(() => error.value?.message ?? null)
 
@@ -95,10 +127,15 @@ export function useContentItemsList() {
     selectedTags,
     selectedTypes,
     selectedProgresses,
+    selectedDays,
     translatedTagsData,
     translatedTypesData,
     translatedProgressesData,
+    translatedDaysData,
     visibleColumns,
+    filtersCollapsed,
+    activeFilterCount,
+    activeFilterCounts,
     isLoading,
     isFetching,
     isError,
@@ -109,6 +146,8 @@ export function useContentItemsList() {
     showProgress,
     showStatus,
     showType,
+    showDayOfWeek,
+    showTags,
     visibleColumnCount,
     per_page,
     handlePageChange,
