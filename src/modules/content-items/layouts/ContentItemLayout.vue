@@ -39,6 +39,9 @@ const isDragging = ref<boolean>(false)
 const startX = ref<number>(0)
 const startWidth = ref<number>(MIN)
 
+let rafId: number | null = null
+let latestX = 0
+
 const isMobileSidebarOpen = ref(false)
 const mobileDragging = ref(false)
 const mobileStartX = ref(0)
@@ -68,12 +71,18 @@ const handleMouseDown = (e: MouseEvent) => {
 const handleMouseMove = (e: MouseEvent) => {
   if (!isDragging.value || isMobile()) return
 
-  const movement = e.clientX - startX.value
-  const nextWidth = startWidth.value + movement
+  latestX = e.clientX
+  if (rafId !== null) return
 
-  if (nextWidth >= MIN && nextWidth <= MAX) {
-    width.value = nextWidth
-  }
+  rafId = requestAnimationFrame(() => {
+    rafId = null
+    const movement = latestX - startX.value
+    const nextWidth = startWidth.value + movement
+
+    if (nextWidth >= MIN && nextWidth <= MAX) {
+      width.value = nextWidth
+    }
+  })
 }
 
 const handleMouseUp = () => {
@@ -97,6 +106,9 @@ const toggleCollapsed = () => {
   if (!isMobile()) {
     animating.value = true
     width.value = width.value === MIN ? MAX : MIN
+    setTimeout(() => {
+      animating.value = false
+    }, 200)
     return
   }
 
@@ -161,6 +173,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  if (rafId !== null) cancelAnimationFrame(rafId)
   window.removeEventListener('touchstart', handleTouchStart)
   window.removeEventListener('touchmove', handleTouchMove)
   window.removeEventListener('touchend', handleTouchEnd)

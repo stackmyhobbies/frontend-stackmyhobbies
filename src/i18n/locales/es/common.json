@@ -2,6 +2,15 @@
   "save": "Guardar",
   "cancel": "Cancelar",
   "selectPlaceholder": "Selecciona una opción",
+  "navigation": {
+    "home": "Inicio",
+    "addNewTitle": "Agregar nuevo título",
+    "addHobby": "Agregar hobby",
+    "listOfHobbies": "Lista de hobbies",
+    "logout": "Cerrar sesión",
+    "help": "Ayuda",
+    "expandSidebar": "Expandir sidebar"
+  },
   "days": {
     "monday": "Lunes",
     "tuesday": "Martes",

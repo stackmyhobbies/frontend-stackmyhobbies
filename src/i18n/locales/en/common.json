@@ -2,6 +2,15 @@
   "save": "Save",
   "cancel": "Cancel",
   "selectPlaceholder": "Select an option",
+  "navigation": {
+    "home": "Home",
+    "addNewTitle": "Add New Title",
+    "addHobby": "Add Hobby",
+    "listOfHobbies": "List of Hobbies",
+    "logout": "Logout",
+    "help": "Help",
+    "expandSidebar": "Expand sidebar"
+  },
   "days": {
     "monday": "Monday",
     "tuesday": "Tuesday",
