@@ -21,7 +21,7 @@
           class="btn btn-soft btn-accent"
         >
           <back-icon class="size-[1.5em]" />
-          {{ t('navigation.listOfHobbies') }}
+          {{ t('contentDrawer.list_hobby') }}
         </router-link>
 
         <!-- <button-custom @click="toggleStore.open()" custom-class="btn-soft btn-info self-end-safe">

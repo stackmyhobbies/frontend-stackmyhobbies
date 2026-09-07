@@ -91,7 +91,20 @@
     "completed": "Completed",
     "seen": "seen",
     "start": "Start",
-    "lastUpdate": "Last update"
+    "lastUpdate": "Last update",
+    "increment": "Increase progress",
+    "decrement": "Decrease progress",
+    "minReached": "Progress cannot be less than 0",
+    "maxReached": "You have reached the maximum progress",
+    "updateSuccess": "Progress updated",
+    "updateError": "Could not update progress"
+  },
+  "actions": {
+    "back": "Back",
+    "share": "Share",
+    "bookmark": "Bookmark",
+    "shared": "Link copied to clipboard",
+    "shareUnavailable": "Could not share"
   },
   "specs": {
     "title": "Specifications",
