@@ -1,0 +1,9 @@
+{
+    "main": {
+        "home": "Home"
+    },
+    "footer": {
+        "add_hobby": "Add hobby",
+        "logout": "Logout"
+    }
+}
