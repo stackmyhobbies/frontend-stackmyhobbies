@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1">
+  <div class="flex-1 min-h-0 overflow-y-auto scrollbar-thin">
     <table class="table table-pin-rows bg-base-200">
       <thead>
         <tr class="text-base-content capitalize">
@@ -110,3 +110,9 @@ defineProps<{
 
 const activeId = ref<number | null>(null)
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+  width: 10px;
+}
+</style>

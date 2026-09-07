@@ -1,0 +1,9 @@
+{
+    "main": {
+        "home": "Inicio"
+    },
+    "footer": {
+        "add_hobby": "Agregar hobby",
+        "logout": "Cerrar sesión"
+    }
+}

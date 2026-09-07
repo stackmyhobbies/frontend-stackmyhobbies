@@ -12,7 +12,7 @@
           class="btn btn-soft btn-accent"
         >
           <add-icon class="size-[1.5em]" />
-          Add Hobby
+          {{ t('contentDrawer.add_hobby') }}
         </router-link>
 
         <router-link
@@ -21,7 +21,7 @@
           class="btn btn-soft btn-accent"
         >
           <back-icon class="size-[1.5em]" />
-          List of Hobbies
+          {{ t('navigation.listOfHobbies') }}
         </router-link>
 
         <!-- <button-custom @click="toggleStore.open()" custom-class="btn-soft btn-info self-end-safe">
@@ -71,11 +71,11 @@ Add icon
 import MenuDesktop from '@/modules/content-items/components/DrawerContent/MenuDesktop.vue'
 import MenuMobile from '@/modules/content-items/components/DrawerContent/MenuMobile.vue'
 import FooterComponent from '../FooterComponent.vue'
-import ButtonCustom from '../ButtonCustom.vue'
 import AddIcon from '@/shared/icons/svg/AddIcon.vue'
 
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 import { useToggleStore } from '@/stores/toggle'
 import { RouterLink } from 'vue-router'
@@ -83,9 +83,10 @@ import BackIcon from '@/shared/icons/svg/BackIcon.vue'
 
 import { twMerge } from 'tailwind-merge'
 
-const emits = defineEmits<{ (e: 'toggleCollapsed'): void }>()
+defineEmits<{ (e: 'toggleCollapsed'): void }>()
 const toggleStore = useToggleStore()
 const route = useRoute()
+const { t } = useI18n({ useScope: 'global' })
 const is_content_item_create = computed(() => route.name === 'content-item-create')
 const is_content_item_edit = computed(() => route.name === 'content-item-edit')
 const is_content_item_list = computed(() => route.name === 'content-item-list')
