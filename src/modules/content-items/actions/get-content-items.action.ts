@@ -30,6 +30,7 @@ export const getContentItemsAction = async (
     if (!data.success) {
       throw new ApiError(data.message)
     }
+    console.log(data)
     return data
   } catch (error: unknown) {
     throwApiError(error)
